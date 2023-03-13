@@ -18,13 +18,14 @@ import Geolocation from 'react-native-geolocation-service';
 const AbsensiScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);
   const [location, setLocation] = useState(false);
+  const [isInRadius, setIsInRadius] = useState(false);
 
   const arePointsNear = (checkPoint, centerPoint, km) => {
     var ky = 40000 / 360;
     var kx = Math.cos((Math.PI * centerPoint.lat) / 180.0) * ky;
     var dx = Math.abs(centerPoint.lng - checkPoint.lng) * kx;
     var dy = Math.abs(centerPoint.lat - checkPoint.lat) * ky;
-    return Math.sqrt(dx * dx + dy * dy) <= km;
+    return Math.sqrt(dx * dx + dy * dy) / 10000 <= km;
   };
 
   const requestLocationPermission = async () => {
@@ -59,8 +60,16 @@ const AbsensiScreen = ({navigation}) => {
       if (res) {
         Geolocation.getCurrentPosition(
           position => {
-            console.log(position.coords.latitude);
-            setLocation(position);
+            let centerPoint = {
+              lat: -7.559030526213746,
+              lng: 110.85834367179535,
+            };
+            let location = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+            console.log(arePointsNear(location, centerPoint, 2));
+            setLocation(location);
           },
           error => {
             // See error code charts below.
@@ -71,7 +80,7 @@ const AbsensiScreen = ({navigation}) => {
         );
       }
     });
-    console.log(location.latitude);
+    console.log(location);
   };
 
   return (
