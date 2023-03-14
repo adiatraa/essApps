@@ -18,6 +18,7 @@ import Geolocation from 'react-native-geolocation-service';
 const AbsensiScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);
   const [location, setLocation] = useState(false);
+  const [isInRadius, setIsInRadius] = useState(false);
 
   const arePointsNear = (checkPoint, centerPoint, km) => {
     var ky = 40000 / 360;
@@ -59,18 +60,16 @@ const AbsensiScreen = ({navigation}) => {
       if (res) {
         Geolocation.getCurrentPosition(
           position => {
-            let checkPoint = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
             let centerPoint = {
               lat: -7.559030526213746,
               lng: 110.85834367179535,
             };
-            console.log(
-              'In Radius : ' + arePointsNear(checkPoint, centerPoint, 2),
-            );
-            setLocation(position);
+            let location = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+            console.log(arePointsNear(location, centerPoint, 2));
+            setLocation(location);
           },
           error => {
             // See error code charts below.
@@ -81,7 +80,7 @@ const AbsensiScreen = ({navigation}) => {
         );
       }
     });
-    console.log(location.latitude);
+    console.log(location);
   };
 
   return (
