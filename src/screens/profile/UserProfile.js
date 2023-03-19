@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,8 +9,11 @@ import {
   ImageBackground,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {AuthContext} from '../../context/AuthContext';
 
 export default function UserProfile() {
+  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={{flexDirection: 'row'}}>
@@ -66,7 +69,7 @@ export default function UserProfile() {
           <Text style={styles.menuText}>Change Password</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuContainer}>
+      <TouchableOpacity style={styles.menuContainer} onPress={logout}>
         <View style={styles.menuIcon}>
           <Ionicons name="md-exit-outline" size={32} color="#FFC700" />
         </View>

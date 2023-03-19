@@ -14,6 +14,7 @@ import AbsensiScreen from '../screens/absensi/AbsensiScreen';
 import HomeScreen from '../screens/home/HomeScreen';
 import AbsensiDetailScreen from '../screens/absensi/AbsensiDetailScreen';
 import UserProfile from '../screens/profile/UserProfile';
+import ClockInScreen from '../screens/absensi/ClockInScreen';
 
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
@@ -40,6 +41,11 @@ const AbsensiStackScreen = () => {
       <AbsensiStack.Screen
         name="AbsensiDetail"
         component={AbsensiDetailScreen}
+        options={{headerShown: false}}
+      />
+      <AbsensiStack.Screen
+        name="ClockIn"
+        component={ClockInScreen}
         options={{headerShown: false}}
       />
     </AbsensiStack.Navigator>
@@ -84,7 +90,7 @@ const AuthStack = () => {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.dark20,
         tabBarStyle:
-          route.name === 'AbsensiStack'
+          (route.name === 'Login') | (route.name === 'AbsensiStack')
             ? {display: 'none'}
             : {
                 borderWidth: 2,

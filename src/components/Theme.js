@@ -10,6 +10,7 @@ const colors = {
   dark60: '#EEEEEE',
   black: '#000000',
   white: '#FFFFFF',
+  bgWhite: '#F5F5F5',
   bgDanger: '#FFEEED',
   danger: '#FF6666',
   bgSuccess: '#B5F5D1',

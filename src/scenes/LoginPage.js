@@ -12,8 +12,8 @@ export default function LoginPage({navigation}) {
   const {login} = useContext(AuthContext);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
-  const [NPP, setNPP] = useState('kminchelle');
-  const [password, setPassword] = useState('0lelplR');
+  const [NPP, setNPP] = useState('');
+  const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
   const [eyeStatus, setEyeStatus] = useState('eye-closed');
 
@@ -124,7 +124,7 @@ export default function LoginPage({navigation}) {
           fontSize: 18,
           color: colors.dark10,
           marginBottom: 60,
-          marginTop: 170,
+          marginTop: 200,
           fontWeight: 'bold',
           textAlign: 'center',
         }}>
@@ -197,7 +197,7 @@ export default function LoginPage({navigation}) {
             backgroundColor: '#FFD60A',
             borderRadius: 10,
           }}
-          containerStyle={{marginBottom: 100}}
+          containerStyle={{marginBottom: 150}}
           onPress={() => {
             login(NPP, password);
           }}

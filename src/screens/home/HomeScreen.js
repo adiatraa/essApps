@@ -1,5 +1,5 @@
 import {ScrollView, StatusBar, StyleSheet, View} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import * as Progress from 'react-native-progress';
 import {SafeAreaView} from 'react-native';
 import {colors, fonts} from '../../components/Theme';
@@ -7,8 +7,75 @@ import Logo from '../../assets/logo_2.svg';
 import {ImageBackground} from 'react-native';
 import {Button, Image, Text} from '@rneui/base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Spinner from '../../components/Spinner';
+import axios from 'axios';
+import {AuthContext} from '../../context/AuthContext';
+import {BASE_URL} from '../../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import HomeSkeleton from '../../components/HomeSkeleton';
 
 const HomeScreen = ({navigation}) => {
+  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+  const [status, setStatus] = useState('loading');
+  const [data, setData] = useState({
+    agama: '1',
+    created_date: '2023-03-15T21:00:07.652Z',
+    email_lain: 'arif@gmail.com',
+    golongan_darah: 'O',
+    jenis_kelamin: 'L',
+    kode_eselon: '1',
+    kode_jabatan: 6744,
+    kode_jenis_jabatan: 'S',
+    kode_lokasi_tugas: 'B',
+    kode_pendidikan: 9,
+    kode_status_aktif: 1,
+    kode_status_pegawai: 1,
+    kode_status_pernikahan: 'TK0',
+    kode_unit: 823,
+    nama_lengkap: 'ARIF,DR.,IR.',
+    nama_panggil: 'ARIF',
+    no_hp: '08111111111',
+    no_ktp: '3,13101E+15',
+    no_npwp: '123.456.789.123',
+    npp: '801236',
+    tanggal_lahir: '1996-02-15T00:00:00.000Z',
+    tempat_lahir: 'JAKARTA',
+    updated_by: 'ADMIN',
+  });
+
+  const fetchMyAPI = async () => {
+    try {
+      axios
+        .get(BASE_URL + '/users/api/user/' + userInfo.npp, {
+          headers: {'x-access-token': userToken},
+        })
+        .then(response => {
+          AsyncStorage.setItem('dataPersonil', JSON.stringify(response.data));
+        })
+        .catch(e => {
+          logout();
+        });
+    } catch {}
+  };
+  const getData = async () => {
+    let dataFromStorage = await AsyncStorage.getItem('dataPersonil');
+    // setData(JSON.parse(dataFromStorage));
+  };
+  useEffect(() => {
+    setStatus('loading');
+    fetchMyAPI();
+    getData();
+    setStatus('success');
+
+    // const intervalId = setInterval(() => {
+    //   fetchMyAPI();
+    // }, 1000 * 5); // in milliseconds
+    // return () => clearInterval(intervalId);
+  }, []);
+  // if (status === 'loading' || data === null) {
+  //   return <HomeSkeleton />;
+  // }
+
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.white} barStyle={'dark-content'} />
@@ -41,7 +108,7 @@ const HomeScreen = ({navigation}) => {
                   fontFamily: fonts.poppins_b,
                   fontWeight: 'bold',
                 }}>
-                Freyanashifa Jayawardana
+                {data.nama_lengkap}
               </Text>
               <Text style={{fontSize: 12, fontFamily: fonts.poppins}}>
                 back End

@@ -15,8 +15,8 @@ export const AuthProvider = ({children}) => {
   const login = (username, password) => {
     setIsLoading(true);
     axios
-      .post(BASE_URL + '/auth/signin', {
-        username: 'user',
+      .post(BASE_URL + '/api/login', {
+        npp: '801236',
         password: '12345678',
       })
       .then(res => {
@@ -35,6 +35,7 @@ export const AuthProvider = ({children}) => {
     setUserToken(null);
     AsyncStorage.removeItem('userToken');
     AsyncStorage.removeItem('userInfo');
+    AsyncStorage.removeItem('dataPersonil');
     setIsLoading(false);
   };
 

@@ -1,5 +1,4 @@
 import {
-  PermissionsAndroid,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -10,88 +9,28 @@ import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native';
 import {colors, fonts} from '../../components/Theme';
 import {ImageBackground} from 'react-native';
-import {Button, Image, Text} from '@rneui/base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Dialog} from '@rneui/themed';
-import Geolocation from 'react-native-geolocation-service';
+import {Dialog, Button, Text, BottomSheet} from '@rneui/themed';
+import ClockInScreen from './ClockInScreen';
+import ClockOutScreen from './ClockOutScreen';
 
 const AbsensiScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);
-  const [location, setLocation] = useState(false);
-  const [isInRadius, setIsInRadius] = useState(false);
-
-  const arePointsNear = (checkPoint, centerPoint, km) => {
-    var ky = 40000 / 360;
-    var kx = Math.cos((Math.PI * centerPoint.lat) / 180.0) * ky;
-    var dx = Math.abs(centerPoint.lng - checkPoint.lng) * kx;
-    var dy = Math.abs(centerPoint.lat - checkPoint.lat) * ky;
-    return Math.sqrt(dx * dx + dy * dy) / 10000 <= km;
-  };
-
-  const requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Geolocation Permission',
-          message: 'Can we access your location?',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      console.log('granted', granted);
-      if (granted === 'granted') {
-        console.log('You can use Geolocation');
-        return true;
-      } else {
-        console.log('You cannot use Geolocation');
-        return false;
-      }
-    } catch (err) {
-      return false;
-    }
-  };
-
-  const getLocation = () => {
-    const result = requestLocationPermission();
-    result.then(res => {
-      console.log('res is:', res);
-      if (res) {
-        Geolocation.getCurrentPosition(
-          position => {
-            let centerPoint = {
-              lat: -7.559030526213746,
-              lng: 110.85834367179535,
-            };
-            let location = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-            console.log(arePointsNear(location, centerPoint, 2));
-            setLocation(location);
-          },
-          error => {
-            // See error code charts below.
-            console.log(error.code, error.message);
-            setLocation(false);
-          },
-          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-        );
-      }
-    });
-    console.log(location);
-  };
+  const [outVisible, setOutVisible] = useState(false);
+  const [height, setHeight] = useState('none');
 
   return (
     <SafeAreaView>
-      <Dialog
+      {/* <Dialog
         isVisible={visible}
         onBackdropPress={() => {
           setVisible(false);
         }}>
-        <Dialog.Loading />
-      </Dialog>
+        <View style={styles.alertRadius}>
+          <Icon name="alert-circle-outline" color={colors.danger} size={48} />
+          <Text>Anda berada di luar jangkauan!</Text>
+        </View>
+      </Dialog> */}
       <StatusBar backgroundColor={colors.white} barStyle={'dark-content'} />
       <View style={styles.header}>
         <Icon
@@ -126,7 +65,9 @@ const AbsensiScreen = ({navigation}) => {
                       style={styles.mainCardButtonIcon}
                     />
                   }
-                  onPress={getLocation}
+                  onPress={() => {
+                    setVisible(true);
+                  }}
                 />
                 <Button
                   title={'Clock Out'}
@@ -141,6 +82,9 @@ const AbsensiScreen = ({navigation}) => {
                       style={styles.mainCardButtonIcon}
                     />
                   }
+                  onPress={() => {
+                    setOutVisible(true);
+                  }}
                 />
               </View>
               {/* <Text style={styles.mainCardDescription}>Tidak ada presensi</Text> */}
@@ -260,6 +204,42 @@ const AbsensiScreen = ({navigation}) => {
         </View>
         <View />
       </ScrollView>
+      <BottomSheet
+        isVisible={visible}
+        modalProps={{
+          animationType: 'slide',
+          presentationStyle: 'overFullScreen',
+        }}
+        onBackdropPress={() => setVisible(false)}>
+        <View style={styles.sheetHeader}>
+          <Icon
+            name="chevron-left"
+            size={32}
+            color={colors.black}
+            onPress={() => setVisible(false)}
+          />
+          <Text style={styles.sheetHeaderTitle}>Clock In</Text>
+        </View>
+        <ClockInScreen />
+      </BottomSheet>
+      <BottomSheet
+        isVisible={outVisible}
+        modalProps={{
+          animationType: 'slide',
+          presentationStyle: 'overFullScreen',
+        }}
+        onBackdropPress={() => setOutVisible(false)}>
+        <View style={styles.sheetHeader}>
+          <Icon
+            name="chevron-left"
+            size={32}
+            color={colors.black}
+            onPress={() => setOutVisible(false)}
+          />
+          <Text style={styles.sheetHeaderTitle}>Clock Out</Text>
+        </View>
+        <ClockOutScreen />
+      </BottomSheet>
     </SafeAreaView>
   );
 };
@@ -415,6 +395,24 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   sectionContent: {marginBottom: 100},
+  sheetHeader: {
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingBottom: 30,
+    paddingHorizontal: 30,
+    paddingTop: 50,
+  },
+  sheetHeaderTitle: {
+    fontFamily: fonts.poppins_sb,
+    fontSize: 24,
+    marginBottom: -5,
+    marginLeft: 10,
+  },
   subTitle: {
     fontFamily: fonts.poppins_sb,
     fontSize: 18,
