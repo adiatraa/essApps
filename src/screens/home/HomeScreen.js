@@ -7,12 +7,12 @@ import Logo from '../../assets/logo_2.svg';
 import {ImageBackground} from 'react-native';
 import {Button, Image, Text} from '@rneui/base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Spinner from '../../components/Spinner';
 import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
 import {BASE_URL} from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeSkeleton from '../../components/HomeSkeleton';
+import HomeFeature from '../../components/HomeFeature';
 
 const HomeScreen = ({navigation}) => {
   const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
@@ -42,6 +42,7 @@ const HomeScreen = ({navigation}) => {
     tempat_lahir: 'JAKARTA',
     updated_by: 'ADMIN',
   });
+  // const [data, setData] = useState(null);
 
   const fetchMyAPI = async () => {
     try {
@@ -51,6 +52,7 @@ const HomeScreen = ({navigation}) => {
         })
         .then(response => {
           AsyncStorage.setItem('dataPersonil', JSON.stringify(response.data));
+          setData(response.data);
         })
         .catch(e => {
           logout();
@@ -59,12 +61,11 @@ const HomeScreen = ({navigation}) => {
   };
   const getData = async () => {
     let dataFromStorage = await AsyncStorage.getItem('dataPersonil');
-    // setData(JSON.parse(dataFromStorage));
+    return dataFromStorage != null ? JSON.parse(dataFromStorage) : null;
   };
   useEffect(() => {
     setStatus('loading');
     fetchMyAPI();
-    getData();
     setStatus('success');
 
     // const intervalId = setInterval(() => {
@@ -72,9 +73,9 @@ const HomeScreen = ({navigation}) => {
     // }, 1000 * 5); // in milliseconds
     // return () => clearInterval(intervalId);
   }, []);
-  // if (status === 'loading' || data === null) {
-  //   return <HomeSkeleton />;
-  // }
+  if (status === 'loading') {
+    return <HomeSkeleton />;
+  }
 
   return (
     <SafeAreaView>
@@ -91,7 +92,7 @@ const HomeScreen = ({navigation}) => {
             style={styles.profileCardBody}>
             <Image
               source={{
-                uri: 'https://liputan7upcash.com/wp-content/uploads/2022/07/Freya-JKT48-agama.jpg',
+                uri: 'https://berita.99.co/wp-content/uploads/2022/06/foto-profil-keren.jpg',
               }}
               style={{
                 width: 60,
@@ -108,10 +109,10 @@ const HomeScreen = ({navigation}) => {
                   fontFamily: fonts.poppins_b,
                   fontWeight: 'bold',
                 }}>
-                {data.nama_lengkap}
+                {data?.nama_lengkap}
               </Text>
               <Text style={{fontSize: 12, fontFamily: fonts.poppins}}>
-                back End
+                {data.npp}
               </Text>
             </View>
           </ImageBackground>
@@ -180,94 +181,28 @@ const HomeScreen = ({navigation}) => {
           <Text style={styles.subTitle}>Monitoring</Text>
           <View style={styles.divider} />
           <View style={styles.monitoring}>
-            <Button
+            <HomeFeature
               title={'Absensi'}
-              titleStyle={styles.monitoringTitle}
-              containerStyle={styles.monitoringButtonContainer}
-              buttonStyle={styles.monitoringButton}
-              icon={
-                <Icon
-                  name="calendar-month"
-                  size={20}
-                  color={colors.primary}
-                  style={styles.monitoringIcon}
-                />
-              }
+              icon={'calendar-month'}
+              onPress={() => navigation.navigate('AbsensiStack')}
             />
-            <Button
-              title={'Kesehatan'}
-              titleStyle={styles.monitoringTitle}
-              containerStyle={styles.monitoringButtonContainer}
-              buttonStyle={styles.monitoringButton}
-              icon={
-                <Icon
-                  name="heart-plus-outline"
-                  size={20}
-                  color={colors.primary}
-                  style={styles.monitoringIcon}
-                />
-              }
-            />
-            <Button
+            <HomeFeature
               title={'Jam Terbuang'}
-              titleStyle={styles.monitoringTitle}
-              containerStyle={styles.monitoringButtonContainer}
-              buttonStyle={styles.monitoringButton}
-              icon={
-                <Icon
-                  name="timelapse"
-                  size={20}
-                  color={colors.primary}
-                  style={styles.monitoringIcon}
-                />
-              }
+              icon={'timelapse'}
+              onPress={() => navigation.navigate('JamTerbuang')}
             />
+            <HomeFeature title={'Kesehatan'} icon={'heart-plus-outline'} />
           </View>
           <Text style={styles.subTitle}>Monitoring</Text>
           <View style={styles.divider} />
           <View style={styles.monitoring}>
-            <Button
+            <HomeFeature
               title={'Absensi'}
-              titleStyle={styles.monitoringTitle}
-              containerStyle={styles.monitoringButtonContainer}
-              buttonStyle={styles.monitoringButton}
-              icon={
-                <Icon
-                  name="calendar-month"
-                  size={20}
-                  color={colors.primary}
-                  style={styles.monitoringIcon}
-                />
-              }
+              icon={'calendar-month'}
+              onPress={() => navigation.navigate('AbsensiStack')}
             />
-            <Button
-              title={'Kesehatan'}
-              titleStyle={styles.monitoringTitle}
-              containerStyle={styles.monitoringButtonContainer}
-              buttonStyle={styles.monitoringButton}
-              icon={
-                <Icon
-                  name="heart-plus-outline"
-                  size={20}
-                  color={colors.primary}
-                  style={styles.monitoringIcon}
-                />
-              }
-            />
-            <Button
-              title={'Jam Terbuang'}
-              titleStyle={styles.monitoringTitle}
-              containerStyle={styles.monitoringButtonContainer}
-              buttonStyle={styles.monitoringButton}
-              icon={
-                <Icon
-                  name="timelapse"
-                  size={20}
-                  color={colors.primary}
-                  style={styles.monitoringIcon}
-                />
-              }
-            />
+            <HomeFeature title={'Jam Terbuang'} icon={'timelapse'} />
+            <HomeFeature title={'Kesehatan'} icon={'heart-plus-outline'} />
           </View>
         </View>
       </ScrollView>
@@ -321,28 +256,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 20,
     paddingHorizontal: 30,
-  },
-  monitoringButton: {
-    backgroundColor: colors.white,
-    borderColor: colors.dark60,
-    borderRadius: 10,
-    borderWidth: 1,
-    color: colors.dark,
-    elevation: 5,
-    flex: 1,
-    marginVertical: 10,
-    paddingVertical: 15,
-    shadowColor: '#333',
-    shadowOffset: {width: 2, height: 1},
-    shadowRadius: 3,
-  },
-  monitoringButtonContainer: {width: 150},
-  monitoringIcon: {marginLeft: -10, paddingRight: 10},
-  monitoringTitle: {
-    color: colors.dark,
-    fontFamily: fonts.poppins_sb,
-    fontSize: 12,
-    fontWeight: 'bold',
   },
   profileCard: {
     height: 'auto',

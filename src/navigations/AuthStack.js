@@ -2,72 +2,24 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React from 'react';
 import Spinner from '../components/Spinner';
-import LoginPage from '../scenes/LoginPage';
+import LoginPage from '../screens/LoginPage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Reset from '../scenes/password_reset/Reset';
-import SendEmail from '../scenes/password_reset/SendEmail';
-import Success from '../scenes/password_reset/Success';
-import Verify from '../scenes/password_reset/Verify';
-import Test from '../scenes/Test';
 import {colors} from '../components/Theme';
 import AbsensiScreen from '../screens/absensi/AbsensiScreen';
 import HomeScreen from '../screens/home/HomeScreen';
 import AbsensiDetailScreen from '../screens/absensi/AbsensiDetailScreen';
-import UserProfile from '../screens/profile/UserProfile';
-import ClockInScreen from '../screens/absensi/ClockInScreen';
-
-const HomeStack = createNativeStackNavigator();
-const HomeStackScreen = () => {
-  return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{headerShown: false}}
-      />
-    </HomeStack.Navigator>
-  );
-};
-
-const AbsensiStack = createNativeStackNavigator();
-const AbsensiStackScreen = () => {
-  return (
-    <AbsensiStack.Navigator>
-      <AbsensiStack.Screen
-        name="Absensi"
-        component={AbsensiScreen}
-        options={{headerShown: false}}
-      />
-      <AbsensiStack.Screen
-        name="AbsensiDetail"
-        component={AbsensiDetailScreen}
-        options={{headerShown: false}}
-      />
-      <AbsensiStack.Screen
-        name="ClockIn"
-        component={ClockInScreen}
-        options={{headerShown: false}}
-      />
-    </AbsensiStack.Navigator>
-  );
-};
-
-const ProfileStack = createNativeStackNavigator();
-const ProfileStackScreen = () => {
-  return (
-    <ProfileStack.Navigator>
-      <ProfileStack.Screen
-        name="Profile"
-        component={UserProfile}
-        options={{headerShown: false}}
-      />
-    </ProfileStack.Navigator>
-  );
-};
+import JamTerbuangScreen from '../screens/jamterbuang/JamTerbuangScreen';
+import DetailScreen from '../screens/jamterbuang/DetailScreen';
+import UserProfileScreen from '../screens/profile/UserProfileScreen';
+import SettingProfile from '../screens/profile/SettingProfile';
+import EditProfileScreen from '../screens/profile/EditProfileScreen';
+import ChangePassScreen from '../screens/password_change/ChangePassScreen';
+import ConfirmChangePassScreen from '../screens/password_change/ConfirmChangePassScreen';
+import SuccessChangePassScreen from '../screens/password_change/SuccessChangePassScreen';
+import * as PasswordReset from '../screens/password_reset';
 
 const Tab = createBottomTabNavigator();
-
-const AuthStack = () => {
+const HomeTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -90,9 +42,8 @@ const AuthStack = () => {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.dark20,
         tabBarStyle:
-          (route.name === 'Login') | (route.name === 'AbsensiStack')
-            ? {display: 'none'}
-            : {
+          route.name === 'HomeStack' || route.name === 'ProfileStack'
+            ? {
                 borderWidth: 2,
                 borderColor: '#CCCCCC',
                 borderTopLeftRadius: 30,
@@ -100,15 +51,53 @@ const AuthStack = () => {
                 height: 80,
                 paddingHorizontal: 30,
                 marginHorizontal: -5,
-              },
+              }
+            : {display: 'none'},
         tabBarShowLabel: false,
         headerShown: false,
       })}>
-      <Tab.Screen name="HomeStack" component={HomeStackScreen} />
-      <Tab.Screen name="AbsensiStack" component={AbsensiStackScreen} />
-      <Tab.Screen name="ProfileStack" component={ProfileStackScreen} />
-      {/* <Tab.Screen name="Login" component={LoginPage} /> */}
+      <Tab.Screen name="HomeStack" component={HomeScreen} />
+      <Tab.Screen name="AbsensiStack" component={AbsensiScreen} />
+      <Tab.Screen name="ProfileStack" component={SettingProfile} />
     </Tab.Navigator>
+  );
+};
+
+const Stack = createNativeStackNavigator();
+const AuthStack = () => {
+  const page = [
+    {name: 'Login', component: LoginPage},
+    {name: 'ProfileSetting', component: SettingProfile},
+    {name: 'UserProfile', component: UserProfileScreen},
+    {name: 'EditProfile', component: EditProfileScreen},
+    {name: 'Absensi', component: AbsensiScreen},
+    {name: 'AbsensiDetail', component: AbsensiDetailScreen},
+    {name: 'JamTerbuang', component: JamTerbuangScreen},
+    {name: 'JamTerbuangDetail', component: DetailScreen},
+    {name: 'ChangePassScreen', component: ChangePassScreen},
+    {name: 'ConfirmChangePassScreen', component: ConfirmChangePassScreen},
+    {name: 'SuccessChangePassScreen', component: SuccessChangePassScreen},
+    {name: 'PasswordReset', component: PasswordReset.Reset},
+    {name: 'PasswordResetSendEmail', component: PasswordReset.SendEmail},
+    {name: 'PasswordResetVerify', component: PasswordReset.Verify},
+    {name: 'PasswordResetSuccess', component: PasswordReset.Success},
+  ];
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="HomeTabs"
+        component={HomeTabs}
+        options={{headerShown: false}}
+      />
+      {page.map((page, index) => (
+        <Stack.Screen
+          key={index}
+          name={page.name}
+          component={page.component}
+          options={{headerShown: false}}
+        />
+      ))}
+    </Stack.Navigator>
   );
 };
 

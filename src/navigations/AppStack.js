@@ -13,7 +13,7 @@ import {colors} from '../components/Theme';
 import AbsensiScreen from '../screens/absensi/AbsensiScreen';
 import HomeScreen from '../screens/home/HomeScreen';
 import AbsensiDetailScreen from '../screens/absensi/AbsensiDetailScreen';
-import UserProfile from '../screens/profile/UserProfile';
+import UserProfile from '../screens/profile/SettingProfile';
 import ClockInScreen from '../screens/absensi/ClockInScreen';
 
 const HomeStack = createNativeStackNavigator();

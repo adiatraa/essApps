@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, {createContext, useEffect, useState} from 'react';
 import {BASE_URL} from '../../config';
-import * as Keychain from 'react-native-keychain';
 
 export const AuthContext = createContext();
 
@@ -16,7 +15,7 @@ export const AuthProvider = ({children}) => {
     setIsLoading(true);
     axios
       .post(BASE_URL + '/api/login', {
-        npp: '801236',
+        npp: '801237',
         password: '12345678',
       })
       .then(res => {

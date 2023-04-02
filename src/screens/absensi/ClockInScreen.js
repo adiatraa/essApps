@@ -1,21 +1,49 @@
 import {StyleSheet, View, ScrollView, PermissionsAndroid} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {colors, fonts} from '../../components/Theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button, Dialog, Text} from '@rneui/themed';
 import * as Animatable from 'react-native-animatable';
 import Geolocation from 'react-native-geolocation-service';
+import axios from 'axios';
+import {AuthContext} from '../../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {BASE_URL} from '../../../config';
+import Alert from '../../components/Alert';
 
 const ClockInScreen = ({isVisible, setIsVisible}) => {
+  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+  const [data, setData] = useState({});
+
+  const clockIn = async () => {
+    try {
+      axios
+        .post(
+          BASE_URL + '/users/api/checkIn',
+          {npp: data.npp, kode_unit: data.kode_unit},
+          {
+            headers: {'x-access-token': userToken},
+          },
+        )
+        .then(response => {
+          console.log(response);
+        });
+    } catch {}
+  };
   const [location, setLocation] = useState('');
   const [danger, setDanger] = useState(false);
+  const [success, setSucccess] = useState(false);
   const [height, setHeight] = useState(350);
+  const [radius, setRadius] = useState('');
 
   const arePointsNear = (checkPoint, centerPoint, km) => {
     var ky = 40000 / 360;
     var kx = Math.cos((Math.PI * centerPoint.lat) / 180.0) * ky;
     var dx = Math.abs(centerPoint.lng - checkPoint.lng) * kx;
     var dy = Math.abs(centerPoint.lat - checkPoint.lat) * ky;
+    let radius = Math.sqrt(dx * dx + dy * dy) / 10000;
+    console.log(radius);
+    setRadius(radius.toFixed(2));
     return Math.sqrt(dx * dx + dy * dy) / 10000 <= km;
   };
 
@@ -59,6 +87,7 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             };
+            arePointsNear(location, centerPoint, 2);
             setLocation(location);
           },
           error => {
@@ -72,8 +101,17 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
     });
     console.log(location);
   };
+
+  const getData = async () => {
+    let dataFromStorage = await AsyncStorage.getItem('dataPersonil');
+    setData(JSON.parse(dataFromStorage));
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <Animatable.View style={{height: height}} transition={'height'}>
+      <Alert.Danger visible={false} />
       <ScrollView style={styles.scrollView}>
         <View style={styles.sectionContent}>
           <View style={styles.content}>
@@ -114,8 +152,14 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
                   style={styles.locationIcon}
                 />
                 <View>
-                  <Text style={styles.locationDetail}>{location.lat}</Text>
+                  <Text style={styles.locationDetail}>
+                    Anda berada dalam radius {radius} dari CenterPoint.
+                  </Text>
+                  {/* <Text style={styles.locationDetail}>{location.lat}</Text>
                   <Text style={styles.locationDetail}>{location.lng}</Text>
+                  <Text>{data.kode_unit}</Text>
+                  <Text>{data.npp}</Text>
+                  <Text>{userToken}</Text> */}
                 </View>
               </View>
             )}
@@ -127,13 +171,8 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
         titleStyle={styles.sendButtonTitle}
         containerStyle={styles.sendButtonContainer}
         buttonStyle={styles.sendButton}
+        onPress={clockIn}
       />
-      <Dialog isVisible={danger} onBackdropPress={() => setDanger(false)}>
-        <View style={styles.alertRadius}>
-          <Icon name="alert-circle-outline" color={colors.danger} size={48} />
-          <Text>Anda berada di luar jangkauan!</Text>
-        </View>
-      </Dialog>
     </Animatable.View>
   );
 };
@@ -181,6 +220,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.poppins,
     fontSize: 12,
     marginBottom: -5,
+    maxWidth: 150,
   },
   locationIcon: {
     backgroundColor: colors.primary,

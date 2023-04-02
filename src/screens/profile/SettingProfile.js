@@ -11,8 +11,11 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {AuthContext} from '../../context/AuthContext';
 
-export default function UserProfile() {
+export default function SettingProfile({navigation, route}) {
   const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+  useEffect(() => {
+    console.log(route);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -53,7 +56,9 @@ export default function UserProfile() {
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.menuContainer}>
+      <TouchableOpacity
+        style={styles.menuContainer}
+        onPress={() => navigation.navigate('UserProfile')}>
         <View style={styles.menuIcon}>
           <Ionicons name="md-person-circle-outline" size={32} color="#FFC700" />
         </View>
@@ -61,7 +66,9 @@ export default function UserProfile() {
           <Text style={styles.menuText}>User Profile</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuContainer}>
+      <TouchableOpacity
+        style={styles.menuContainer}
+        onPress={() => navigation.navigate('ChangePassScreen')}>
         <View style={styles.menuIcon}>
           <Ionicons name="md-key-outline" size={32} color="#FFC700" />
         </View>

@@ -183,7 +183,7 @@ export default function LoginPage({navigation}) {
             onChangeText={text => setPassword(text)}
           />
         </KeyboardAvoidingView>
-        <Text style={{marginVertical: 20, textAlign: 'right', width: 280}} onPress={()=>navigation.navigate('SendEmailReset')} >
+        <Text style={{marginVertical: 20, textAlign: 'right', width: 280}} onPress={()=>navigation.navigate('PasswordResetSendEmail')} >
           Forgot Password?
         </Text>
         <Button

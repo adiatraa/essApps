@@ -24,7 +24,7 @@ const HomeScreen = ({navigation}) => {
             style={styles.profileCardBody}>
             <Image
               source={{
-                uri: 'https://liputan7upcash.com/wp-content/uploads/2022/07/Freya-JKT48-agama.jpg',
+                uri: 'https://berita.99.co/wp-content/uploads/2022/06/foto-profil-keren.jpg',
               }}
               style={{
                 width: 60,

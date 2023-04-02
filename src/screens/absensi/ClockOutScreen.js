@@ -1,12 +1,35 @@
 import {StyleSheet, View, ScrollView, PermissionsAndroid} from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {colors, fonts} from '../../components/Theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button, Dialog, Text} from '@rneui/themed';
 import * as Animatable from 'react-native-animatable';
 import Geolocation from 'react-native-geolocation-service';
+import axios from 'axios';
+import {AuthContext} from '../../context/AuthContext';
+import {BASE_URL} from '../../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ClockOutScreen = ({isVisible, setIsVisible}) => {
+  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+  const [data, setData] = useState({});
+
+  const clockOut = async () => {
+    try {
+      axios
+        .put(
+          BASE_URL + '/users/api/checkOut',
+          {npp: data.npp},
+          {
+            headers: {'x-access-token': userToken},
+          },
+        )
+        .then(response => {
+          console.log(response);
+        });
+    } catch {}
+  };
+
   const [location, setLocation] = useState('');
   const [danger, setDanger] = useState(false);
   const [height, setHeight] = useState(350);
@@ -72,6 +95,14 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
     });
     console.log(location);
   };
+
+  const getData = async () => {
+    let dataFromStorage = await AsyncStorage.getItem('dataPersonil');
+    setData(JSON.parse(dataFromStorage));
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <Animatable.View style={{height: height}}>
       <ScrollView style={styles.scrollView}>
@@ -127,6 +158,7 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
         titleStyle={styles.sendButtonTitle}
         containerStyle={styles.sendButtonContainer}
         buttonStyle={styles.sendButton}
+        onPress={clockOut}
       />
       <Dialog isVisible={danger} onBackdropPress={() => setDanger(false)}>
         <View style={styles.alertRadius}>

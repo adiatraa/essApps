@@ -5,20 +5,13 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import React, {useState, useEffect, useContext} from 'react';
+import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, fonts} from '../../components/Theme';
 import {Text} from '@rneui/themed';
 import Timeline from '../../components/Timeline';
-import axios from 'axios';
-import {BASE_URL} from '../../../config';
-import {AuthContext} from '../../context/AuthContext';
-import {getDate} from '../../components/Date';
 
-const AbsensiDetailScreen = ({route, navigation}) => {
-  const {date, npp, t} = route.params;
-  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
-
+const DetailScreen = ({navigation}) => {
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.secondary} />
@@ -30,33 +23,31 @@ const AbsensiDetailScreen = ({route, navigation}) => {
             color={colors.white}
             onPress={() => navigation.goBack()}
           />
-          <Text style={styles.headerTitle}>Absensi</Text>
+          <Text style={styles.headerTitle}>Detail Jam Terbuang</Text>
         </View>
         <View style={styles.headerDescription}>
           <Icon name="calendar-month-outline" size={22} color={colors.white} />
-          <Text style={styles.headerDate}>{getDate(new Date(date))}</Text>
+          <Text style={styles.headerDate}>Senin, 24 Januari 2029</Text>
         </View>
       </View>
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
-          {t.map((t, index) => {
-            return t != null ? (
-              <Timeline
-                title={index % 2 !== 1 ? 'Clock In' : 'Clock Out'}
-                description={t + ' WIB'}
-                status={'success'}
-              />
-            ) : (
-              <></>
-            );
-          })}
+          <Timeline title={'Jam Telat'} description={'1 Jam'} />
+          <Timeline title={'Jam Pulang Cepat'} description={'2 Jam'} />
+          <Timeline title={'Jam Keluar Kompleks'} description={'1 Jam'} />
+          <Timeline title={'Jam Tidak Ada Keterangan'} description={'0 Jam'} />
+          <Timeline
+            title={'Total Jam Terbuang'}
+            description={'4 Jam'}
+            active={true}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default AbsensiDetailScreen;
+export default DetailScreen;
 
 const styles = StyleSheet.create({
   content: {
