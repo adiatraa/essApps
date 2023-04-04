@@ -1,5 +1,6 @@
 const colors = {
   primary: '#FFD60A',
+  bgPrimary: 'rgba(254, 208, 58, 0.6)',
   secondary: '#FFC100',
   dark: '#111111',
   dark10: '#333333',
@@ -10,11 +11,11 @@ const colors = {
   dark60: '#EEEEEE',
   black: '#000000',
   white: '#FFFFFF',
-  bgWhite: '#F5F5F5',
-  bgDanger: '#FFEEED',
+  bgWhite: '#F5F7FB',
   danger: '#FF6666',
-  bgSuccess: '#B5F5D1',
+  bgDanger: '#FFEEED',
   success: '#00B658',
+  bgSuccess: '#B5F5D1',
   blue: '#2663FF',
 };
 

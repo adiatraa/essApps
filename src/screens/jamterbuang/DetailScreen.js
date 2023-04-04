@@ -5,13 +5,14 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, fonts} from '../../components/Theme';
 import {Text} from '@rneui/themed';
 import Timeline from '../../components/Timeline';
 
-const DetailScreen = ({navigation}) => {
+const DetailScreen = ({navigation, route}) => {
+  const {data} = route.params;
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.secondary} />
@@ -32,13 +33,22 @@ const DetailScreen = ({navigation}) => {
       </View>
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
-          <Timeline title={'Jam Telat'} description={'1 Jam'} />
-          <Timeline title={'Jam Pulang Cepat'} description={'2 Jam'} />
-          <Timeline title={'Jam Keluar Kompleks'} description={'1 Jam'} />
-          <Timeline title={'Jam Tidak Ada Keterangan'} description={'0 Jam'} />
+          <Timeline title={'Jam Telat'} description={data.jam_telat + ' Jam'} />
+          <Timeline
+            title={'Jam Pulang Cepat'}
+            description={data.jam_pulang_cepat + ' Jam'}
+          />
+          <Timeline
+            title={'Jam Keluar Kompleks'}
+            description={data.jam_kk_tidak_kembali + ' Jam'}
+          />
+          <Timeline
+            title={'Jam Tidak Ada Keterangan'}
+            description={data.jam_tidak_ada_keterangan + ' Jam'}
+          />
           <Timeline
             title={'Total Jam Terbuang'}
-            description={'4 Jam'}
+            description={data.total_jam_terbuang + ' Jam'}
             active={true}
           />
         </View>

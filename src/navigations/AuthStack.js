@@ -66,17 +66,17 @@ const HomeTabs = () => {
 const Stack = createNativeStackNavigator();
 const AuthStack = () => {
   const page = [
+    // {name: 'ProfileSetting', component: SettingProfile},
+    // {name: 'UserProfile', component: UserProfileScreen},
+    // {name: 'EditProfile', component: EditProfileScreen},
+    // {name: 'Absensi', component: AbsensiScreen},
+    // {name: 'AbsensiDetail', component: AbsensiDetailScreen},
+    // {name: 'JamTerbuang', component: JamTerbuangScreen},
+    // {name: 'JamTerbuangDetail', component: DetailScreen},
+    // {name: 'ChangePassScreen', component: ChangePassScreen},
+    // {name: 'ConfirmChangePassScreen', component: ConfirmChangePassScreen},
+    // {name: 'SuccessChangePassScreen', component: SuccessChangePassScreen},
     {name: 'Login', component: LoginPage},
-    {name: 'ProfileSetting', component: SettingProfile},
-    {name: 'UserProfile', component: UserProfileScreen},
-    {name: 'EditProfile', component: EditProfileScreen},
-    {name: 'Absensi', component: AbsensiScreen},
-    {name: 'AbsensiDetail', component: AbsensiDetailScreen},
-    {name: 'JamTerbuang', component: JamTerbuangScreen},
-    {name: 'JamTerbuangDetail', component: DetailScreen},
-    {name: 'ChangePassScreen', component: ChangePassScreen},
-    {name: 'ConfirmChangePassScreen', component: ConfirmChangePassScreen},
-    {name: 'SuccessChangePassScreen', component: SuccessChangePassScreen},
     {name: 'PasswordReset', component: PasswordReset.Reset},
     {name: 'PasswordResetSendEmail', component: PasswordReset.SendEmail},
     {name: 'PasswordResetVerify', component: PasswordReset.Verify},
@@ -84,11 +84,11 @@ const AuthStack = () => {
   ];
   return (
     <Stack.Navigator>
-      <Stack.Screen
+      {/* <Stack.Screen
         name="HomeTabs"
         component={HomeTabs}
         options={{headerShown: false}}
-      />
+      /> */}
       {page.map((page, index) => (
         <Stack.Screen
           key={index}

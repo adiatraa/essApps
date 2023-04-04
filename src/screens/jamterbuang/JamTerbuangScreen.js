@@ -6,13 +6,17 @@ import {
   ScrollView,
   TouchableHighlight,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {colors, fonts} from '../../components/Theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DatePicker from 'react-native-modern-datepicker';
 import {Dialog} from '@rneui/themed';
+import axios from 'axios';
+import {BASE_URL} from '../../../config';
+import {AuthContext} from '../../context/AuthContext';
+import {getDate, getTime} from '../../components/Date';
 
-const Card = ({onPress}) => {
+const Card = ({onPress, tanggal, jam}) => {
   return (
     <TouchableHighlight
       style={styles.card}
@@ -26,10 +30,10 @@ const Card = ({onPress}) => {
               size={16}
               color={colors.dark30}
             />
-            <Text style={styles.dateTitle}>Senin, 24 Novomber 2023</Text>
+            <Text style={styles.dateTitle}>{tanggal}</Text>
           </View>
           <Text style={styles.cardTitle}>Total Jam Terbuang</Text>
-          <Text style={styles.cardDescription}>4 Jam</Text>
+          <Text style={styles.cardDescription}>{jam} Jam</Text>
         </View>
         <Icon name="chevron-right" size={32} />
       </>
@@ -40,7 +44,23 @@ const Card = ({onPress}) => {
 const JamTerbuangScreen = ({navigation}) => {
   const [selectedDate, setSelectedDate] = useState();
   const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+  const [data, setData] = useState([]);
+  const getJamTerbuangAPI = async () => {
+    try {
+      axios
+        .get(BASE_URL + '/jam-terbuang/' + userInfo.npp, {
+          headers: {'x-access-token': userToken},
+        })
+        .then(response => {
+          setData(response.data.data.jam_terbuangs);
+        });
+    } catch {}
+  };
 
+  useEffect(() => {
+    getJamTerbuangAPI();
+  }, []);
   return (
     <SafeAreaView>
       <Dialog
@@ -90,10 +110,18 @@ const JamTerbuangScreen = ({navigation}) => {
             <Text>Choose Date</Text>
           </View>
         </TouchableHighlight>
-        <Card onPress={() => navigation.navigate('JamTerbuangDetail')} />
-        <Card onPress={() => navigation.navigate('JamTerbuangDetail')} />
-        <Card onPress={() => navigation.navigate('JamTerbuangDetail')} />
-        <Card onPress={() => navigation.navigate('JamTerbuangDetail')} />
+        {data.map((i, index) => {
+          return (
+            <Card
+              key={index}
+              tanggal={getDate(new Date(i.tanggal))}
+              jam={i.total_jam_terbuang}
+              onPress={() =>
+                navigation.navigate('JamTerbuangDetail', {data: i})
+              }
+            />
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );

@@ -12,7 +12,7 @@ export default function LoginPage({navigation}) {
   const {login} = useContext(AuthContext);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
-  const [NPP, setNPP] = useState('801237');
+  const [NPP, setNPP] = useState('801236');
   const [password, setPassword] = useState('12345678');
   const [secureText, setSecureText] = useState(true);
   const [eyeStatus, setEyeStatus] = useState('eye-closed');
@@ -200,6 +200,7 @@ export default function LoginPage({navigation}) {
           containerStyle={{marginBottom: 150}}
           onPress={() => {
             login(NPP, password);
+            // navigation.replace('HomeTabs');
           }}
         />
       </Animatable.View>

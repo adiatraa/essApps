@@ -16,19 +16,19 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
   const [data, setData] = useState({});
 
   const clockIn = async () => {
-    try {
-      axios
-        .post(
-          BASE_URL + '/users/api/checkIn',
-          {npp: data.npp, kode_unit: data.kode_unit},
-          {
-            headers: {'x-access-token': userToken},
-          },
-        )
-        .then(response => {
-          console.log(response);
-        });
-    } catch {}
+    // try {
+    //   axios
+    //     .post(
+    //       BASE_URL + '/clock-in',
+    //       {npp: data.npp, kode_unit: data.kode_unit},
+    //       {
+    //         headers: {'x-access-token': userToken},
+    //       },
+    //     )
+    //     .then(response => {
+    //       console.log(response);
+    //     });
+    // } catch {}
   };
   const [location, setLocation] = useState('');
   const [danger, setDanger] = useState(false);
@@ -42,7 +42,6 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
     var dx = Math.abs(centerPoint.lng - checkPoint.lng) * kx;
     var dy = Math.abs(centerPoint.lat - checkPoint.lat) * ky;
     let radius = Math.sqrt(dx * dx + dy * dy) / 10000;
-    console.log(radius);
     setRadius(radius.toFixed(2));
     return Math.sqrt(dx * dx + dy * dy) / 10000 <= km;
   };
@@ -106,9 +105,9 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
     let dataFromStorage = await AsyncStorage.getItem('dataPersonil');
     setData(JSON.parse(dataFromStorage));
   };
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
   return (
     <Animatable.View style={{height: height}} transition={'height'}>
       <Alert.Danger visible={false} />

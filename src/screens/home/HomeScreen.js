@@ -1,4 +1,10 @@
-import {ScrollView, StatusBar, StyleSheet, View} from 'react-native';
+import {
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import * as Progress from 'react-native-progress';
 import {SafeAreaView} from 'react-native';
@@ -47,22 +53,25 @@ const HomeScreen = ({navigation}) => {
   const fetchMyAPI = async () => {
     try {
       axios
-        .get(BASE_URL + '/users/api/user/' + userInfo.npp, {
+        .get(BASE_URL + '/user-profile/' + userInfo?.npp, {
           headers: {'x-access-token': userToken},
         })
         .then(response => {
-          AsyncStorage.setItem('dataPersonil', JSON.stringify(response.data));
-          setData(response.data);
+          console.log(response.data.data.user);
+          setData(response.data.data.user);
+          // AsyncStorage.setItem('dataPersonil', JSON.stringify(response.data));
         })
         .catch(e => {
-          logout();
+          // logout();
         });
     } catch {}
   };
+
   const getData = async () => {
     let dataFromStorage = await AsyncStorage.getItem('dataPersonil');
     return dataFromStorage != null ? JSON.parse(dataFromStorage) : null;
   };
+
   useEffect(() => {
     setStatus('loading');
     fetchMyAPI();
@@ -79,9 +88,22 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <SafeAreaView>
-      <StatusBar backgroundColor={colors.white} barStyle={'dark-content'} />
+      <StatusBar backgroundColor={colors.bgWhite} barStyle={'dark-content'} />
       <View style={styles.header}>
         <Logo width={60} height={40} />
+        <TouchableHighlight
+          underlayColor={colors.white}
+          onPress={() => navigation.navigate('Notification')}>
+          <View style={styles.notification}>
+            <View style={styles.notificationDot} />
+            <Icon
+              name="bell-outline"
+              size={22}
+              color={colors.white}
+              style={styles.notificationIcon}
+            />
+          </View>
+        </TouchableHighlight>
       </View>
       <ScrollView style={styles.scrollView}>
         <View style={styles.profileCard}>
@@ -193,16 +215,20 @@ const HomeScreen = ({navigation}) => {
             />
             <HomeFeature title={'Kesehatan'} icon={'heart-plus-outline'} />
           </View>
-          <Text style={styles.subTitle}>Monitoring</Text>
+          <Text style={styles.subTitle}>Benefit</Text>
           <View style={styles.divider} />
           <View style={styles.monitoring}>
+            <HomeFeature title={'Gaji'} icon={'hand-coin'} />
             <HomeFeature
-              title={'Absensi'}
-              icon={'calendar-month'}
-              onPress={() => navigation.navigate('AbsensiStack')}
+              title={'Penghasilan Lain'}
+              icon={'hand-coin-outline'}
             />
-            <HomeFeature title={'Jam Terbuang'} icon={'timelapse'} />
-            <HomeFeature title={'Kesehatan'} icon={'heart-plus-outline'} />
+            <HomeFeature title={'Saldo Depan'} icon={'content-paste'} />
+            <HomeFeature title={'Saldo SWK'} icon={'inbox'} />
+            <HomeFeature
+              title={'Bukti Potong 1721'}
+              icon={'credit-card-outline'}
+            />
           </View>
         </View>
       </ScrollView>
@@ -245,7 +271,11 @@ const styles = StyleSheet.create({
     width: 70,
   },
   header: {
-    backgroundColor: colors.white,
+    alignItems: 'center',
+    backgroundColor: colors.bgWhite,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: 30,
     paddingVertical: 20,
   },
@@ -256,6 +286,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 20,
     paddingHorizontal: 30,
+  },
+  notification: {
+    backgroundColor: colors.dark,
+    borderRadius: 20,
+    padding: 8,
+    position: 'relative',
+  },
+  notificationDot: {
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    height: 8,
+    position: 'absolute',
+    right: 10,
+    top: 10,
+    width: 8,
+    zIndex: 10,
   },
   profileCard: {
     height: 'auto',
@@ -274,7 +320,7 @@ const styles = StyleSheet.create({
   },
   progressText: {fontSize: 12, fontWeight: 'bold'},
   scrollView: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.bgWhite,
     height: '100%',
     width: '100%',
   },

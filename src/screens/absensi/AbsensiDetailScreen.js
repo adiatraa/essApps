@@ -42,6 +42,7 @@ const AbsensiDetailScreen = ({route, navigation}) => {
           {t.map((t, index) => {
             return t != null ? (
               <Timeline
+                key={index}
                 title={index % 2 !== 1 ? 'Clock In' : 'Clock Out'}
                 description={t + ' WIB'}
                 status={'success'}

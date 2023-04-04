@@ -14,21 +14,6 @@ const HomeFeature = ({navigation, icon, title, onPress}) => {
       />
       <Text style={styles.featureTitle}>{title}</Text>
     </TouchableOpacity>
-    // <Button
-    //   title={'Absensi'}
-    //   titleStyle={styles.monitoringTitle}
-    //   containerStyle={styles.monitoringButtonContainer}
-    //   buttonStyle={styles.monitoringButton}
-    //   icon={
-    //     <Icon
-    //       name="calendar-month"
-    //       size={20}
-    //       color={colors.primary}
-    //       style={styles.monitoringIcon}
-    //     />
-    //   }
-    //   onPress={() => navigation.navigate('AbsensiStack')}
-    // />
   );
 };
 

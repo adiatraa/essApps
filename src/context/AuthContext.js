@@ -14,16 +14,16 @@ export const AuthProvider = ({children}) => {
   const login = (username, password) => {
     setIsLoading(true);
     axios
-      .post(BASE_URL + '/api/login', {
-        npp: '801237',
-        password: '12345678',
+      .post(BASE_URL + '/login', {
+        npp: username,
+        password: password,
       })
       .then(res => {
         let userInfo = res.data;
-        setUserInfo(userInfo);
-        setUserToken(userInfo.accessToken);
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        AsyncStorage.setItem('userToken', userInfo.accessToken);
+        setUserInfo(userInfo.data.user);
+        setUserToken(userInfo.data.token);
+        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo.data.user));
+        AsyncStorage.setItem('userToken', userInfo.data.token);
       })
       .catch(error => console.log(error));
     setIsLoading(false);

@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const ClockOutScreen = ({isVisible, setIsVisible}) => {
   const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
   const [data, setData] = useState({});
+  const [radius, setRadius] = useState('');
 
   const clockOut = async () => {
     try {
@@ -39,6 +40,8 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
     var kx = Math.cos((Math.PI * centerPoint.lat) / 180.0) * ky;
     var dx = Math.abs(centerPoint.lng - checkPoint.lng) * kx;
     var dy = Math.abs(centerPoint.lat - checkPoint.lat) * ky;
+    let radius = Math.sqrt(dx * dx + dy * dy) / 10000;
+    setRadius(radius.toFixed(2));
     return Math.sqrt(dx * dx + dy * dy) / 10000 <= km;
   };
 
@@ -82,6 +85,7 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             };
+            arePointsNear(location, centerPoint, 2);
             setLocation(location);
           },
           error => {
@@ -145,8 +149,10 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
                   style={styles.locationIcon}
                 />
                 <View>
-                  <Text style={styles.locationDetail}>{location.lat}</Text>
-                  <Text style={styles.locationDetail}>{location.lng}</Text>
+                  <Text style={styles.locationDetail}>
+                    {' '}
+                    Anda berada dalam radius {radius} dari CenterPoint.
+                  </Text>
                 </View>
               </View>
             )}
@@ -213,6 +219,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.poppins,
     fontSize: 12,
     marginBottom: -5,
+    maxWidth: 150,
   },
   locationIcon: {
     backgroundColor: colors.primary,
