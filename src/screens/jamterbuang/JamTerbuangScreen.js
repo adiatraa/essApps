@@ -14,8 +14,9 @@ import {Dialog} from '@rneui/themed';
 import axios from 'axios';
 import {BASE_URL} from '../../../config';
 import {AuthContext} from '../../context/AuthContext';
-import {getDate, getTime} from '../../components/Date';
+import {getDate} from '../../components/Date';
 
+// Card component
 const Card = ({onPress, tanggal, jam}) => {
   return (
     <TouchableHighlight
@@ -42,10 +43,12 @@ const Card = ({onPress, tanggal, jam}) => {
 };
 
 const JamTerbuangScreen = ({navigation}) => {
-  const [selectedDate, setSelectedDate] = useState();
-  const [datePickerVisible, setDatePickerVisible] = useState(false);
-  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+  const [selectedDate, setSelectedDate] = useState(); // Menyimpan tanggal terpilih filter Choose Date
+  const [datePickerVisible, setDatePickerVisible] = useState(false); // Status visible datepicker
+  const {userToken, userInfo} = useContext(AuthContext);
   const [data, setData] = useState([]);
+
+  // Get API riwayat Jam Terbuang
   const getJamTerbuangAPI = async () => {
     try {
       axios
@@ -53,7 +56,25 @@ const JamTerbuangScreen = ({navigation}) => {
           headers: {'x-access-token': userToken},
         })
         .then(response => {
-          setData(response.data.data.jam_terbuangs);
+          setData(response.data.data.jam_terbuang);
+        });
+    } catch {}
+  };
+
+  // Get API riwayat Jam Terbuang sesuai filter tanggal
+  const getOneJamTerbuangAPI = async () => {
+    try {
+      axios
+        .post(
+          BASE_URL + '/choose-jam-terbuang',
+          {npp: userInfo.npp, tanggal: selectedDate},
+          {
+            headers: {'x-access-token': userToken},
+          },
+        )
+        .then(response => {
+          setData([response.data.data.jam_terbuang]);
+          setDatePickerVisible(false);
         });
     } catch {}
   };
@@ -61,6 +82,7 @@ const JamTerbuangScreen = ({navigation}) => {
   useEffect(() => {
     getJamTerbuangAPI();
   }, []);
+
   return (
     <SafeAreaView>
       <Dialog
@@ -79,12 +101,10 @@ const JamTerbuangScreen = ({navigation}) => {
         <Dialog.Actions>
           <Dialog.Button
             title="CONFIRM"
-            onPress={() => setDatePickerVisible(false)}
+            onPress={() => {
+              getOneJamTerbuangAPI();
+            }}
           />
-          {/* <Dialog.Button
-            title="CANCEL"
-            onPress={() => setDatePickerVisible(false)}
-          /> */}
         </Dialog.Actions>
       </Dialog>
       <View style={styles.header}>
@@ -111,7 +131,18 @@ const JamTerbuangScreen = ({navigation}) => {
           </View>
         </TouchableHighlight>
         {data.map((i, index) => {
-          return (
+          return i === null ? (
+            <Text
+              style={{
+                width: '100%',
+                textAlign: 'center',
+                fontFamily: fonts.poppins,
+                fontSize: 14,
+                marginTop: 10,
+              }}>
+              Data Jam Terbuang Tidak Ditemukan
+            </Text>
+          ) : (
             <Card
               key={index}
               tanggal={getDate(new Date(i.tanggal))}
@@ -135,7 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 18,
     display: 'flex',
-    elevation: 10,
+    elevation: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 30,

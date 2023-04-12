@@ -1,5 +1,5 @@
 import {StyleSheet, View, ScrollView, PermissionsAndroid} from 'react-native';
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext} from 'react';
 import {colors, fonts} from '../../components/Theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button, Dialog, Text} from '@rneui/themed';
@@ -7,45 +7,29 @@ import * as Animatable from 'react-native-animatable';
 import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BASE_URL} from '../../../config';
 import Alert from '../../components/Alert';
 
-const ClockInScreen = ({isVisible, setIsVisible}) => {
-  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
-  const [data, setData] = useState({});
-
-  const clockIn = async () => {
-    // try {
-    //   axios
-    //     .post(
-    //       BASE_URL + '/clock-in',
-    //       {npp: data.npp, kode_unit: data.kode_unit},
-    //       {
-    //         headers: {'x-access-token': userToken},
-    //       },
-    //     )
-    //     .then(response => {
-    //       console.log(response);
-    //     });
-    // } catch {}
-  };
+const ClockInScreen = ({status, parentFunction}) => {
+  const {userToken, userInfo} = useContext(AuthContext);
   const [location, setLocation] = useState('');
   const [danger, setDanger] = useState(false);
   const [success, setSucccess] = useState(false);
   const [height, setHeight] = useState(350);
   const [radius, setRadius] = useState('');
 
+  // Cek radius user
   const arePointsNear = (checkPoint, centerPoint, km) => {
     var ky = 40000 / 360;
     var kx = Math.cos((Math.PI * centerPoint.lat) / 180.0) * ky;
     var dx = Math.abs(centerPoint.lng - checkPoint.lng) * kx;
     var dy = Math.abs(centerPoint.lat - checkPoint.lat) * ky;
     let radius = Math.sqrt(dx * dx + dy * dy) / 10000;
-    setRadius(radius.toFixed(2));
-    return Math.sqrt(dx * dx + dy * dy) / 10000 <= km;
+    setRadius(radius.toFixed(2)); // Set radius dengan format KM
+    return Math.sqrt(dx * dx + dy * dy) / 10000 <= km; // Return true jika radius tidak lebih dari KM yang ditentukan
   };
 
+  // Meminta perijinan lokasi
   const requestLocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -71,6 +55,7 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
     }
   };
 
+  // Mendapatkan lokasi user
   const getLocation = () => {
     const result = requestLocationPermission();
     result.then(res => {
@@ -101,13 +86,39 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
     console.log(location);
   };
 
-  const getData = async () => {
-    let dataFromStorage = await AsyncStorage.getItem('dataPersonil');
-    setData(JSON.parse(dataFromStorage));
+  // Menangani tombol kirim
+  const handleSend = async () => {
+    if (status === 'Kosong') {
+      try {
+        axios
+          .post(
+            BASE_URL + '/clock-in',
+            {npp: userInfo.npp, kode_unit: userInfo.kode_unit},
+            {
+              headers: {'x-access-token': userToken},
+            },
+          )
+          .then(response => {
+            console.log(response);
+          });
+      } catch {}
+    } else if (status === 'Isi') {
+      try {
+        axios
+          .put(
+            BASE_URL + '/clock-in',
+            {npp: userInfo.npp, kode_unit: userInfo.kode_unit},
+            {
+              headers: {'x-access-token': userToken},
+            },
+          )
+          .then(response => {
+            console.log(response);
+          });
+      } catch {}
+    }
   };
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+
   return (
     <Animatable.View style={{height: height}} transition={'height'}>
       <Alert.Danger visible={false} />
@@ -154,11 +165,6 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
                   <Text style={styles.locationDetail}>
                     Anda berada dalam radius {radius} dari CenterPoint.
                   </Text>
-                  {/* <Text style={styles.locationDetail}>{location.lat}</Text>
-                  <Text style={styles.locationDetail}>{location.lng}</Text>
-                  <Text>{data.kode_unit}</Text>
-                  <Text>{data.npp}</Text>
-                  <Text>{userToken}</Text> */}
                 </View>
               </View>
             )}
@@ -170,7 +176,7 @@ const ClockInScreen = ({isVisible, setIsVisible}) => {
         titleStyle={styles.sendButtonTitle}
         containerStyle={styles.sendButtonContainer}
         buttonStyle={styles.sendButton}
-        onPress={clockIn}
+        onPress={handleSend}
       />
     </Animatable.View>
   );

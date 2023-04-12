@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableHighlight,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import * as Progress from 'react-native-progress';
@@ -11,18 +12,30 @@ import {SafeAreaView} from 'react-native';
 import {colors, fonts} from '../../components/Theme';
 import Logo from '../../assets/logo_2.svg';
 import {ImageBackground} from 'react-native';
-import {Button, Image, Text} from '@rneui/base';
+import {Image, Text} from '@rneui/base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
 import {BASE_URL} from '../../../config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeSkeleton from '../../components/HomeSkeleton';
-import HomeFeature from '../../components/HomeFeature';
+
+const Feature = ({icon, title, onPress}) => {
+  return (
+    <TouchableOpacity style={styles.feature} onPress={onPress}>
+      <Icon
+        name={icon}
+        size={20}
+        color={colors.primary}
+        style={styles.featureIcon}
+      />
+      <Text style={styles.featureTitle}>{title}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const HomeScreen = ({navigation}) => {
-  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
-  const [status, setStatus] = useState('loading');
+  const {userToken, userInfo} = useContext(AuthContext); // Memanggil user info dan user token dari context
+  const [status, setStatus] = useState('loading'); // Loading status
   const [data, setData] = useState({
     agama: '1',
     created_date: '2023-03-15T21:00:07.652Z',
@@ -55,40 +68,36 @@ const HomeScreen = ({navigation}) => {
       axios
         .get(BASE_URL + '/user-profile/' + userInfo?.npp, {
           headers: {'x-access-token': userToken},
-        })
+        }) // Get API dengan parameter NPP dengan keamanan x-access-token token
         .then(response => {
-          console.log(response.data.data.user);
-          setData(response.data.data.user);
-          // AsyncStorage.setItem('dataPersonil', JSON.stringify(response.data));
+          setData(response.data.data.user); // Mengisi data dengan data dari response API
         })
         .catch(e => {
-          // logout();
+          // logout(); // Apabla terdapat error maka akan logout
         });
     } catch {}
   };
 
-  const getData = async () => {
-    let dataFromStorage = await AsyncStorage.getItem('dataPersonil');
-    return dataFromStorage != null ? JSON.parse(dataFromStorage) : null;
-  };
-
   useEffect(() => {
-    setStatus('loading');
-    fetchMyAPI();
-    setStatus('success');
+    setStatus('loading'); // Status loading true
+    fetchMyAPI(); // Get data dari APi
+    setStatus('success'); // Status loading false
 
     // const intervalId = setInterval(() => {
     //   fetchMyAPI();
     // }, 1000 * 5); // in milliseconds
     // return () => clearInterval(intervalId);
   }, []);
+
   if (status === 'loading') {
-    return <HomeSkeleton />;
+    return <HomeSkeleton />; // Apabila status loading true maka akan menampilkan Skeleton
   }
 
   return (
     <SafeAreaView>
+      {/* Styling Status Bar */}
       <StatusBar backgroundColor={colors.bgWhite} barStyle={'dark-content'} />
+      {/* Header */}
       <View style={styles.header}>
         <Logo width={60} height={40} />
         <TouchableHighlight
@@ -105,7 +114,9 @@ const HomeScreen = ({navigation}) => {
           </View>
         </TouchableHighlight>
       </View>
+      {/* Scrollview Content */}
       <ScrollView style={styles.scrollView}>
+        {/* Profile Card */}
         <View style={styles.profileCard}>
           <ImageBackground
             source={require('../../assets/backgroundCard.png')}
@@ -202,33 +213,27 @@ const HomeScreen = ({navigation}) => {
           </View>
           <Text style={styles.subTitle}>Monitoring</Text>
           <View style={styles.divider} />
-          <View style={styles.monitoring}>
-            <HomeFeature
+          <View style={styles.featureWrapper}>
+            <Feature
               title={'Absensi'}
               icon={'calendar-month'}
               onPress={() => navigation.navigate('AbsensiStack')}
             />
-            <HomeFeature
+            <Feature
               title={'Jam Terbuang'}
               icon={'timelapse'}
               onPress={() => navigation.navigate('JamTerbuang')}
             />
-            <HomeFeature title={'Kesehatan'} icon={'heart-plus-outline'} />
+            <Feature title={'Kesehatan'} icon={'heart-plus-outline'} />
           </View>
           <Text style={styles.subTitle}>Benefit</Text>
           <View style={styles.divider} />
-          <View style={styles.monitoring}>
-            <HomeFeature title={'Gaji'} icon={'hand-coin'} />
-            <HomeFeature
-              title={'Penghasilan Lain'}
-              icon={'hand-coin-outline'}
-            />
-            <HomeFeature title={'Saldo Depan'} icon={'content-paste'} />
-            <HomeFeature title={'Saldo SWK'} icon={'inbox'} />
-            <HomeFeature
-              title={'Bukti Potong 1721'}
-              icon={'credit-card-outline'}
-            />
+          <View style={styles.featureWrapper}>
+            <Feature title={'Gaji'} icon={'hand-coin'} />
+            <Feature title={'Penghasilan Lain'} icon={'hand-coin-outline'} />
+            <Feature title={'Saldo Depan'} icon={'content-paste'} />
+            <Feature title={'Saldo SWK'} icon={'inbox'} />
+            <Feature title={'Bukti Potong 1721'} icon={'credit-card-outline'} />
           </View>
         </View>
       </ScrollView>
@@ -270,6 +275,39 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     width: 70,
   },
+  feature: {
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderColor: colors.dark60,
+    borderRadius: 10,
+    borderWidth: 1,
+    color: colors.dark,
+    display: 'flex',
+    elevation: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 10,
+    paddingVertical: 15,
+    shadowColor: '#333',
+    shadowOffset: {width: 2, height: 1},
+    shadowRadius: 3,
+    width: 150,
+  },
+  featureIcon: {marginLeft: -10, paddingRight: 10},
+  featureTitle: {
+    color: colors.dark,
+    fontFamily: fonts.poppins_sb,
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  featureWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+    paddingHorizontal: 30,
+  },
   header: {
     alignItems: 'center',
     backgroundColor: colors.bgWhite,
@@ -278,14 +316,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 30,
     paddingVertical: 20,
-  },
-  monitoring: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginVertical: 20,
-    paddingHorizontal: 30,
   },
   notification: {
     backgroundColor: colors.dark,

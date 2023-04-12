@@ -5,19 +5,15 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import React, {useState, useEffect, useContext} from 'react';
+import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, fonts} from '../../components/Theme';
 import {Text} from '@rneui/themed';
 import Timeline from '../../components/Timeline';
-import axios from 'axios';
-import {BASE_URL} from '../../../config';
-import {AuthContext} from '../../context/AuthContext';
 import {getDate} from '../../components/Date';
 
 const AbsensiDetailScreen = ({route, navigation}) => {
-  const {date, npp, t} = route.params;
-  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+  const {date, t} = route.params; // Get data parameter dari props
 
   return (
     <SafeAreaView>

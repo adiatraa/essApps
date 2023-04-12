@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -61,7 +61,7 @@ export default function EditProfileScreen({navigation, route}) {
           <Text style={{fontSize: 11}}>NPP</Text>
           <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
             <TextInput style={{fontSize: 16, fontWeight: 'bold'}}>
-              989382983982
+              {989382983982}
             </TextInput>
           </View>
         </View>
@@ -69,7 +69,7 @@ export default function EditProfileScreen({navigation, route}) {
           <Text style={{fontSize: 11}}>NIK</Text>
           <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
             <TextInput style={{fontSize: 16, fontWeight: 'bold'}}>
-              317112323131
+              {317112323131}
             </TextInput>
           </View>
         </View>
@@ -77,7 +77,7 @@ export default function EditProfileScreen({navigation, route}) {
           <Text style={{fontSize: 11}}>NPWP</Text>
           <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
             <TextInput style={{fontSize: 16, fontWeight: 'bold'}}>
-              317112323131
+              {317112323131}
             </TextInput>
           </View>
         </View>
@@ -223,10 +223,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   container: {
-    flex: 1,
-    backgroundColor: '#f6f6f6',
     alignItems: 'center',
-    // margin: 10,
+    backgroundColor: '#f6f6f6',
+    flex: 1,
     padding: 20,
   },
   formContainer: {
@@ -235,21 +234,15 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   formContainerHorizontal: {
-    width: '100%',
-    // marginTop: 20,
-    marginBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 20,
+    width: '100%',
   },
 
   formSidebySideContainer: {
     width: '47%',
-    // marginTop: 20,
   },
-  imgBackground: {
-    resizeMode: 'contain',
-  },
-
   leftContainer: {
     backgroundColor: '#FFD60A',
     borderBottomLeftRadius: 20,
@@ -260,39 +253,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: '100%',
   },
-  menuBar: {
-    height: 30,
-    justifyContent: 'center',
-    marginLeft: 20,
-    width: 200,
-  },
-
-  menuContainer: {
-    alignItems: 'flex-start',
-    backgroundColor: 'blue',
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    elevation: 15,
-    flexDirection: 'row',
-    height: 50,
-    margin: 10,
-    marginTop: 0,
-    padding: 10,
-    paddingHorizontal: 15,
-    width: '100%',
-  },
-
-  menuIcon: {
-    height: 30,
-    justifyContent: 'center',
-    width: 30,
-  },
-
-  menuText: {
-    color: '#B6B6B6',
-    fontWeight: 'bold',
-  },
-
   nameText: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -305,19 +265,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 40,
   },
-
-  profileIcon: {
-    height: 100,
-    justifyContent: 'center',
-    width: 90,
-  },
   profileText: {
     height: 90,
     justifyContent: 'center',
     marginLeft: 20,
     width: 200,
   },
-
   righttContainer: {
     backgroundColor: '#FFD60A',
     borderBottomRightRadius: 20,
@@ -328,7 +281,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: '100%',
   },
-
   titleText: {
     fontSize: 13,
   },

@@ -1,27 +1,23 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  Image,
   TextInput,
   StatusBar,
-  ImageBackground,
   Dimensions,
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function ConfirmChangePassScreen({navigation, route}) {
-  const handleFinish = () => {
-    navigation.replace('SuccessChangePassScreen');
-  };
+export default function ConfirmChangePassScreen({navigation}) {
+  const [newPassword, setNewPassword] = useState('');
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.text}>
-        Masukkan password baru yang mau Anda gantikan
+        Masukkan password baru yang ingin Anda ganti
       </Text>
       <View style={styles.menuContainer}>
         <View style={styles.menuIcon}>
@@ -36,10 +32,17 @@ export default function ConfirmChangePassScreen({navigation, route}) {
           <Icon name="lock-outline" size={26} color="#373737" />
         </View>
         <View style={styles.menuBar}>
-          <TextInput placeholder="Confirm New Password" style={{height: 50}} />
+          <TextInput
+            secureTextEntry={true}
+            value={newPassword}
+            placeholder="Confirm New Password"
+            style={{height: 50}}
+            onChangeText={text => setNewPassword(text)}
+          />
         </View>
       </View>
-      <TouchableOpacity onPress={handleFinish}>
+      <TouchableOpacity
+        onPress={() => navigation.replace('SuccessChangePassScreen')}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>Finish</Text>
         </View>
@@ -59,7 +62,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: Dimensions.get('screen').width - 100,
   },
-
   buttonText: {
     color: '#000',
     fontSize: 18,
@@ -72,17 +74,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     paddingVertical: 20,
   },
-
   menuBar: {
     height: 30,
     justifyContent: 'center',
     marginLeft: 20,
     width: 200,
   },
-
   menuContainer: {
     alignItems: 'flex-start',
-    backgroundColor: 'blue',
     backgroundColor: '#FFF',
     borderColor: '#373737',
     borderRadius: 10,
@@ -93,19 +92,12 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 15,
     width: '100%',
-    // justifyContent: 'center',
   },
   menuIcon: {
     height: 30,
     justifyContent: 'center',
     width: 30,
   },
-
-  menuText: {
-    color: '#B6B6B6',
-    fontWeight: 'bold',
-  },
-
   text: {
     color: '#000',
     fontSize: 17,

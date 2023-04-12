@@ -11,30 +11,13 @@ import {BASE_URL} from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ClockOutScreen = ({isVisible, setIsVisible}) => {
-  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
-  const [data, setData] = useState({});
+  const {userToken, userInfo} = useContext(AuthContext);
   const [radius, setRadius] = useState('');
-
-  const clockOut = async () => {
-    try {
-      axios
-        .put(
-          BASE_URL + '/users/api/checkOut',
-          {npp: data.npp},
-          {
-            headers: {'x-access-token': userToken},
-          },
-        )
-        .then(response => {
-          console.log(response);
-        });
-    } catch {}
-  };
-
   const [location, setLocation] = useState('');
   const [danger, setDanger] = useState(false);
   const [height, setHeight] = useState(350);
 
+  // Cek radius user
   const arePointsNear = (checkPoint, centerPoint, km) => {
     var ky = 40000 / 360;
     var kx = Math.cos((Math.PI * centerPoint.lat) / 180.0) * ky;
@@ -45,6 +28,7 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
     return Math.sqrt(dx * dx + dy * dy) / 10000 <= km;
   };
 
+  // Meminta perijinan lokasi
   const requestLocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -70,6 +54,7 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
     }
   };
 
+  // Mendapatkan lokasi user
   const getLocation = () => {
     const result = requestLocationPermission();
     result.then(res => {
@@ -100,13 +85,23 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
     console.log(location);
   };
 
-  const getData = async () => {
-    let dataFromStorage = await AsyncStorage.getItem('dataPersonil');
-    setData(JSON.parse(dataFromStorage));
+  // Menangani tombol kirim
+  const handleSend = async () => {
+    try {
+      axios
+        .put(
+          BASE_URL + '/clock-out',
+          {npp: userInfo.npp, kode_unit: userInfo.kode_unit},
+          {
+            headers: {'x-access-token': userToken},
+          },
+        )
+        .then(response => {
+          console.log(response);
+        });
+    } catch {}
   };
-  useEffect(() => {
-    getData();
-  }, []);
+
   return (
     <Animatable.View style={{height: height}}>
       <ScrollView style={styles.scrollView}>
@@ -164,7 +159,7 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
         titleStyle={styles.sendButtonTitle}
         containerStyle={styles.sendButtonContainer}
         buttonStyle={styles.sendButton}
-        onPress={clockOut}
+        onPress={handleSend}
       />
       <Dialog isVisible={danger} onBackdropPress={() => setDanger(false)}>
         <View style={styles.alertRadius}>

@@ -6,7 +6,10 @@ import {colors} from './Theme';
 
 const Toast = () => {
   return (
-    <Dialog isVisible={true} overlayStyle={styles.toast} animationType={'fade'}>
+    <Dialog
+      isVisible={false}
+      overlayStyle={styles.toast}
+      animationType={'fade'}>
       <Icon name="alert-circle-outline" color={colors.success} size={48} />
       <Text>Anda berada di luar jangkauan!</Text>
     </Dialog>

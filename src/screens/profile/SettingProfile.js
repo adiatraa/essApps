@@ -12,7 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {AuthContext} from '../../context/AuthContext';
 
 export default function SettingProfile({navigation, route}) {
-  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+  const {logout, userToken, userInfo} = useContext(AuthContext);
   useEffect(() => {
     console.log(route);
   }, []);
@@ -95,18 +95,12 @@ const styles = StyleSheet.create({
     top: 5,
     width: 66,
   },
-
   container: {
-    flex: 1,
-    backgroundColor: '#f6f6f6',
     alignItems: 'center',
-    // margin: 10,
+    backgroundColor: '#f6f6f6',
+    flex: 1,
     padding: 20,
   },
-  imgBackground: {
-    resizeMode: 'contain',
-  },
-
   leftContainer: {
     backgroundColor: '#FFD60A',
     borderBottomLeftRadius: 20,
@@ -126,7 +120,6 @@ const styles = StyleSheet.create({
 
   menuContainer: {
     alignItems: 'flex-start',
-    backgroundColor: 'blue',
     backgroundColor: '#FFF',
     borderRadius: 10,
     flexDirection: 'row',
@@ -135,7 +128,6 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 15,
     width: '100%',
-    // justifyContent: 'center',
   },
 
   menuIcon: {
@@ -162,11 +154,6 @@ const styles = StyleSheet.create({
     top: 40,
   },
 
-  profileIcon: {
-    height: 100,
-    justifyContent: 'center',
-    width: 90,
-  },
   profileText: {
     height: 90,
     justifyContent: 'center',

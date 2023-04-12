@@ -22,19 +22,19 @@ import {AuthContext} from '../../context/AuthContext';
 import Toast from '../../components/Toast';
 
 const AbsensiScreen = ({navigation}) => {
-  const {logout, userToken, userInfo, newToken} = useContext(AuthContext);
+  const {userToken, userInfo} = useContext(AuthContext);
   const [visible, setVisible] = useState(false);
   const [outVisible, setOutVisible] = useState(false);
   const [height, setHeight] = useState('none');
   const [date, setDate] = useState(new Date());
   const [status, setStatus] = useState('');
-  // const [data, setData] = useState();
   const [data, setData] = useState([]);
 
   const refreshClock = () => {
     setDate(new Date());
   };
 
+  // Get API riwayat absensi
   const getHistoryAPI = async () => {
     try {
       axios
@@ -48,6 +48,7 @@ const AbsensiScreen = ({navigation}) => {
     } catch {}
   };
 
+  // Menangani tombol Clock In
   const handleClockIn = async () => {
     try {
       axios
@@ -61,7 +62,7 @@ const AbsensiScreen = ({navigation}) => {
           },
         )
         .then(response => {
-          if (response.data.message === 'User have not attended') {
+          if (response.data.message === 'User have not attendance') {
             setVisible(true);
             setStatus('Kosong');
           } else if (response.data.message === 'User already clocked out') {
@@ -72,7 +73,10 @@ const AbsensiScreen = ({navigation}) => {
           }
         });
     } catch (error) {}
+    console.log(status);
   };
+
+  // Menangani tombol Clock Out
   const handleClockOut = async () => {
     try {
       axios
@@ -96,7 +100,7 @@ const AbsensiScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    getHistoryAPI();
+    getHistoryAPI(); // Menjalankan function ketika terdapat perubahan halaman
   }, []);
 
   return (
@@ -223,7 +227,7 @@ const AbsensiScreen = ({navigation}) => {
           />
           <Text style={styles.sheetHeaderTitle}>Clock In</Text>
         </View>
-        <ClockInScreen />
+        <ClockInScreen status={status} parentFunction={setVisible(false)} />
       </BottomSheet>
       <BottomSheet
         isVisible={outVisible}
@@ -241,7 +245,7 @@ const AbsensiScreen = ({navigation}) => {
           />
           <Text style={styles.sheetHeaderTitle}>Clock Out</Text>
         </View>
-        <ClockOutScreen />
+        <ClockOutScreen status={status} parentFunction={setOutVisible(false)} />
       </BottomSheet>
     </SafeAreaView>
   );

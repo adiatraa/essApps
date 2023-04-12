@@ -1,22 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  Image,
   StatusBar,
-  ImageBackground,
-  Button,
   Dimensions,
   SafeAreaView,
 } from 'react-native';
 
 export default function SuccessChangePassScreen({navigation}) {
-  const handleGetStarted = () => {
-    navigation.replace('UserProfile');
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={'#FFD60A'} />
@@ -27,7 +20,7 @@ export default function SuccessChangePassScreen({navigation}) {
           Selamat password Anda berhasil diganti!
         </Text>
       </View>
-      <TouchableOpacity onPress={handleGetStarted}>
+      <TouchableOpacity onPress={() => navigation.replace('UserProfile')}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>GET STARTED</Text>
         </View>

@@ -2,17 +2,16 @@ import {
   View,
   Text,
   StyleSheet,
+  SafeAreaView,
   StatusBar,
   KeyboardAvoidingView,
   ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Input, Button} from '@rneui/themed';
 import {colors, fonts} from '../../components/Theme';
-import {Input} from '@rneui/base';
 import ForgotPasswordProgress from '../../components/ForgotPasswordProgress';
-import {Button} from '@rneui/themed';
 
 const Reset = ({navigation}) => {
   const [password, setPassword] = useState('');

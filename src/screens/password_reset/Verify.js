@@ -5,14 +5,13 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import React, {useState, useRef} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Button, Input} from '@rneui/themed';
 import {colors, fonts} from '../../components/Theme';
-import {Input} from '@rneui/base';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ForgotPasswordProgress from '../../components/ForgotPasswordProgress';
-import {Button} from '@rneui/themed';
 
 const Verify = ({navigation}) => {
   const [otp1, setOtp1] = useState('');

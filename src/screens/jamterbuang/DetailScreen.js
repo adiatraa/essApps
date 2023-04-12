@@ -5,14 +5,15 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, fonts} from '../../components/Theme';
 import {Text} from '@rneui/themed';
 import Timeline from '../../components/Timeline';
+import {getDate} from '../../components/Date';
 
 const DetailScreen = ({navigation, route}) => {
-  const {data} = route.params;
+  const {data} = route.params; // Get data parameter dari props
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.secondary} />
@@ -28,7 +29,9 @@ const DetailScreen = ({navigation, route}) => {
         </View>
         <View style={styles.headerDescription}>
           <Icon name="calendar-month-outline" size={22} color={colors.white} />
-          <Text style={styles.headerDate}>Senin, 24 Januari 2029</Text>
+          <Text style={styles.headerDate}>
+            {getDate(new Date(data.tanggal))}
+          </Text>
         </View>
       </View>
       <ScrollView style={styles.scrollView}>
