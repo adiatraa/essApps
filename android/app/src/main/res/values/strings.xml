@@ -1,3 +1,7 @@
 <resources>
+<<<<<<< HEAD
     <string name="app_name">ESS</string>
+=======
+    <string name="app_name">EssApps</string>
+>>>>>>> 9b0901983b4f82c1ab5248d7601e3e093aeac0e9
 </resources>

@@ -1,6 +1,7 @@
 module.exports = {
   root: true,
   extends: '@react-native-community',
+<<<<<<< HEAD
   rules: {
     'react-hooks/exhaustive-deps': 'warn',
     'react/react-in-jsx-scope': 'off',
@@ -22,4 +23,6 @@ module.exports = {
       },
     ],
   },
+=======
+>>>>>>> 9b0901983b4f82c1ab5248d7601e3e093aeac0e9
 };

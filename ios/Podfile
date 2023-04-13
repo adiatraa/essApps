@@ -21,7 +21,11 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+<<<<<<< HEAD
 target 'ESS' do
+=======
+target 'EssApps' do
+>>>>>>> 9b0901983b4f82c1ab5248d7601e3e093aeac0e9
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -43,7 +47,11 @@ target 'ESS' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+<<<<<<< HEAD
   target 'ESSTests' do
+=======
+  target 'EssAppsTests' do
+>>>>>>> 9b0901983b4f82c1ab5248d7601e3e093aeac0e9
     inherit! :complete
     # Pods for testing
   end

@@ -5,6 +5,7 @@
  * @format
  */
 
+<<<<<<< HEAD
 // module.exports = {
 //   transformer: {
 //     getTransformOptions: async () => ({
@@ -32,3 +33,15 @@ module.exports = (async () => {
     },
   };
 })();
+=======
+module.exports = {
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: true,
+      },
+    }),
+  },
+};
+>>>>>>> 9b0901983b4f82c1ab5248d7601e3e093aeac0e9

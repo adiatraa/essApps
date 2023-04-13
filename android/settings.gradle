@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 rootProject.name = 'ESS'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
@@ -6,3 +7,9 @@ includeBuild('../node_modules/react-native-gradle-plugin')
 // Add these two lines
 include ':react-native-vector-icons'
 project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
+=======
+rootProject.name = 'EssApps'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'
+includeBuild('../node_modules/react-native-gradle-plugin')
+>>>>>>> 9b0901983b4f82c1ab5248d7601e3e093aeac0e9
