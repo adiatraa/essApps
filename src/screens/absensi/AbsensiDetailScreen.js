@@ -21,12 +21,12 @@ const AbsensiDetailScreen = ({route, navigation}) => {
       <View>
         <View style={styles.header}>
           <Icon
-            name="chevron-left-circle-outline"
-            size={48}
+            name="arrow-left"
+            size={24}
             color={colors.white}
             onPress={() => navigation.goBack()}
           />
-          <Text style={styles.headerTitle}>Absensi</Text>
+          <Text style={styles.headerTitle}>Detail Absensi</Text>
         </View>
         <View style={styles.headerDescription}>
           <Icon name="calendar-month-outline" size={22} color={colors.white} />
@@ -41,7 +41,7 @@ const AbsensiDetailScreen = ({route, navigation}) => {
                 key={index}
                 title={index % 2 !== 1 ? 'Clock In' : 'Clock Out'}
                 description={t + ' WIB'}
-                status={'success'}
+                status={index % 2 !== 1 ? 'success' : 'danger'}
               />
             ) : (
               <></>
@@ -88,15 +88,16 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    paddingBottom: 50,
-    paddingLeft: 80,
+    paddingBottom: 40,
+    paddingLeft: 60,
+    paddingTop: 10,
   },
   headerTitle: {
     color: colors.white,
     fontFamily: fonts.poppins_b,
     fontSize: 18,
     marginBottom: -5,
-    marginLeft: 10,
+    marginLeft: 20,
   },
   scrollView: {
     backgroundColor: colors.secondary,

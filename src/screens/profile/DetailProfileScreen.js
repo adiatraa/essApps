@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,14 +9,13 @@ import {
   ImageBackground,
   TextInput,
   ScrollView,
-  Dimensions,
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, fonts} from '../../components/Theme';
 import {getAge, getDateWDay} from '../../components/Date';
 
-export default function EditProfileScreen({navigation, route}) {
+export default function UserProfileScreen({navigation, route}) {
   const [data, setData] = useState({
     npp: '801236',
     nama_lengkap: 'ARIF,DR.,IR.',
@@ -80,44 +79,54 @@ export default function EditProfileScreen({navigation, route}) {
           color={colors.black}
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.headerTitle}>Edit Profile</Text>
+        <Text style={styles.headerTitle}>Profile</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-        <TouchableOpacity style={{flexDirection: 'row'}}>
-          <View style={{width: '50%'}}>
-            <ImageBackground
-              style={styles.leftContainer}
-              resizeMode="contain"
-              imageStyle={{
-                alignSelf: 'flex-end',
-                marginLeft: -60,
-                marginTop: 70,
-              }}
-              source={require('../../assets/ellipse.png')}
-            />
-          </View>
-          <View style={{width: '50%'}}>
-            <ImageBackground
-              style={styles.righttContainer}
-              resizeMode="contain"
-              imageStyle={{
-                alignSelf: 'flex-end',
-                marginLeft: 40,
-              }}
-              source={require('../../assets/group.png')}
-            />
-          </View>
-          <View style={styles.profileContainer}>
+        <View style={styles.profileCard}>
+          <ImageBackground
+            source={require('../../assets/backgroundCard.png')}
+            resizeMode={'cover'}
+            borderRadius={20}
+            style={styles.profileCardBody}>
             <Image
-              source={require('../../assets/avatar.png')}
-              fadeDuration={0}
-              style={styles.avatar}
+              source={{
+                uri: 'https://berita.99.co/wp-content/uploads/2022/06/foto-profil-keren.jpg',
+              }}
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 35,
+                marginRight: 10,
+              }}
+              resizeMode="cover"
             />
-            <View style={styles.profileText}>
-              <Text style={styles.nameText}>Leslie Alexander</Text>
-              <Text style={styles.titleText}>Back End Developer</Text>
+            <View>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                }}>
+                {data?.nama_lengkap}
+              </Text>
+              <Text style={{fontSize: 12, fontFamily: fonts.poppins}}>
+                {data.npp}
+              </Text>
             </View>
+          </ImageBackground>
+        </View>
+
+        <TouchableOpacity
+          style={[styles.editButton, styles.shadowProp]}
+          onPress={() => {
+            navigation.navigate('EditProfile');
+          }}>
+          <View style={styles.menuIcon}>
+            <Icon name="pencil" size={25} color="#FFD60A" />
+          </View>
+          <View style={styles.menuBar}>
+            <Text style={styles.menuText}>Edit Profile</Text>
           </View>
         </TouchableOpacity>
         <View style={styles.formContainer}>
@@ -233,7 +242,7 @@ export default function EditProfileScreen({navigation, route}) {
               <TextInput
                 editable={false}
                 style={styles.textInput}
-                value={convertAgama(data.agama)}
+                value={data.agama}
               />
             </View>
           </View>
@@ -279,16 +288,6 @@ export default function EditProfileScreen({navigation, route}) {
             </View>
           </View>
         </View>
-        <View style={{alignItems: 'center'}}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}>
-            <View style={styles.button}>
-              <Text style={styles.buttonText}>Simpan</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
         <View style={{marginBottom: 100}} />
       </ScrollView>
 
@@ -298,29 +297,18 @@ export default function EditProfileScreen({navigation, route}) {
 }
 
 const styles = StyleSheet.create({
-  avatar: {
-    height: 71,
-    top: 5,
-    width: 66,
-  },
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#FFD60A',
-    borderRadius: 10,
-    height: 50,
-    justifyContent: 'center',
-    marginBottom: 20,
-    marginTop: 20,
-    width: Dimensions.get('screen').width - 70,
-  },
-  buttonText: {
-    color: '#000',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   container: {
     backgroundColor: colors.bgWhite,
     paddingHorizontal: 30,
+  },
+  editButton: {
+    alignItems: 'flex-start',
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    flexDirection: 'row',
+    marginVertical: 10,
+    padding: 10,
+    paddingHorizontal: 15,
   },
   formContainer: {
     marginBottom: 20,
@@ -335,9 +323,47 @@ const styles = StyleSheet.create({
   formSidebySideContainer: {
     width: '47%',
   },
+
   header: {
     alignItems: 'center',
-    backgroundColor: '#F5F7FB',
+    backgroundColor: colors.bgWhite,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 30,
+    paddingVertical: 30,
+  },
+  headerTitle: {
+    fontFamily: fonts.poppins_b,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 20,
+  },
+  menuBar: {
+    height: 30,
+    justifyContent: 'center',
+    marginLeft: 20,
+    width: 200,
+  },
+
+  menuIcon: {
+    height: 30,
+    justifyContent: 'center',
+    width: 30,
+  },
+  menuText: {
+    color: '#B6B6B6',
+    fontWeight: 'bold',
+  },
+  profileCard: {
+    height: 'auto',
+    marginTop: 10,
+    position: 'relative',
+    width: '100%',
+  },
+
+  profileCardBody: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -345,51 +371,11 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
   },
 
-  headerTitle: {
-    fontFamily: fonts.poppins_b,
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 20,
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
-  leftContainer: {
-    backgroundColor: '#FFD60A',
-    borderBottomLeftRadius: 20,
-    borderTopLeftRadius: 20,
-    flexDirection: 'row',
-    height: 120,
-    marginBottom: 30,
-    marginTop: 20,
-    width: '100%',
-  },
-  nameText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  profileContainer: {
-    alignContent: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    left: 30,
-    position: 'absolute',
-    top: 40,
-  },
-  profileText: {
-    height: 90,
-    justifyContent: 'center',
-    marginLeft: 20,
-    width: 200,
-  },
-  righttContainer: {
-    backgroundColor: '#FFD60A',
-    borderBottomRightRadius: 20,
-    borderTopRightRadius: 20,
-    flexDirection: 'row',
-    height: 120,
-    marginBottom: 30,
-    marginTop: 20,
-    width: '100%',
-  },
-  titleText: {
-    fontSize: 13,
-  },
+  textInput: {color: '#000000', fontSize: 16, fontWeight: 'bold'},
 });

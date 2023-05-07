@@ -2,7 +2,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React from 'react';
 import Spinner from '../components/Spinner';
-import LoginPage from '../scenes/LoginPage';
+import LoginPage from '../screens/LoginPage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../components/Theme';
 import AbsensiScreen from '../screens/absensi/AbsensiScreen';
@@ -11,6 +11,7 @@ import AbsensiDetailScreen from '../screens/absensi/AbsensiDetailScreen';
 import JamTerbuangScreen from '../screens/jamterbuang/JamTerbuangScreen';
 import DetailScreen from '../screens/jamterbuang/DetailScreen';
 import UserProfileScreen from '../screens/profile/UserProfileScreen';
+import DetailProfileScreen from '../screens/profile/DetailProfileScreen';
 import SettingProfile from '../screens/profile/SettingProfile';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import ChangePassScreen from '../screens/password_change/ChangePassScreen';
@@ -18,6 +19,7 @@ import ConfirmChangePassScreen from '../screens/password_change/ConfirmChangePas
 import SuccessChangePassScreen from '../screens/password_change/SuccessChangePassScreen';
 import * as PasswordReset from '../screens/password_reset';
 import NotificationScreen from '../screens/home/NotificationScreen';
+import CVScreen from '../screens/profile/CVScreen';
 
 const Tab = createBottomTabNavigator();
 const HomeTabs = () => {
@@ -67,10 +69,13 @@ const HomeTabs = () => {
 const Stack = createNativeStackNavigator();
 const AppStack = () => {
   const page = [
+    // {name: 'Login', component: LoginPage},
     {name: 'Notification', component: NotificationScreen},
     {name: 'ProfileSetting', component: SettingProfile},
     {name: 'UserProfile', component: UserProfileScreen},
+    {name: 'DetailProfile', component: DetailProfileScreen},
     {name: 'EditProfile', component: EditProfileScreen},
+    {name: 'CVScreen', component: CVScreen},
     {name: 'Absensi', component: AbsensiScreen},
     {name: 'AbsensiDetail', component: AbsensiDetailScreen},
     {name: 'JamTerbuang', component: JamTerbuangScreen},
@@ -78,7 +83,6 @@ const AppStack = () => {
     {name: 'ChangePassScreen', component: ChangePassScreen},
     {name: 'ConfirmChangePassScreen', component: ConfirmChangePassScreen},
     {name: 'SuccessChangePassScreen', component: SuccessChangePassScreen},
-    // {name: 'Login', component: LoginPage},
     // {name: 'PasswordReset', component: PasswordReset.Reset},
     // {name: 'PasswordResetSendEmail', component: PasswordReset.SendEmail},
     // {name: 'PasswordResetVerify', component: PasswordReset.Verify},

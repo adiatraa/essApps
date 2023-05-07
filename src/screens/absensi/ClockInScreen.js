@@ -9,14 +9,16 @@ import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
 import {BASE_URL} from '../../../config';
 import Alert from '../../components/Alert';
+import {getDate, getTime} from '../../components/Date';
 
-const ClockInScreen = ({status, parentFunction}) => {
+const ClockInScreen = ({status, handleSend}) => {
   const {userToken, userInfo} = useContext(AuthContext);
   const [location, setLocation] = useState('');
   const [danger, setDanger] = useState(false);
   const [success, setSucccess] = useState(false);
   const [height, setHeight] = useState(350);
   const [radius, setRadius] = useState('');
+  const [submitVisible, setSubmitVisible] = useState(false);
 
   // Cek radius user
   const arePointsNear = (checkPoint, centerPoint, km) => {
@@ -71,7 +73,9 @@ const ClockInScreen = ({status, parentFunction}) => {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             };
-            arePointsNear(location, centerPoint, 2);
+            arePointsNear(location, centerPoint, 2) == false
+              ? setSubmitVisible(true)
+              : setSubmitVisible(false);
             setLocation(location);
           },
           error => {
@@ -86,39 +90,6 @@ const ClockInScreen = ({status, parentFunction}) => {
     console.log(location);
   };
 
-  // Menangani tombol kirim
-  const handleSend = async () => {
-    if (status === 'Kosong') {
-      try {
-        axios
-          .post(
-            BASE_URL + '/clock-in',
-            {npp: userInfo.npp, kode_unit: userInfo.kode_unit},
-            {
-              headers: {'x-access-token': userToken},
-            },
-          )
-          .then(response => {
-            console.log(response);
-          });
-      } catch {}
-    } else if (status === 'Isi') {
-      try {
-        axios
-          .put(
-            BASE_URL + '/clock-in',
-            {npp: userInfo.npp, kode_unit: userInfo.kode_unit},
-            {
-              headers: {'x-access-token': userToken},
-            },
-          )
-          .then(response => {
-            console.log(response);
-          });
-      } catch {}
-    }
-  };
-
   return (
     <Animatable.View style={{height: height}} transition={'height'}>
       <Alert.Danger visible={false} />
@@ -126,11 +97,11 @@ const ClockInScreen = ({status, parentFunction}) => {
         <View style={styles.sectionContent}>
           <View style={styles.content}>
             <Text style={styles.subTitle}>Tanggal</Text>
-            <Text style={styles.text}>Kamis, 02 Maret 2023</Text>
+            <Text style={styles.text}>{getDate(new Date())}</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.subTitle}>Waktu</Text>
-            <Text style={styles.textSuccess}>08.43 WIB</Text>
+            <Text style={styles.textSuccess}>{getTime(new Date())} WIB</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.subTitle}>Lokasi</Text>
@@ -174,7 +145,10 @@ const ClockInScreen = ({status, parentFunction}) => {
       <Button
         title={'Kirim'}
         titleStyle={styles.sendButtonTitle}
-        containerStyle={styles.sendButtonContainer}
+        containerStyle={[
+          styles.sendButtonContainer,
+          {display: submitVisible == false ? 'none' : 'flex'},
+        ]}
         buttonStyle={styles.sendButton}
         onPress={handleSend}
       />

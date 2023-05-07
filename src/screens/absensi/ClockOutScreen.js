@@ -9,13 +9,15 @@ import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
 import {BASE_URL} from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getDate, getTime} from '../../components/Date';
 
-const ClockOutScreen = ({isVisible, setIsVisible}) => {
+const ClockOutScreen = ({handleSend}) => {
   const {userToken, userInfo} = useContext(AuthContext);
   const [radius, setRadius] = useState('');
   const [location, setLocation] = useState('');
   const [danger, setDanger] = useState(false);
   const [height, setHeight] = useState(350);
+  const [submitVisible, setSubmitVisible] = useState(false);
 
   // Cek radius user
   const arePointsNear = (checkPoint, centerPoint, km) => {
@@ -70,7 +72,9 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             };
-            arePointsNear(location, centerPoint, 2);
+            arePointsNear(location, centerPoint, 2) == false
+              ? setSubmitVisible(true)
+              : setSubmitVisible(false);
             setLocation(location);
           },
           error => {
@@ -85,34 +89,17 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
     console.log(location);
   };
 
-  // Menangani tombol kirim
-  const handleSend = async () => {
-    try {
-      axios
-        .put(
-          BASE_URL + '/clock-out',
-          {npp: userInfo.npp, kode_unit: userInfo.kode_unit},
-          {
-            headers: {'x-access-token': userToken},
-          },
-        )
-        .then(response => {
-          console.log(response);
-        });
-    } catch {}
-  };
-
   return (
     <Animatable.View style={{height: height}}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.sectionContent}>
           <View style={styles.content}>
             <Text style={styles.subTitle}>Tanggal</Text>
-            <Text style={styles.text}>Kamis, 02 Maret 2023</Text>
+            <Text style={styles.text}>{getDate(new Date())}</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.subTitle}>Waktu</Text>
-            <Text style={styles.textDanger}>08.43 WIB</Text>
+            <Text style={styles.textDanger}>{getTime(new Date())} WIB</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.subTitle}>Lokasi</Text>
@@ -157,7 +144,10 @@ const ClockOutScreen = ({isVisible, setIsVisible}) => {
       <Button
         title={'Kirim'}
         titleStyle={styles.sendButtonTitle}
-        containerStyle={styles.sendButtonContainer}
+        containerStyle={[
+          styles.sendButtonContainer,
+          {display: submitVisible == false ? 'none' : 'flex'},
+        ]}
         buttonStyle={styles.sendButton}
         onPress={handleSend}
       />

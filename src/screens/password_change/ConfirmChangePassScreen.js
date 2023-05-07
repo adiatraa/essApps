@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,9 +10,64 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import axios from 'axios';
+import {BASE_URL} from '../../../config';
+import {AuthContext} from '../../context/AuthContext';
+import {useToast} from 'native-base';
+import Toast from '../../components/Toast';
+import {colors} from '../../components/Theme';
 
 export default function ConfirmChangePassScreen({navigation}) {
   const [newPassword, setNewPassword] = useState('');
+  const [newConfirmPassword, setNewConfirmPassword] = useState('');
+  const {userToken, userInfo} = useContext(AuthContext);
+  const toast = useToast();
+
+  const handleSend = async () => {
+    if (newPassword.length < 8) {
+      toast.show({
+        render: () => {
+          return (
+            <Toast
+              message={'Password minimal 8 karakter !'}
+              bgColor={colors.danger}
+              color={colors.white}
+              icon={'alert-outline'}
+            />
+          );
+        },
+        placement: 'top',
+      });
+    } else if (newPassword !== newConfirmPassword) {
+      toast.show({
+        render: () => {
+          return (
+            <Toast
+              message={'Confirm password tidak sama !'}
+              bgColor={colors.danger}
+              color={colors.white}
+              icon={'alert-outline'}
+            />
+          );
+        },
+        placement: 'top',
+      });
+    } else {
+      try {
+        axios
+          .post(
+            BASE_URL + '/update-password',
+            {npp: userInfo.npp, new_password: newPassword},
+            {
+              headers: {'x-access-token': userToken},
+            },
+          )
+          .then(response => {
+            navigation.replace('SuccessChangePassScreen');
+          });
+      } catch {}
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,7 +79,13 @@ export default function ConfirmChangePassScreen({navigation}) {
           <Icon name="lock-outline" size={26} color="#373737" />
         </View>
         <View style={styles.menuBar}>
-          <TextInput placeholder="New Password" style={{height: 50}} />
+          <TextInput
+            secureTextEntry={true}
+            value={newPassword}
+            placeholder="New Password"
+            style={{height: 50}}
+            onChangeText={text => setNewPassword(text)}
+          />
         </View>
       </View>
       <View style={styles.menuContainer}>
@@ -34,15 +95,14 @@ export default function ConfirmChangePassScreen({navigation}) {
         <View style={styles.menuBar}>
           <TextInput
             secureTextEntry={true}
-            value={newPassword}
+            value={newConfirmPassword}
             placeholder="Confirm New Password"
             style={{height: 50}}
-            onChangeText={text => setNewPassword(text)}
+            onChangeText={text => setNewConfirmPassword(text)}
           />
         </View>
       </View>
-      <TouchableOpacity
-        onPress={() => navigation.replace('SuccessChangePassScreen')}>
+      <TouchableOpacity onPress={handleSend}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>Finish</Text>
         </View>
@@ -72,7 +132,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f6f6f6',
     flex: 1,
     paddingHorizontal: 50,
-    paddingVertical: 20,
+    paddingTop: 40,
   },
   menuBar: {
     height: 30,

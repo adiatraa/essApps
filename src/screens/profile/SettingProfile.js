@@ -9,14 +9,39 @@ import {
   ImageBackground,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
+import HomeSkeleton from '../../components/HomeSkeleton';
+import {BASE_URL} from '../../../config';
 
 export default function SettingProfile({navigation, route}) {
   const {logout, userToken, userInfo} = useContext(AuthContext);
-  useEffect(() => {
-    console.log(route);
-  }, []);
+  const [data, setData] = useState(null);
+  const [status, setStatus] = useState('loading'); // Loading status
 
+  const fetchMyAPI = async () => {
+    setStatus('loading'); // Status loading true
+
+    try {
+      axios
+        .get(BASE_URL + '/user-profile/' + userInfo.npp, {
+          headers: {'x-access-token': userToken},
+        }) // Get API dengan parameter NPP dengan keamanan x-access-token token
+        .then(response => {
+          setData(response.data.data); // Mengisi data dengan data dari response API
+          setStatus('success'); // Status loading false
+        })
+        .catch(e => {
+          // logout(); // Apabla terdapat error maka akan logout
+        });
+    } catch {}
+  };
+  useEffect(() => {
+    fetchMyAPI();
+  }, []);
+  if (status === 'loading') {
+    return <HomeSkeleton />; // Apabila status loading true maka akan menampilkan Skeleton
+  }
   return (
     <View style={styles.container}>
       <TouchableOpacity style={{flexDirection: 'row'}}>
@@ -45,20 +70,31 @@ export default function SettingProfile({navigation, route}) {
         </View>
         <View style={styles.profileContainer}>
           <Image
-            source={require('../../assets/avatar.png')}
-            fadeDuration={0}
-            style={styles.avatar}
+            source={{
+              uri: 'https://berita.99.co/wp-content/uploads/2022/06/foto-profil-keren.jpg',
+            }}
+            style={[
+              styles.avatar,
+              {
+                width: 60,
+                height: 60,
+                borderRadius: 35,
+                marginRight: -10,
+                marginTop: 10,
+              },
+            ]}
+            resizeMode="cover"
           />
           <View style={styles.profileText}>
-            <Text style={styles.nameText}>Leslie Alexander</Text>
-            <Text style={styles.titleText}>Back End Developer</Text>
+            <Text style={styles.nameText}>{data.personil.nama_lengkap}</Text>
+            <Text style={styles.titleText}>{data.personil.npp}</Text>
           </View>
         </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.menuContainer}
-        onPress={() => navigation.navigate('UserProfile')}>
+        onPress={() => navigation.navigate('UserProfile', {data: data})}>
         <View style={styles.menuIcon}>
           <Ionicons name="md-person-circle-outline" size={32} color="#FFC700" />
         </View>

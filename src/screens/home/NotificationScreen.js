@@ -17,13 +17,13 @@ const Card = ({isActive, title, description, note}) => {
     <View
       style={[
         styles.card,
-        {backgroundColor: isActive === true ? colors.bgPrimary : colors.white},
+        {backgroundColor: isActive === true ? colors.primary : colors.white},
       ]}>
       <Icon
         name="calendar-check-outline"
         size={28}
         style={styles.cardIcon}
-        color={colors.dark}
+        color={colors.dark10}
       />
       <View style={styles.cardBody}>
         <Text style={styles.cardTitle}>{title}</Text>
@@ -43,7 +43,7 @@ const NotificationScreen = ({navigation}) => {
           name="arrow-left"
           size={24}
           color={colors.black}
-          onPress={() => navigation.navigate('HomeStack')}
+          onPress={() => navigation.goBack()}
         />
         <Text style={styles.headerTitle}>Notification</Text>
       </View>
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 20,
     display: 'flex',
+    elevation: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 5,

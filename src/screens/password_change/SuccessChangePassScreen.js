@@ -20,7 +20,7 @@ export default function SuccessChangePassScreen({navigation}) {
           Selamat password Anda berhasil diganti!
         </Text>
       </View>
-      <TouchableOpacity onPress={() => navigation.replace('UserProfile')}>
+      <TouchableOpacity onPress={() => navigation.replace('ProfileSetting')}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>GET STARTED</Text>
         </View>

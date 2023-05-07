@@ -1,256 +1,350 @@
-import React, {useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
+  StatusBar,
+  SafeAreaView,
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
-  Image,
-  StatusBar,
-  ImageBackground,
-  TextInput,
   ScrollView,
-  SafeAreaView,
+  ImageBackground,
 } from 'react-native';
+import {colors, fonts} from '../../components/Theme';
+import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Image, Button, Text} from '@rneui/themed';
+import {AuthContext} from '../../context/AuthContext';
+import Toast from '../../components/Toast';
+import axios from 'axios';
+import {useToast} from 'native-base';
+import HomeSkeleton from '../../components/HomeSkeleton';
+import {BASE_URL} from '../../../config';
 
-export default function UserProfileScreen({navigation, route}) {
-  useEffect(() => {
-    console.log(route);
-  }, []);
+const ProfilePage = ({navigation, route}) => {
+  const toast = useToast();
+  const {data} = route.params;
+
+  const showToast = () => {
+    toast.show({
+      render: () => {
+        return (
+          <Toast
+            message={'Fitur masih dalam proses pengembangan!'}
+            bgColor={colors.bgPrimary}
+          />
+        );
+      },
+      placement: 'top',
+    });
+  };
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={{flexDirection: 'row', marginTop: 0}}>
-        <View style={{width: '50%'}}>
+    <SafeAreaView>
+      <StatusBar backgroundColor={'#F5F7FB'} barStyle={'dark-content'} />
+      <View style={styles.header}>
+        <Icon
+          name="arrow-left"
+          size={24}
+          color={colors.black}
+          onPress={() => navigation.goBack()}
+        />
+        <Text style={styles.headerTitle}>User Profile</Text>
+      </View>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.profileCard}>
           <ImageBackground
-            style={styles.leftContainer}
-            resizeMode="contain"
-            imageStyle={{
-              alignSelf: 'flex-end',
-              marginLeft: -60,
-              marginTop: 70,
-            }}
-            source={require('../../assets/ellipse.png')}
-          />
+            source={require('../../assets/backgroundCard.png')}
+            resizeMode={'cover'}
+            borderRadius={20}
+            style={styles.profileCardBody}>
+            <Image
+              source={{
+                uri: 'https://berita.99.co/wp-content/uploads/2022/06/foto-profil-keren.jpg',
+              }}
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 35,
+                marginRight: 10,
+              }}
+              resizeMode="cover"
+            />
+            <View>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                }}>
+                {data.personil.nama_lengkap}
+              </Text>
+              <Text style={{fontSize: 12, fontFamily: fonts.poppins}}>
+                {data.personil.npp}
+              </Text>
+            </View>
+          </ImageBackground>
         </View>
-        <View style={{width: '50%'}}>
-          <ImageBackground
-            style={styles.righttContainer}
-            resizeMode="contain"
-            imageStyle={{
-              alignSelf: 'flex-end',
-              marginLeft: 40,
-            }}
-            source={require('../../assets/group.png')}
-          />
-        </View>
-        <View style={styles.profileContainer}>
-          <Image
-            source={require('../../assets/avatar.png')}
-            fadeDuration={0}
-            style={styles.avatar}
-          />
-          <View style={styles.profileText}>
-            <Text style={styles.nameText}>Leslie Alexander</Text>
-            <Text style={styles.titleText}>Back End Developer</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.menuContainer, styles.shadowProp]}
-        onPress={() => {
-          navigation.navigate('EditProfile');
-        }}>
-        <View style={styles.menuIcon}>
-          <Icon name="pencil" size={25} color="#FFD60A" />
-        </View>
-        <View style={styles.menuBar}>
-          <Text style={styles.menuText}>Edit Profile</Text>
-        </View>
-      </TouchableOpacity>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{padding: 10, width: '100%'}}>
-        <View style={styles.formContainer}>
-          <Text style={{fontSize: 11}}>NPP</Text>
-          <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-            <TextInput editable={false} style={styles.textInput}>
-              989382983982
-            </TextInput>
-          </View>
-        </View>
-        <View style={styles.formContainer}>
-          <Text style={{fontSize: 11}}>NIK</Text>
-          <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-            <TextInput editable={false} style={styles.textInput}>
-              317112323131
-            </TextInput>
-          </View>
-        </View>
-        <View style={styles.formContainer}>
-          <Text style={{fontSize: 11}}>NPWP</Text>
-          <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-            <TextInput editable={false} style={styles.textInput}>
-              317112323131
-            </TextInput>
-          </View>
-        </View>
-        <View style={styles.formContainer}>
-          <Text style={{fontSize: 11}}>Nama Lengkap</Text>
-          <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-            <TextInput editable={false} style={styles.textInput}>
-              Leslie Alexander
-            </TextInput>
-          </View>
-        </View>
-        <View style={styles.formContainer}>
-          <Text style={{fontSize: 11}}>Nama Panggilan</Text>
-          <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-            <TextInput editable={false} style={styles.textInput}>
-              Leslie
-            </TextInput>
-          </View>
-        </View>
-        <View style={styles.formContainer}>
-          <Text style={{fontSize: 11}}>Email</Text>
-          <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-            <TextInput editable={false} style={styles.textInput}>
-              lesliealexander@gmail.com
-            </TextInput>
-          </View>
-        </View>
-        <View style={styles.formContainer}>
-          <Text style={{fontSize: 11}}>Nomor HP</Text>
-          <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-            <TextInput editable={false} style={styles.textInput}>
-              081223344556
-            </TextInput>
-          </View>
-        </View>
-        <View style={styles.formContainerHorizontal}>
-          <View style={styles.formSidebySideContainer}>
-            <Text style={{fontSize: 11}}>Tempat Lahir</Text>
-            <View
-              style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-              <TextInput editable={false} style={styles.textInput}>
-                Surakarta
-              </TextInput>
+        <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          decelerationRate="fast"
+          style={{width: 350, marginHorizontal: 30}}>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+            }}>
+            <View style={styles.menuContainerScroll}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                  marginTop: 18,
+                  marginLeft: 8,
+                }}>
+                Cuti Besar
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                  marginTop: 20,
+                  marginLeft: 72,
+                  color: '#FFD60A',
+                }}>
+                {data.cuti_besar}
+              </Text>
+            </View>
+            <View style={styles.menuContainerScroll}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                  marginTop: 10,
+                  marginLeft: 8,
+                }}>
+                Poin Tahun Penilaian 2022
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                  marginTop: 32,
+                  marginLeft: -165,
+                  color: '#00B658',
+                }}>
+                {data.personil.poin}
+              </Text>
+            </View>
+            <View style={styles.menuContainerScroll}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                  marginTop: 10,
+                  marginLeft: 8,
+                }}>
+                Pensiun
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                  marginTop: 10,
+                  marginLeft: 84,
+                  color: '#9747FF',
+                }}>
+                {data.pensiun}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: '700',
+                  marginTop: 12,
+                  marginLeft: 6,
+                  color: '#AFAFAF',
+                }}>
+                Tahun
+              </Text>
+              <Progress.Bar
+                progress={0.3}
+                width={200}
+                style={{
+                  marginLeft: -195,
+                  marginTop: 40,
+                }}
+                color={'#9747FF'}
+              />
+            </View>
+            <View style={styles.menuContainerScroll}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                  marginTop: 10,
+                  marginLeft: 8,
+                }}>
+                Lama Masa Kerja
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: 'bold',
+                  marginTop: 10,
+                  marginLeft: 44,
+                  color: '#18A0FB',
+                }}>
+                {data.lama_masa_kerja}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontFamily: fonts.poppins_b,
+                  fontWeight: '700',
+                  marginTop: 12,
+                  marginLeft: 6,
+                  color: '#AFAFAF',
+                }}>
+                Tahun
+              </Text>
+              <Progress.Bar
+                progress={0.3}
+                width={200}
+                style={{
+                  marginLeft: -195,
+                  marginTop: 40,
+                }}
+                color={'#18A0FB'}
+              />
             </View>
           </View>
-          <View style={styles.formSidebySideContainer}>
-            <Text style={{fontSize: 11}}>Tanggal Lahir</Text>
-            <View
-              style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-              <TextInput editable={false} style={styles.textInput}>
-                20 Oktober 1998
-              </TextInput>
-            </View>
-          </View>
+        </ScrollView>
+        <View style={styles.cvWrapper}>
+          <TouchableOpacity style={styles.cvMenu} onPress={showToast}>
+            <Icon name="text-account" size={32} color="#FFC700" />
+            <Text style={styles.menuText}>CV Internal</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cvMenu}
+            onPress={() => {
+              navigation.navigate('CVScreen');
+            }}>
+            <Icon name="account-details-outline" size={32} color="#FFC700" />
+            <Text style={styles.menuText}>CV Eksternal</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.formContainerHorizontal}>
-          <View style={styles.formSidebySideContainer}>
-            <Text style={{fontSize: 11}}>Umur</Text>
-            <View
-              style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-              <TextInput editable={false} style={styles.textInput}>
-                24 Tahun
-              </TextInput>
-            </View>
+        <TouchableOpacity
+          style={styles.menuContainer}
+          onPress={() => {
+            navigation.navigate('DetailProfile');
+          }}>
+          <View style={styles.menuIcon}>
+            <Icon name="account-circle-outline" size={32} color="#FFC700" />
           </View>
-          <View style={styles.formSidebySideContainer}>
-            <Text style={{fontSize: 11}}>Agama</Text>
-            <View
-              style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-              <TextInput editable={false} style={styles.textInput}>
-                Islam
-              </TextInput>
-            </View>
+          <View style={styles.menuBar}>
+            <Text style={styles.menuText}>Profile</Text>
           </View>
-        </View>
-        <View style={styles.formContainerHorizontal}>
-          <View style={styles.formSidebySideContainer}>
-            <Text style={{fontSize: 11}}>Golongan Darah</Text>
-            <View
-              style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-              <TextInput editable={false} style={styles.textInput}>
-                O
-              </TextInput>
-            </View>
+          <View style={styles.menuIconRight}>
+            <Icon name="chevron-right" size={32} color={colors.dark20} />
           </View>
-          <View style={styles.formSidebySideContainer}>
-            <Text style={{fontSize: 11}}>Jenis Kelamin</Text>
-            <View
-              style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-              <TextInput editable={false} style={styles.textInput}>
-                Perempuan
-              </TextInput>
-            </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuContainer} onPress={showToast}>
+          <View style={styles.menuIcon}>
+            <Icon name="school" size={32} color="#FFC700" />
           </View>
-        </View>
-        <View style={styles.formContainerHorizontal}>
-          <View style={styles.formSidebySideContainer}>
-            <Text style={{fontSize: 11}}>Status Pernikahan</Text>
-            <View
-              style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-              <TextInput editable={false} style={styles.textInput}>
-                Belum Menikah
-              </TextInput>
-            </View>
+          <View style={styles.menuBar}>
+            <Text style={styles.menuText}>Pendidikan</Text>
           </View>
-        </View>
+          <View style={styles.menuIconRight}>
+            <Icon name="chevron-right" size={32} color={colors.dark20} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuContainer} onPress={showToast}>
+          <View style={styles.menuIcon}>
+            <Icon name="briefcase-variant" size={32} color="#FFC700" />
+          </View>
+          <View style={styles.menuBar}>
+            <Text style={styles.menuText}>Kepegawaian</Text>
+          </View>
+          <View style={styles.menuIconRight}>
+            <Icon name="chevron-right" size={32} color={colors.dark20} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuContainer} onPress={showToast}>
+          <View style={styles.menuIcon}>
+            <Icon name="account-multiple-plus" size={32} color="#FFC700" />
+          </View>
+          <View style={styles.menuBar}>
+            <Text style={styles.menuText}>Ketenagakerjaan</Text>
+          </View>
+          <View style={styles.menuIconRight}>
+            <Icon name="chevron-right" size={32} color={colors.dark20} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuContainer} onPress={showToast}>
+          <View style={styles.menuIcon}>
+            <Icon name="clipboard-outline" size={32} color="#FFC700" />
+          </View>
+          <View style={styles.menuBar}>
+            <Text style={styles.menuText}>Kinerja</Text>
+          </View>
+          <View style={styles.menuIconRight}>
+            <Icon name="chevron-right" size={32} color={colors.dark20} />
+          </View>
+        </TouchableOpacity>
+        <View style={{marginBottom: 150}} />
       </ScrollView>
-
-      <StatusBar style="auto" />
     </SafeAreaView>
   );
-}
+};
+
+export default ProfilePage;
 
 const styles = StyleSheet.create({
-  avatar: {
-    height: 71,
-    top: 5,
-    width: 66,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#f6f6f6',
+  cvMenu: {
     alignItems: 'center',
-    // margin: 10,
-    padding: 20,
+    backgroundColor: '#FFF',
+    borderColor: '#B6B6B6',
+    borderRadius: 10,
+    borderWidth: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    width: '48%',
   },
-  formContainer: {
-    width: '100%',
-    // marginTop: 20,
-    marginBottom: 20,
-  },
-  formContainerHorizontal: {
-    width: '100%',
-    // marginTop: 20,
-    marginBottom: 20,
+  cvWrapper: {
+    alignItems: 'center',
+    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-
-  formSidebySideContainer: {
-    width: '47%',
-    // marginTop: 20,
-  },
-
-  imgBackground: {
-    resizeMode: 'contain',
-  },
-  leftContainer: {
-    backgroundColor: '#FFD60A',
-    borderBottomLeftRadius: 20,
-    borderTopLeftRadius: 20,
-    flexDirection: 'row',
-    height: 120,
-    marginBottom: 5,
+    marginHorizontal: 30,
     marginTop: 20,
-    width: '100%',
   },
-
+  header: {
+    alignItems: 'center',
+    backgroundColor: '#F5F7FB',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 30,
+    paddingVertical: 30,
+  },
+  headerTitle: {
+    fontFamily: fonts.poppins_b,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 20,
+  },
   menuBar: {
     height: 30,
     justifyContent: 'center',
@@ -259,74 +353,65 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     alignItems: 'flex-start',
-    backgroundColor: 'blue',
     backgroundColor: '#FFF',
-    borderRadius: 19,
+    borderRadius: 10,
     flexDirection: 'row',
-    height: 50,
-    margin: 10,
+    marginBottom: 2,
+    marginLeft: 32,
+    marginRight: 10,
+    marginTop: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    width: '85%',
+  },
+  menuContainerScroll: {
+    alignItems: 'flex-start',
+    backgroundColor: '#FFF',
+    borderColor: colors.dark30,
+    borderRadius: 20,
+    borderWidth: 1,
+    flexDirection: 'row',
+    height: 80,
+    marginBottom: 2,
+    marginRight: 20,
+    marginTop: 20,
     padding: 10,
     paddingHorizontal: 15,
-    width: '100%',
+    width: 240,
   },
-
   menuIcon: {
     height: 30,
     justifyContent: 'center',
     width: 30,
   },
-
+  menuIconRight: {
+    height: 30,
+    justifyContent: 'flex-end',
+    marginLeft: 35,
+    width: 30,
+  },
   menuText: {
     color: '#B6B6B6',
-    fontWeight: 'bold',
+    fontWeight: 'regular',
   },
-
-  nameText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-
-  profileContainer: {
-    alignContent: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    left: 30,
-    position: 'absolute',
-    top: 40,
-  },
-  profileIcon: {
-    height: 100,
-    justifyContent: 'center',
-    width: 90,
-  },
-
-  profileText: {
-    height: 90,
-    justifyContent: 'center',
-    marginLeft: 20,
-    width: 200,
-  },
-  righttContainer: {
-    backgroundColor: '#FFD60A',
-    borderBottomRightRadius: 20,
-    borderTopRightRadius: 20,
-    flexDirection: 'row',
-    height: 120,
-    marginBottom: 5,
+  profileCard: {
+    height: 'auto',
     marginTop: 20,
+    paddingHorizontal: 30,
+    position: 'relative',
     width: '100%',
   },
-
-  shadowProp: {
-    shadowColor: '#171717',
-    shadowOffset: {width: -2, height: 4},
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+  profileCardBody: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 30,
+    paddingVertical: 30,
   },
-
-  textInput: {color: '#000000', fontSize: 16, fontWeight: 'bold'},
-
-  titleText: {
-    fontSize: 13,
+  scrollView: {
+    backgroundColor: '#F5F7FB',
+    height: '100%',
+    width: '100%',
   },
 });

@@ -10,7 +10,7 @@ import HomeScreen from '../screens/home/HomeScreen';
 import AbsensiDetailScreen from '../screens/absensi/AbsensiDetailScreen';
 import JamTerbuangScreen from '../screens/jamterbuang/JamTerbuangScreen';
 import DetailScreen from '../screens/jamterbuang/DetailScreen';
-import UserProfileScreen from '../screens/profile/UserProfileScreen';
+import UserProfileScreen from '../screens/profile/DetailProfileScreen';
 import SettingProfile from '../screens/profile/SettingProfile';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import ChangePassScreen from '../screens/password_change/ChangePassScreen';

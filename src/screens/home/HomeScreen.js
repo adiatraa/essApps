@@ -18,6 +18,8 @@ import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
 import {BASE_URL} from '../../../config';
 import HomeSkeleton from '../../components/HomeSkeleton';
+import {useToast} from 'native-base';
+import Toast from '../../components/Toast';
 
 const Feature = ({icon, title, onPress}) => {
   return (
@@ -28,54 +30,69 @@ const Feature = ({icon, title, onPress}) => {
         color={colors.primary}
         style={styles.featureIcon}
       />
+      {/* <AddressCard /> */}
       <Text style={styles.featureTitle}>{title}</Text>
     </TouchableOpacity>
   );
 };
 
 const HomeScreen = ({navigation}) => {
+  const toast = useToast();
   const {userToken, userInfo} = useContext(AuthContext); // Memanggil user info dan user token dari context
   const [status, setStatus] = useState('loading'); // Loading status
-  const [data, setData] = useState({
-    agama: '1',
-    created_date: '2023-03-15T21:00:07.652Z',
-    email_lain: 'arif@gmail.com',
-    golongan_darah: 'O',
-    jenis_kelamin: 'L',
-    kode_eselon: '1',
-    kode_jabatan: 6744,
-    kode_jenis_jabatan: 'S',
-    kode_lokasi_tugas: 'B',
-    kode_pendidikan: 9,
-    kode_status_aktif: 1,
-    kode_status_pegawai: 1,
-    kode_status_pernikahan: 'TK0',
-    kode_unit: 823,
-    nama_lengkap: 'ARIF,DR.,IR.',
-    nama_panggil: 'ARIF',
-    no_hp: '08111111111',
-    no_ktp: '3,13101E+15',
-    no_npwp: '123.456.789.123',
-    npp: '801236',
-    tanggal_lahir: '1996-02-15T00:00:00.000Z',
-    tempat_lahir: 'JAKARTA',
-    updated_by: 'ADMIN',
-  });
-  // const [data, setData] = useState(null);
-
+  // const [data, setData] = useState({
+  //   agama: '1',
+  //   created_date: '2023-03-15T21:00:07.652Z',
+  //   email_lain: 'arif@gmail.com',
+  //   golongan_darah: 'O',
+  //   jenis_kelamin: 'L',
+  //   kode_eselon: '1',
+  //   kode_jabatan: 6744,
+  //   kode_jenis_jabatan: 'S',
+  //   kode_lokasi_tugas: 'B',
+  //   kode_pendidikan: 9,
+  //   kode_status_aktif: 1,
+  //   kode_status_pegawai: 1,
+  //   kode_status_pernikahan: 'TK0',
+  //   kode_unit: 823,
+  //   nama_lengkap: 'ARIF,DR.,IR.',
+  //   nama_panggil: 'ARIF',
+  //   no_hp: '08111111111',
+  //   no_ktp: '3,13101E+15',
+  //   no_npwp: '123.456.789.123',
+  //   npp: '801236',
+  //   tanggal_lahir: '1996-02-15T00:00:00.000Z',
+  //   tempat_lahir: 'JAKARTA',
+  //   updated_by: 'ADMIN',
+  // });
+  const [data, setData] = useState({});
   const fetchMyAPI = async () => {
     try {
       axios
-        .get(BASE_URL + '/user-profile/' + userInfo?.npp, {
+        .get(BASE_URL + '/user-profile/' + userInfo.npp, {
           headers: {'x-access-token': userToken},
         }) // Get API dengan parameter NPP dengan keamanan x-access-token token
         .then(response => {
-          setData(response.data.data.user); // Mengisi data dengan data dari response API
+          setData(response.data.data.personil); // Mengisi data dengan data dari response API
         })
         .catch(e => {
           // logout(); // Apabla terdapat error maka akan logout
         });
     } catch {}
+  };
+
+  const showToast = () => {
+    toast.show({
+      render: () => {
+        return (
+          <Toast
+            message={'Fitur masih dalam proses pengembangan!'}
+            bgColor={colors.bgPrimary}
+          />
+        );
+      },
+      placement: 'top',
+    });
   };
 
   useEffect(() => {
@@ -84,10 +101,10 @@ const HomeScreen = ({navigation}) => {
     setStatus('success'); // Status loading false
 
     // const intervalId = setInterval(() => {
-    //   fetchMyAPI();
+    //   fetchMyAPI;
     // }, 1000 * 5); // in milliseconds
     // return () => clearInterval(intervalId);
-  }, []);
+  }, [toast]);
 
   if (status === 'loading') {
     return <HomeSkeleton />; // Apabila status loading true maka akan menampilkan Skeleton
@@ -142,7 +159,7 @@ const HomeScreen = ({navigation}) => {
                   fontFamily: fonts.poppins_b,
                   fontWeight: 'bold',
                 }}>
-                {data?.nama_lengkap}
+                {data.nama_lengkap}
               </Text>
               <Text style={{fontSize: 12, fontFamily: fonts.poppins}}>
                 {data.npp}
@@ -224,16 +241,32 @@ const HomeScreen = ({navigation}) => {
               icon={'timelapse'}
               onPress={() => navigation.navigate('JamTerbuang')}
             />
-            <Feature title={'Kesehatan'} icon={'heart-plus-outline'} />
+            <Feature
+              title={'Kesehatan'}
+              icon={'heart-plus-outline'}
+              onPress={showToast}
+            />
           </View>
           <Text style={styles.subTitle}>Benefit</Text>
           <View style={styles.divider} />
           <View style={styles.featureWrapper}>
-            <Feature title={'Gaji'} icon={'hand-coin'} />
-            <Feature title={'Penghasilan Lain'} icon={'hand-coin-outline'} />
-            <Feature title={'Saldo Depan'} icon={'content-paste'} />
-            <Feature title={'Saldo SWK'} icon={'inbox'} />
-            <Feature title={'Bukti Potong 1721'} icon={'credit-card-outline'} />
+            <Feature onPress={showToast} title={'Gaji'} icon={'hand-coin'} />
+            <Feature
+              onPress={showToast}
+              title={'Penghasilan Lain'}
+              icon={'hand-coin-outline'}
+            />
+            <Feature
+              onPress={showToast}
+              title={'Saldo Depan'}
+              icon={'content-paste'}
+            />
+            <Feature onPress={showToast} title={'Saldo SWK'} icon={'inbox'} />
+            <Feature
+              onPress={showToast}
+              title={'Bukti Potong 1721'}
+              icon={'credit-card-outline'}
+            />
           </View>
         </View>
       </ScrollView>
@@ -361,5 +394,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 20,
     paddingHorizontal: 30,
+  },
+  toast: {
+    backgroundColor: colors.bgPrimary,
   },
 });

@@ -1,30 +1,42 @@
-import {View, Text, StyleSheet} from 'react-native';
-import React from 'react';
-import {Dialog} from '@rneui/themed';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {StyleSheet, Text, View} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import {colors} from './Theme';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Toast = () => {
+const Toast = ({bgColor, message, icon, color}) => {
   return (
-    <Dialog
-      isVisible={false}
-      overlayStyle={styles.toast}
-      animationType={'fade'}>
-      <Icon name="alert-circle-outline" color={colors.success} size={48} />
-      <Text>Anda berada di luar jangkauan!</Text>
-    </Dialog>
+    <View style={[styles.toast, {backgroundColor: bgColor}]}>
+      <Icon
+        name={icon}
+        size={16}
+        color={color}
+        style={{marginLeft: -5, paddingRight: 10}}
+      />
+      <Text style={{color: color}}>{message}</Text>
+    </View>
   );
 };
+
+Toast.defaultProps = {
+  color: colors.dark10,
+  bgColor: colors.white,
+  message: 'This is toast!',
+  icon: 'alert-outline',
+};
+
+export default Toast;
 
 const styles = StyleSheet.create({
   toast: {
     alignItems: 'center',
-    backgroundColor: colors.bgSuccess,
-    borderRadius: 20,
+    borderColor: colors.dark50,
+    borderRadius: 5,
+    borderWidth: 1,
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
 });
-
-export default Toast;

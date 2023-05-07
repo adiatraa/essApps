@@ -47,6 +47,52 @@ const JamTerbuangScreen = ({navigation}) => {
   const [datePickerVisible, setDatePickerVisible] = useState(false); // Status visible datepicker
   const {userToken, userInfo} = useContext(AuthContext);
   const [data, setData] = useState([]);
+  // const [data, setData] = useState([
+  //   {
+  //     tanggal: '2023-04-04',
+  //     npp: '801236',
+  //     jam_telat: 1,
+  //     jam_pulang_cepat: 1,
+  //     jam_kk_tidak_kembali: 0,
+  //     jam_tidak_ada_keterangan: 2,
+  //     total_jam_terbuang: 4,
+  //     uang_jaga: 0,
+  //     uang_makan: 0,
+  //   },
+  //   {
+  //     tanggal: '2023-04-03',
+  //     npp: '801236',
+  //     jam_telat: 1,
+  //     jam_pulang_cepat: 1,
+  //     jam_kk_tidak_kembali: 0,
+  //     jam_tidak_ada_keterangan: 2,
+  //     total_jam_terbuang: 4,
+  //     uang_jaga: 0,
+  //     uang_makan: 0,
+  //   },
+  //   {
+  //     tanggal: '2023-04-02',
+  //     npp: '801236',
+  //     jam_telat: 1,
+  //     jam_pulang_cepat: 1,
+  //     jam_kk_tidak_kembali: 0,
+  //     jam_tidak_ada_keterangan: 2,
+  //     total_jam_terbuang: 4,
+  //     uang_jaga: 0,
+  //     uang_makan: 0,
+  //   },
+  //   {
+  //     tanggal: '2023-04-01',
+  //     npp: '801236',
+  //     jam_telat: 1,
+  //     jam_pulang_cepat: 1,
+  //     jam_kk_tidak_kembali: 0,
+  //     jam_tidak_ada_keterangan: 2,
+  //     total_jam_terbuang: 4,
+  //     uang_jaga: 0,
+  //     uang_makan: 0,
+  //   },
+  // ]);
 
   // Get API riwayat Jam Terbuang
   const getJamTerbuangAPI = async () => {
@@ -216,7 +262,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    backgroundColor: colors.white,
+    backgroundColor: colors.bgWhite,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
