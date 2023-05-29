@@ -12,8 +12,8 @@ export default function LoginPage({navigation}) {
   const {login} = useContext(AuthContext);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
-  const [NPP, setNPP] = useState('801236');
-  const [password, setPassword] = useState('12345678');
+  const [NPP, setNPP] = useState('');
+  const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
   const [eyeStatus, setEyeStatus] = useState('eye-closed');
 
@@ -183,7 +183,9 @@ export default function LoginPage({navigation}) {
             onChangeText={text => setPassword(text)}
           />
         </KeyboardAvoidingView>
-        <Text style={{marginVertical: 20, textAlign: 'right', width: 280}} onPress={()=>navigation.navigate('PasswordResetSendEmail')} >
+        <Text style={{marginVertical: 20, textAlign: 'right', width: 280}} onPress={()=>
+          navigation.navigate('PasswordResetSendEmail')}
+           >
           Forgot Password?
         </Text>
         <Button
@@ -200,6 +202,7 @@ export default function LoginPage({navigation}) {
           containerStyle={{marginBottom: 150}}
           onPress={() => {
             login(NPP, password);
+            setIsButtonLoading(true);
             // navigation.replace('HomeTabs');
           }}
         />

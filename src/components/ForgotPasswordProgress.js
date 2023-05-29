@@ -25,7 +25,12 @@ const ForgotPasswordProgress = ({status}) => {
           <View style={styles.progressIconActive}>
             <Icon name="email" color={colors.black} size={16} />
           </View>
-          <Text style={{fontWeight: 'bold', fontSize: 12, color: colors.black}}>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 12,
+              color: status === 'send' ? colors.black : styles.dark,
+            }}>
             Email Address
           </Text>
         </View>
@@ -38,7 +43,14 @@ const ForgotPasswordProgress = ({status}) => {
             }>
             <Icon name="email-newsletter" color={colors.black} size={16} />
           </View>
-          <Text style={{fontWeight: 'bold', fontSize: 12}}>Get OTP Code</Text>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 12,
+              color: status === 'verify' ? colors.black : styles.dark,
+            }}>
+            Get OTP Code
+          </Text>
         </View>
         <View style={styles.progressDetail}>
           <View
@@ -49,7 +61,14 @@ const ForgotPasswordProgress = ({status}) => {
             }>
             <Icon name="key-change" color={colors.black} size={16} />
           </View>
-          <Text style={{fontWeight: 'bold', fontSize: 12}}>Create New</Text>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 12,
+              color: status === 'change' ? colors.black : styles.dark,
+            }}>
+            Create New
+          </Text>
         </View>
       </View>
     </View>

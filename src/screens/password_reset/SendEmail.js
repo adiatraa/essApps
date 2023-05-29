@@ -9,13 +9,78 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors, fonts} from '../../components/Theme';
+import axios from 'axios';
+import {Box, Pressable, VStack, useToast} from 'native-base';
 import {Input, Button} from '@rneui/themed';
+import {colors, fonts} from '../../components/Theme';
 import ForgotPasswordProgress from '../../components/ForgotPasswordProgress';
+import {BASE_URL} from '../../../config';
+import Toast from '../../components/Toast';
 
 const SendEmail = ({navigation}) => {
   const [NPP, setNPP] = useState('');
   const [KTP, setKTP] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
+
+  const handleSend = async () => {
+    setIsLoading(true);
+    try {
+      axios
+        .put(BASE_URL + '/forget-password', {npp: NPP, no_ktp: KTP})
+        .then(response => {
+          if (response.data.message === 'NPP or No.KTP not found') {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast
+                    message={'User tidak ditemukan!'}
+                    bgColor={colors.danger}
+                    color={colors.white}
+                  />
+                );
+              },
+              placement: 'top',
+            });
+            setIsLoading(false);
+          } else if (response.data.success === true) {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast
+                    message={'OTP telah dikirimkan ke email anda!'}
+                    bgColor={colors.success}
+                    color={colors.white}
+                  />
+                );
+              },
+              placement: 'top',
+            });
+            const delay = setTimeout(() => {
+              navigation.replace('PasswordResetVerify', {
+                npp: NPP,
+                no_ktp: KTP,
+              });
+            }, 1000);
+          } else {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast
+                    message={'OTP gagal dikirim, coba lagi!'}
+                    bgColor={colors.danger}
+                    color={colors.white}
+                  />
+                );
+              },
+              placement: 'top',
+            });
+            setIsLoading(false);
+          }
+        });
+    } catch {}
+  };
+
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.white} />
@@ -26,9 +91,9 @@ const SendEmail = ({navigation}) => {
           color={colors.black}
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.headerTitle}>Absensi</Text>
+        <Text style={styles.headerTitle}>Reset Email</Text>
       </View>
-      <ScrollView style={styles.container}>
+      <Box style={styles.container}>
         <ForgotPasswordProgress status={'send'} />
         <View style={styles.description}>
           <Text
@@ -78,6 +143,7 @@ const SendEmail = ({navigation}) => {
           />
         </KeyboardAvoidingView>
         <Button
+          loading={isLoading}
           title="Kirim Kode"
           titleStyle={{
             fontFamily: fonts.poppins_b,
@@ -92,9 +158,9 @@ const SendEmail = ({navigation}) => {
             borderRadius: 10,
           }}
           containerStyle={{width: 280, left: '50%', marginLeft: -140}}
-          onPress={() => navigation.navigate('PasswordResetVerify')}
+          onPress={handleSend}
         />
-      </ScrollView>
+      </Box>
     </SafeAreaView>
   );
 };

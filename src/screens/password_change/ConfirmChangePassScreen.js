@@ -55,7 +55,7 @@ export default function ConfirmChangePassScreen({navigation}) {
     } else {
       try {
         axios
-          .post(
+          .put(
             BASE_URL + '/update-password',
             {npp: userInfo.npp, new_password: newPassword},
             {

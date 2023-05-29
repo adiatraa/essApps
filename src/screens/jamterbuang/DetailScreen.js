@@ -1,24 +1,19 @@
-import {
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-  View,
-  ScrollView,
-} from 'react-native';
+import {StyleSheet, SafeAreaView, StatusBar, View} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, fonts} from '../../components/Theme';
 import {Text} from '@rneui/themed';
 import Timeline from '../../components/Timeline';
 import {getDate} from '../../components/Date';
+import {ScrollView, Box, HStack, VStack} from 'native-base';
 
 const DetailScreen = ({navigation, route}) => {
   const {data} = route.params; // Get data parameter dari props
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.secondary} />
-      <View>
-        <View style={styles.header}>
+      <Box>
+        <HStack alignItems={'center'} px={5} pt={5} bg={colors.secondary}>
           <Icon
             name="arrow-left"
             size={24}
@@ -26,16 +21,21 @@ const DetailScreen = ({navigation, route}) => {
             onPress={() => navigation.goBack()}
           />
           <Text style={styles.headerTitle}>Detail Jam Terbuang</Text>
-        </View>
-        <View style={styles.headerDescription}>
+        </HStack>
+        <Box style={styles.headerDescription}>
           <Icon name="calendar-month-outline" size={22} color={colors.white} />
           <Text style={styles.headerDate}>
             {getDate(new Date(data.tanggal))}
           </Text>
-        </View>
-      </View>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.content}>
+        </Box>
+      </Box>
+      <ScrollView bg={colors.secondary} minH={'100%'}>
+        <VStack
+          bg={colors.bgWhite}
+          borderTopLeftRadius={80}
+          px={7}
+          py={16}
+          mb={200}>
           <Timeline title={'Jam Telat'} description={data.jam_telat + ' Jam'} />
           <Timeline
             title={'Jam Pulang Cepat'}
@@ -54,7 +54,7 @@ const DetailScreen = ({navigation, route}) => {
             description={data.total_jam_terbuang + ' Jam'}
             active={true}
           />
-        </View>
+        </VStack>
       </ScrollView>
     </SafeAreaView>
   );
@@ -63,25 +63,6 @@ const DetailScreen = ({navigation, route}) => {
 export default DetailScreen;
 
 const styles = StyleSheet.create({
-  content: {
-    backgroundColor: colors.bgWhite,
-    borderTopLeftRadius: 80,
-    marginBottom: 100,
-    marginTop: 20,
-    minHeight: 700,
-    paddingHorizontal: 30,
-    paddingVertical: 80,
-    width: '100%',
-  },
-  header: {
-    alignItems: 'center',
-    backgroundColor: colors.secondary,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 20,
-    paddingTop: 30,
-  },
   headerDate: {
     color: colors.white,
     fontFamily: fonts.poppins,
@@ -105,10 +86,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: -5,
     marginLeft: 20,
-  },
-  scrollView: {
-    backgroundColor: colors.secondary,
-    height: '100%',
-    width: '100%',
   },
 });

@@ -17,6 +17,7 @@ const colors = {
   success: '#00B658',
   bgSuccess: '#B5F5D1',
   blue: '#2663FF',
+  navy: '#001D3D',
 };
 
 const fonts = {

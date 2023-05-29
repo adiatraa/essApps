@@ -1,35 +1,84 @@
 import {StyleSheet, View, ScrollView, PermissionsAndroid} from 'react-native';
-import React, {useState, useContext} from 'react';
+import React, {useState} from 'react';
 import {colors, fonts} from '../../components/Theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Button, Dialog, Text} from '@rneui/themed';
+import {Button} from '@rneui/themed';
 import * as Animatable from 'react-native-animatable';
 import Geolocation from 'react-native-geolocation-service';
-import axios from 'axios';
-import {AuthContext} from '../../context/AuthContext';
-import {BASE_URL} from '../../../config';
+import {centerPoint} from '../../../config';
 import Alert from '../../components/Alert';
 import {getDate, getTime} from '../../components/Date';
+import {Box, Center, useToast, Text} from 'native-base';
 
-const ClockInScreen = ({status, handleSend}) => {
-  const {userToken, userInfo} = useContext(AuthContext);
+const DangerDialog = () => {
+  return (
+    <Center
+      bg={colors.white}
+      mx={1}
+      px={10}
+      py={16}
+      mb={10}
+      borderRadius={20}
+      borderColor={colors.dark30}
+      borderWidth={0.5}>
+      <Box
+        position={'absolute'}
+        top={-30}
+        bg={colors.danger}
+        p={5}
+        borderRadius={10}
+        borderColor={colors.dark30}
+        borderWidth={0.5}>
+        <Icon name="close" color={colors.white} size={36} />
+      </Box>
+      <Text fontFamily={fonts.poppins_sb} fontSize={20} textAlign={'center'}>
+        Peringatan!
+      </Text>
+      <Text fontFamily={fonts.poppins} fontSize={12} textAlign={'center'}>
+        Mohon untuk berada dalam radius 1 km PT PINDAD .
+      </Text>
+    </Center>
+  );
+};
+
+const ClockInScreen = ({status, handleSend, hideSheet}) => {
   const [location, setLocation] = useState('');
-  const [danger, setDanger] = useState(false);
-  const [success, setSucccess] = useState(false);
   const [height, setHeight] = useState(350);
   const [radius, setRadius] = useState('');
   const [submitVisible, setSubmitVisible] = useState(false);
+  const toast = useToast();
 
-  // Cek radius user
-  const arePointsNear = (checkPoint, centerPoint, km) => {
-    var ky = 40000 / 360;
-    var kx = Math.cos((Math.PI * centerPoint.lat) / 180.0) * ky;
-    var dx = Math.abs(centerPoint.lng - checkPoint.lng) * kx;
-    var dy = Math.abs(centerPoint.lat - checkPoint.lat) * ky;
-    let radius = Math.sqrt(dx * dx + dy * dy) / 10000;
-    setRadius(radius.toFixed(2)); // Set radius dengan format KM
-    return Math.sqrt(dx * dx + dy * dy) / 10000 <= km; // Return true jika radius tidak lebih dari KM yang ditentukan
-  };
+  function getDistanceBetweenTwoPoints(cord1, cord2, unit) {
+    const lat1 = cord1.lat;
+    const lon1 = cord1.lng;
+    const lat2 = cord2.lat;
+    const lon2 = cord2.lng;
+
+    if (lat1 === lat2 && lon1 === lon2) {
+      return 0;
+    } else {
+      var radlat1 = (Math.PI * lat1) / 180;
+      var radlat2 = (Math.PI * lat2) / 180;
+      var theta = lon1 - lon2;
+      var radtheta = (Math.PI * theta) / 180;
+      var dist =
+        Math.sin(radlat1) * Math.sin(radlat2) +
+        Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      if (dist > 1) {
+        dist = 1;
+      }
+      dist = Math.acos(dist);
+      dist = (dist * 180) / Math.PI;
+      dist = dist * 60 * 1.1515;
+      if (unit === 'K') {
+        dist = dist * 1.609344;
+      }
+      if (unit === 'N') {
+        dist = dist * 0.8684;
+      }
+      return dist;
+    }
+  }
 
   // Meminta perijinan lokasi
   const requestLocationPermission = async () => {
@@ -44,12 +93,9 @@ const ClockInScreen = ({status, handleSend}) => {
           buttonPositive: 'OK',
         },
       );
-      console.log('granted', granted);
       if (granted === 'granted') {
-        console.log('You can use Geolocation');
         return true;
       } else {
-        console.log('You cannot use Geolocation');
         return false;
       }
     } catch (err) {
@@ -61,33 +107,40 @@ const ClockInScreen = ({status, handleSend}) => {
   const getLocation = () => {
     const result = requestLocationPermission();
     result.then(res => {
-      console.log('res is:', res);
       if (res) {
         Geolocation.getCurrentPosition(
           position => {
-            let centerPoint = {
-              lat: -7.559030526213746,
-              lng: 110.85834367179535,
-            };
             let location = {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             };
-            arePointsNear(location, centerPoint, 2) == false
-              ? setSubmitVisible(true)
-              : setSubmitVisible(false);
-            setLocation(location);
+            if (getDistanceBetweenTwoPoints(location, centerPoint, 'K') <= 3) {
+              setHeight(400);
+              setRadius(
+                getDistanceBetweenTwoPoints(location, centerPoint, 'K').toFixed(
+                  2,
+                ),
+              );
+              setSubmitVisible(true);
+            } else {
+              hideSheet();
+              setSubmitVisible(false);
+              toast.show({
+                render: () => {
+                  return <DangerDialog />;
+                },
+                placement: 'bottom',
+              });
+            }
           },
           error => {
             // See error code charts below.
-            console.log(error.code, error.message);
             setLocation(false);
           },
           {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
         );
       }
     });
-    console.log(location);
   };
 
   return (
@@ -105,7 +158,7 @@ const ClockInScreen = ({status, handleSend}) => {
           </View>
           <View style={styles.content}>
             <Text style={styles.subTitle}>Lokasi</Text>
-            {location === '' ? (
+            {radius === '' ? (
               <Button
                 title={'Get Location'}
                 icon={
@@ -120,7 +173,6 @@ const ClockInScreen = ({status, handleSend}) => {
                 containerStyle={styles.getLocationButtonContainer}
                 buttonStyle={styles.getLocationButton}
                 onPress={() => {
-                  setHeight(600);
                   getLocation();
                 }}
               />

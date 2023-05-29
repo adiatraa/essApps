@@ -34,7 +34,6 @@ export const AuthProvider = ({children}) => {
     setUserToken(null);
     AsyncStorage.removeItem('userToken');
     AsyncStorage.removeItem('userInfo');
-    AsyncStorage.removeItem('dataPersonil');
     setIsLoading(false);
   };
 
@@ -66,7 +65,14 @@ export const AuthProvider = ({children}) => {
 
   return (
     <AuthContext.Provider
-      value={{login, logout, newToken, userToken, userInfo, isLoading}}>
+      value={{
+        login,
+        logout,
+        newToken,
+        userToken,
+        userInfo,
+        isLoading,
+      }}>
       {children}
     </AuthContext.Provider>
   );

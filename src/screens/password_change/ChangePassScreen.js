@@ -66,7 +66,7 @@ export default function ChangePassScreen({navigation}) {
           color={colors.black}
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.headerTitle}>Absensi</Text>
+        <Text style={styles.headerTitle}>Change Password</Text>
       </View>
       <View style={styles.container}>
         <Text style={styles.text}>

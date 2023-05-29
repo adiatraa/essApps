@@ -1,6 +1,5 @@
 import {
   View,
-  Text,
   StyleSheet,
   StatusBar,
   KeyboardAvoidingView,
@@ -12,8 +11,12 @@ import {Button, Input} from '@rneui/themed';
 import {colors, fonts} from '../../components/Theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ForgotPasswordProgress from '../../components/ForgotPasswordProgress';
+import axios from 'axios';
+import {BASE_URL} from '../../../config';
+import Toast from '../../components/Toast';
+import {Pressable, VStack, useToast, Text} from 'native-base';
 
-const Verify = ({navigation}) => {
+const Verify = ({navigation, route}) => {
   const [otp1, setOtp1] = useState('');
   const [otp2, setOtp2] = useState('');
   const [otp3, setOtp3] = useState('');
@@ -27,6 +30,131 @@ const Verify = ({navigation}) => {
   const ref3 = useRef();
   const ref4 = useRef();
   const [fokus, setFokus] = useState('');
+  const {npp, no_ktp} = route.params;
+  const [token, setToken] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [seconds, setSeconds] = useState(null);
+  const [minutes, setMinutes] = useState(null);
+  const toast = useToast();
+
+  const handleSend = async () => {
+    setIsLoading(true);
+    try {
+      axios
+        .post(BASE_URL + '/verify-otp', {
+          npp: npp,
+          otp: otp1 + otp2 + otp3 + otp4,
+        })
+        .then(response => {
+          if (response.data.message === 'OTP is valid') {
+            setToken(response.data.token);
+            toast.show({
+              render: () => {
+                return (
+                  <Toast
+                    message={'Berhasil! Silahkan ganti password anda.'}
+                    bgColor={colors.success}
+                    color={colors.white}
+                  />
+                );
+              },
+              placement: 'top',
+            });
+            const delay = setTimeout(() => {
+              navigation.replace('PasswordReset', {
+                npp: npp,
+                token: response.data.token,
+              });
+            }, 1000);
+          } else if (response.data.message === 'OTP does not match') {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast
+                    message={'Kode OTP tidak sama! Coba lagi.'}
+                    bgColor={colors.danger}
+                    color={colors.white}
+                  />
+                );
+              },
+              placement: 'top',
+            });
+            setIsLoading(false);
+          } else {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast
+                    message={'Server error, coba lagi.'}
+                    bgColor={colors.danger}
+                    color={colors.white}
+                  />
+                );
+              },
+              placement: 'top',
+            });
+            setIsLoading(false);
+          }
+        });
+    } catch {}
+  };
+
+  const reSendEmail = async () => {
+    axios
+      .put(BASE_URL + '/forget-password', {npp: npp, no_ktp: no_ktp})
+      .then(response => {
+        if (response.data.success === true) {
+          toast.show({
+            render: () => {
+              return (
+                <Toast
+                  message={'OTP telah dikirimkan ke email anda!'}
+                  bgColor={colors.success}
+                  color={colors.white}
+                />
+              );
+            },
+            placement: 'top',
+          });
+          delaySend(3);
+        } else {
+          toast.show({
+            render: () => {
+              return (
+                <Toast
+                  message={'OTP gagal dikirim, coba lagi!'}
+                  bgColor={colors.danger}
+                  color={colors.white}
+                />
+              );
+            },
+            placement: 'top',
+          });
+        }
+      });
+  };
+
+  const delaySend = minutes => {
+    var seconds = 60;
+    var mins = minutes;
+    function tick() {
+      seconds--;
+      setSeconds(seconds);
+      setMinutes(mins - 1);
+      if (seconds > 0) {
+        setTimeout(tick, 1000);
+      } else {
+        if (mins > 1) {
+          delaySend(mins - 1);
+        } else {
+          setSeconds(null);
+          setMinutes(null);
+        }
+      }
+    }
+    tick();
+  };
+
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.white} />
@@ -37,7 +165,7 @@ const Verify = ({navigation}) => {
           color={colors.black}
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.headerTitle}>Absensi</Text>
+        <Text style={styles.headerTitle}>Verifikasi OTP</Text>
       </View>
       <ScrollView style={styles.container}>
         <ForgotPasswordProgress status={'verify'} />
@@ -180,8 +308,27 @@ const Verify = ({navigation}) => {
             borderRadius: 10,
           }}
           containerStyle={{width: 280, left: '50%', marginLeft: -140}}
-          onPress={() => navigation.navigate('PasswordReset')}
+          onPress={handleSend}
         />
+        <VStack mx={5} mt={10} alignItems={'flex-end'}>
+          <Text>Belum menerima kode OTP?</Text>
+          <Text>
+            {minutes != null
+              ? (minutes <= 9 ? '0' + minutes : minutes) +
+                ':' +
+                (seconds <= 9 ? '0' + seconds : seconds)
+              : ''}
+          </Text>
+          {minutes === null ? (
+            <Pressable mt={-5} onPress={reSendEmail}>
+              <Text color={colors.primary} fontSize={'md'} fontWeight={'black'}>
+                Kirim ulang
+              </Text>
+            </Pressable>
+          ) : (
+            ''
+          )}
+        </VStack>
       </ScrollView>
     </SafeAreaView>
   );

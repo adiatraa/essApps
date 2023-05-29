@@ -12,10 +12,60 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Input, Button} from '@rneui/themed';
 import {colors, fonts} from '../../components/Theme';
 import ForgotPasswordProgress from '../../components/ForgotPasswordProgress';
+import {BASE_URL} from '../../../config';
+import axios from 'axios';
+import {useToast} from 'native-base';
+import Toast from '../../components/Toast';
 
-const Reset = ({navigation}) => {
+const Reset = ({navigation, route}) => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const {npp, token} = route.params;
+  const toast = useToast();
+
+  const handleSend = async () => {
+    if (password.length < 8) {
+      toast.show({
+        render: () => {
+          return (
+            <Toast
+              message={'Password minimal 8 karakter !'}
+              bgColor={colors.danger}
+              color={colors.white}
+              icon={'alert-outline'}
+            />
+          );
+        },
+        placement: 'top',
+      });
+    } else if (password !== passwordConfirm) {
+      toast.show({
+        render: () => {
+          return (
+            <Toast
+              message={'Confirm password tidak sama !'}
+              bgColor={colors.danger}
+              color={colors.white}
+              icon={'alert-outline'}
+            />
+          );
+        },
+        placement: 'top',
+      });
+    } else {
+      axios
+        .put(
+          BASE_URL + '/update-password',
+          {npp: npp, new_password: password},
+          {
+            headers: {'x-access-token': token},
+          },
+        )
+        .then(response => {
+          navigation.replace('PasswordResetSuccess');
+        });
+    }
+  };
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.white} />
@@ -26,7 +76,7 @@ const Reset = ({navigation}) => {
           color={colors.black}
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.headerTitle}>Absensi</Text>
+        <Text style={styles.headerTitle}>Reset Password</Text>
       </View>
       <ScrollView style={styles.container}>
         <ForgotPasswordProgress status={'change'} />
@@ -94,7 +144,7 @@ const Reset = ({navigation}) => {
             borderRadius: 10,
           }}
           containerStyle={{width: 280, left: '50%', marginLeft: -140}}
-          onPress={() => navigation.navigate('PasswordResetSuccess')}
+          onPress={handleSend}
         />
       </ScrollView>
     </SafeAreaView>
@@ -134,4 +184,5 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
 });
+
 export default Reset;

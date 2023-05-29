@@ -11,65 +11,14 @@ import {
   ScrollView,
   Dimensions,
   SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, fonts} from '../../components/Theme';
 import {getAge, getDateWDay} from '../../components/Date';
 
 export default function EditProfileScreen({navigation, route}) {
-  const [data, setData] = useState({
-    npp: '801236',
-    nama_lengkap: 'ARIF,DR.,IR.',
-    nama_panggil: 'ARIF',
-    tempat_lahir: 'JAKARTA',
-    tanggal_lahir: '1996-02-15',
-    kode_unit: 823,
-    kode_jabatan: 6744,
-    kode_eselon: '1',
-    kode_jenis_jabatan: 'S',
-    kode_status_pegawai: 1,
-    kode_status_aktif: 1,
-    kode_lokasi_tugas: 'B',
-    jenis_kelamin: 'L',
-    golongan_darah: 'O',
-    agama: '1',
-    kode_status_pernikahan: 'TK0',
-    kode_pendidikan: 9,
-    no_hp: '08111111111',
-    no_npwp: '123.456.789.123',
-    no_ktp: '3312013425330002',
-    email_lain: 'arif@gmail.com',
-    mulai_pegawai_tetap: '2015-01-01',
-    mulai_masuk_kerja: '2015-02-02',
-    poin: 100,
-    created_date: '2023-05-01T14:14:19.860Z',
-    updated_by: 'ADMIN',
-  });
-
-  const convertAgama = kodeAgama => {
-    let agama;
-    switch (kodeAgama) {
-      case '1':
-        agama = 'Islam';
-        break;
-      case '2':
-        agama = 'Kristen Protestan';
-        break;
-      case '3':
-        agama = 'Katolik';
-        break;
-      case '4':
-        agama = 'Hindu';
-        break;
-      case '5':
-        agama = 'Buddha';
-        break;
-      case '6':
-        agama = 'Konghucu';
-        break;
-    }
-    return agama;
-  };
+  const {data} = route.params;
 
   return (
     <SafeAreaView>
@@ -150,23 +99,27 @@ export default function EditProfileScreen({navigation, route}) {
             />
           </View>
         </View>
-        <View style={styles.formContainer}>
-          <Text style={{fontSize: 11}}>Nama Lengkap</Text>
-          <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
-            <TextInput
-              editable={false}
-              style={styles.textInput}
-              value={data.nama_lengkap}
-            />
+        <KeyboardAvoidingView behavior="height">
+          <View style={styles.formContainer}>
+            <Text style={{fontSize: 11}}>Nama Lengkap</Text>
+            <View
+              style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
+              <TextInput
+                editable={true}
+                style={styles.textInput}
+                value={data.nama_lengkap}
+              />
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
+
         <View style={styles.formContainer}>
           <Text style={{fontSize: 11}}>Nama Panggilan</Text>
           <View style={{borderBottomColor: '#BEBEBE', borderBottomWidth: 0.5}}>
             <TextInput
               editable={false}
               style={styles.textInput}
-              value={data.nama_panggil}
+              value={data.nama_panggilan}
             />
           </View>
         </View>
@@ -176,7 +129,7 @@ export default function EditProfileScreen({navigation, route}) {
             <TextInput
               editable={false}
               style={styles.textInput}
-              value={data.email_lain}
+              value={data.email}
             />
           </View>
         </View>
@@ -233,7 +186,7 @@ export default function EditProfileScreen({navigation, route}) {
               <TextInput
                 editable={false}
                 style={styles.textInput}
-                value={convertAgama(data.agama)}
+                value={data.agama}
               />
             </View>
           </View>
@@ -389,6 +342,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: '100%',
   },
+  textInput: {color: '#000000', fontSize: 16, fontWeight: 'bold'},
   titleText: {
     fontSize: 13,
   },

@@ -1,49 +1,21 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React from 'react';
 import {
+  Text,
   TouchableHighlight,
   Dimensions,
   View,
   StyleSheet,
-  SafeAreaView,
-  StatusBar,
 } from 'react-native';
 import Pdf from 'react-native-pdf';
+
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import {colors, fonts} from '../../components/Theme';
-import axios from 'axios';
-import {BASE_URL} from '../../../config';
-import {AuthContext} from '../../context/AuthContext';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useIsFocused} from '@react-navigation/native';
-import {Text} from 'native-base';
-import Spinner from '../../components/Spinner';
+import {colors} from '../components/Theme';
 
-const PDFGen = ({navigation}) => {
-  const isFocused = useIsFocused();
-  const [generated, setGenerated] = useState(false);
-  const {userInfo, userToken} = useContext(AuthContext);
-  const [isLoading, setIsLoading] = useState(true);
-  const [source, setSource] = useState({
-    uri: 'file:///storage/emulated/0/Android/data/com.ess/files/Documents/CV.pdf',
-    cache: false,
-  });
-
-  const getCVData = async () => {
-    axios
-      .get(BASE_URL + '/cv/' + userInfo.npp, {
-        headers: {'x-access-token': userToken},
-      }) // Get API dengan parameter NPP dengan keamanan x-access-token token
-      .then(response => {
-        // console.log(response.data.data);
-        createPDF(response.data.data);
-        setIsLoading(false);
-      })
-      .catch(e => {
-        // logout(); // Apabla terdapat error maka akan logout
-      });
+const PDFGen = () => {
+  const source = {
+    uri: 'file:///storage/emulated/0/Android/data/com.ess/files/Documents/test.pdf',
   };
-
-  const createPDF = async data => {
+  const createPDF = async () => {
     let options = {
       html: `
       <!DOCTYPE html>
@@ -111,55 +83,55 @@ const PDFGen = ({navigation}) => {
               <th>1.</th>
               <th>Nama</th>
               <td>:</td>
-              <td>${data.nama}</td>
+              <td>JOHN DOE</td>
             </tr>
             <tr>
               <th>2.</th>
               <th>Unit</th>
               <td>:</td>
-              <td>${data.unit}</td>
+              <td>TEKNOLOGI INFORMASI</td>
             </tr>
             <tr>
               <th>3.</th>
               <th>Tempat/Tanggal Lahir</th>
               <td>:</td>
-              <td>${data.tempat_lahir}, ${data.tanggal_lahir}</td>
+              <td>LONDON, 01 JANUARI 1998</td>
             </tr>
             <tr>
               <th>4.</th>
               <th>Alamat Rumah</th>
               <td>:</td>
-              <td>${data.alamat_rumah}</td>
+              <td>SURAKARTA</td>
             </tr>
             <tr>
               <th>5.</th>
               <th>Alamat Kantor</th>
               <td>:</td>
-              <td>${data.alamat_kantor}</td>
+              <td>JAKARTA</td>
             </tr>
             <tr>
               <th>6.</th>
               <th>Jenis Kelamin</th>
               <td>:</td>
-              <td>${data.jenis_kelamin}</td>
+              <td>LAKI-LAKI</td>
             </tr>
             <tr>
               <th>7.</th>
               <th>Strata</th>
               <td>:</td>
-              <td>${data.strata}</td>
+              <td>1</td>
             </tr>
             <tr>
               <th>8.</th>
               <th>Status</th>
               <td>:</td>
-              <td>${data.status}</td>
+              <td>AKTIF</td>
             </tr>
             <tr>
               <th>9.</th>
               <th>Pendidikan</th>
               <td>:</td>
-              <td>${data.riwayat_pendidikan[0].tingkat_pendidikan}</td>
+              <td>S2-MTI</td>
             </tr>
           </tbody>
         </table>
@@ -177,17 +149,14 @@ const PDFGen = ({navigation}) => {
               </tr>
             </thead>
             <tbody>
-            ${data.riwayat_pendidikan.map((pend, index) => {
-              return `
               <tr>
-              <td>${index + 1}</td>
-              <td>${pend.tingkat_pendidikan}</td>
-              <td>${pend.jurusan_pendidikan}</td>
-              <td>${pend.lembaga_pendidikan}I</td>
-              <td>${pend.kota_lembaga_pendidikan}</td>
-              <td>${pend.tahun_lulus}</td>
-            </tr>`;
-            })}
+                <td>1</td>
+                <td>S2</td>
+                <td>MTI</td>
+                <td>UI</td>
+                <td>JAKARTA</td>
+                <td>2018</td>
+              </tr>
               <tr>
                 <td>2</td>
                 <td>S1</td>
@@ -229,7 +198,7 @@ const PDFGen = ({navigation}) => {
 </html>
 
       `,
-      fileName: 'CV',
+      fileName: 'test',
       directory: 'Documents',
       height: 842,
       width: 595,
@@ -237,62 +206,32 @@ const PDFGen = ({navigation}) => {
 
     let file = await RNHTMLtoPDF.convert(options);
     // console.log(file.filePath);
-    alert('CV berhasil digenerat, lokasi file : ' + file.filePath);
+    alert(file.filePath);
   };
-
-  useEffect(() => {
-    getCVData();
-    setSource({
-      uri: 'file:///storage/emulated/0/Android/data/com.ess/files/Documents/CV.pdf',
-      cache: false,
-    });
-  }, [isFocused, generated]);
-
-  if (isLoading) {
-    return <Spinner />; // Apabila status loading true maka akan menampilkan Skeleton
-  }
-
   return (
-    <SafeAreaView>
-      <StatusBar backgroundColor={colors.primary} barStyle={'dark-content'} />
-      <View style={styles.header}>
-        <Icon
-          name="arrow-left"
-          size={24}
-          color={colors.black}
-          onPress={() => navigation.goBack()}
-        />
-        <Text style={styles.headerTitle}>CV External</Text>
+    <View style={styles.container}>
+      <View>
+        <TouchableHighlight onPress={createPDF} style={styles.btnCreate}>
+          <Text>Create PDF</Text>
+        </TouchableHighlight>
       </View>
-      <View style={styles.container}>
-        <Pdf
-          source={source}
-          onLoadComplete={(numberOfPages, filePath) => {
-            console.log(`Number of pages: ${numberOfPages}`);
-          }}
-          onPageChanged={(page, numberOfPages) => {
-            console.log(`Current page: ${page}`);
-          }}
-          onError={error => {
-            console.log(error);
-          }}
-          onPressLink={uri => {
-            console.log(`Link pressed: ${uri}`);
-          }}
-          style={styles.pdf}
-        />
-        <View>
-          <TouchableHighlight
-            onPress={() => {
-              getCVData();
-              setGenerated(!generated);
-            }}
-            style={styles.btnCreate}>
-            <Text>Generate New PDF</Text>
-          </TouchableHighlight>
-        </View>
-      </View>
-    </SafeAreaView>
+      <Pdf
+        source={source}
+        onLoadComplete={(numberOfPages, filePath) => {
+          console.log(`Number of pages: ${numberOfPages}`);
+        }}
+        onPageChanged={(page, numberOfPages) => {
+          console.log(`Current page: ${page}`);
+        }}
+        onError={error => {
+          console.log(error);
+        }}
+        onPressLink={uri => {
+          console.log(`Link pressed: ${uri}`);
+        }}
+        style={styles.pdf}
+      />
+    </View>
   );
 };
 
@@ -300,39 +239,17 @@ export default PDFGen;
 
 const styles = StyleSheet.create({
   btnCreate: {
-    backgroundColor: colors.white,
-    borderRadius: 15,
-    elevation: 5,
-    marginTop: 30,
-    padding: 10,
-    paddingHorizontal: 15,
-  },
-  container: {
-    alignItems: 'center',
-    backgroundColor: colors.primary,
-    height: '100%',
-    justifyContent: 'flex-start',
-    paddingTop: 30,
-  },
-  header: {
     alignItems: 'center',
     backgroundColor: colors.primary,
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 30,
-    paddingTop: 30,
-  },
-  headerTitle: {
-    bottom: 0,
-    fontFamily: fonts.poppins_b,
-    fontSize: 16,
-    fontWeight: 'bold',
-    left: '50%',
-    marginLeft: -20,
-    position: 'absolute',
-    textAlign: 'center',
+    justifyContent: 'center',
+    marginVertical: 50,
+    paddingVertical: 5,
     width: 100,
+  },
+  container: {
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   pdf: {
     height: Dimensions.get('window').height - 220,
