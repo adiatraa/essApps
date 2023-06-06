@@ -1,16 +1,14 @@
 import {
   View,
-  Text,
   StyleSheet,
   StatusBar,
   KeyboardAvoidingView,
-  ScrollView,
   SafeAreaView,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
-import {Box, Pressable, VStack, useToast} from 'native-base';
+import {Box, Pressable, VStack, Text, useToast} from 'native-base';
 import {Input, Button} from '@rneui/themed';
 import {colors, fonts} from '../../components/Theme';
 import ForgotPasswordProgress from '../../components/ForgotPasswordProgress';
@@ -22,6 +20,7 @@ const SendEmail = ({navigation}) => {
   const [KTP, setKTP] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const refKTP = useRef();
 
   const handleSend = async () => {
     setIsLoading(true);
@@ -123,10 +122,11 @@ const SendEmail = ({navigation}) => {
               />
             }
             onChangeText={text => setNPP(text)}
+            onSubmitEditing={() => refKTP.current.focus()}
           />
           <Input
+            ref={refKTP}
             inputContainerStyle={styles.emailForm}
-            keyboardType={'phone-pad'}
             containerStyle={{width: 300}}
             placeholder="No KTP"
             placeholderTextColor="#666"
@@ -140,6 +140,7 @@ const SendEmail = ({navigation}) => {
               />
             }
             onChangeText={text => setKTP(text)}
+            onSubmitEditing={handleSend}
           />
         </KeyboardAvoidingView>
         <Button

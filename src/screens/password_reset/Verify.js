@@ -6,7 +6,7 @@ import {
   ScrollView,
   SafeAreaView,
 } from 'react-native';
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {Button, Input} from '@rneui/themed';
 import {colors, fonts} from '../../components/Theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,8 +15,11 @@ import axios from 'axios';
 import {BASE_URL} from '../../../config';
 import Toast from '../../components/Toast';
 import {Pressable, VStack, useToast, Text} from 'native-base';
+import {useIsFocused} from '@react-navigation/native';
 
 const Verify = ({navigation, route}) => {
+  const toast = useToast();
+  const isFocused = useIsFocused();
   const [otp1, setOtp1] = useState('');
   const [otp2, setOtp2] = useState('');
   const [otp3, setOtp3] = useState('');
@@ -31,11 +34,9 @@ const Verify = ({navigation, route}) => {
   const ref4 = useRef();
   const [fokus, setFokus] = useState('');
   const {npp, no_ktp} = route.params;
-  const [token, setToken] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [seconds, setSeconds] = useState(null);
   const [minutes, setMinutes] = useState(null);
-  const toast = useToast();
 
   const handleSend = async () => {
     setIsLoading(true);
@@ -47,7 +48,6 @@ const Verify = ({navigation, route}) => {
         })
         .then(response => {
           if (response.data.message === 'OTP is valid') {
-            setToken(response.data.token);
             toast.show({
               render: () => {
                 return (
@@ -154,6 +154,10 @@ const Verify = ({navigation, route}) => {
     }
     tick();
   };
+
+  useEffect(() => {
+    delaySend(3);
+  }, [isFocused]);
 
   return (
     <SafeAreaView>
@@ -294,6 +298,7 @@ const Verify = ({navigation, route}) => {
           </View>
         </KeyboardAvoidingView>
         <Button
+          loading={isLoading}
           title="Kirim Kode"
           titleStyle={{
             fontFamily: fonts.poppins_b,

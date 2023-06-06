@@ -1,7 +1,8 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React from 'react';
 import {colors, fonts} from './Theme';
+import {Text} from 'native-base';
 
 const Timeline = ({active, status, title, description}) => {
   return active ? (

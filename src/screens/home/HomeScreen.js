@@ -1,19 +1,18 @@
-import {StatusBar, StyleSheet, TouchableHighlight} from 'react-native';
+import {StatusBar, StyleSheet} from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import * as Progress from 'react-native-progress';
 import {SafeAreaView} from 'react-native';
 import {colors, fonts} from '../../components/Theme';
 import Logo from '../../assets/logo_2.svg';
 import {ImageBackground} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
 import {BASE_URL} from '../../../config';
-import HomeSkeleton from '../../components/HomeSkeleton';
 import {
   Avatar,
   Box,
   HStack,
+  Image,
   Pressable,
   ScrollView,
   Skeleton,
@@ -23,47 +22,32 @@ import {
 } from 'native-base';
 import Toast from '../../components/Toast';
 import {useIsFocused} from '@react-navigation/native';
+import {CustomIcon} from '../../components/CustomIcon';
 
 const Feature = ({icon, title, onPress}) => {
   return (
     <Pressable onPress={onPress}>
-      {({isHovered, isPressed}) => {
+      {({isPressed}) => {
         return (
           <HStack
             alignItems={'center'}
             justifyContent={'center'}
-            w={150}
+            w={160}
             py={3}
             borderRadius={10}
             my={2}
-            bg={
-              isPressed
-                ? colors.primary
-                : isHovered
-                ? colors.primary
-                : colors.white
-            }>
-            <Icon
+            bg={isPressed ? colors.primary : colors.white}>
+            <CustomIcon
               name={icon}
               size={20}
-              color={
-                isPressed
-                  ? colors.white
-                  : isHovered
-                  ? colors.white
-                  : colors.primary
-              }
+              color={isPressed ? colors.white : colors.secondary}
               style={styles.featureIcon}
             />
             <Text
               style={[
                 styles.featureTitle,
                 {
-                  color: isPressed
-                    ? colors.white
-                    : isHovered
-                    ? colors.white
-                    : colors.dark,
+                  color: isPressed ? colors.white : colors.dark,
                 },
               ]}>
               {title}
@@ -120,8 +104,40 @@ const HomeScreen = ({navigation}) => {
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.bgWhite} barStyle={'dark-content'} />
-      <HStack p={5} bg={colors.bgWhite}>
+      <HStack
+        p={5}
+        bg={colors.bgWhite}
+        justifyContent={'space-between'}
+        alignItems={'center'}>
         <Logo width={60} height={40} />
+        <HStack space={2}>
+          <VStack justifyContent={'center'} alignItems={'flex-end'}>
+            <Text fontFamily={fonts.poppins_b} fontWeight={'bold'} fontSize={8}>
+              EMPLOYEE SELF SERVICE
+            </Text>
+            <Text
+              fontFamily={fonts.poppins_b}
+              fontWeight={'bold'}
+              fontSize={8}
+              mt={-1}>
+              PT PINDAD
+            </Text>
+          </VStack>
+          <HStack
+            w={30}
+            h={30}
+            bg={colors.black}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderRadius={30}>
+            <Image
+              source={require('../../assets/essp.png')}
+              alt="icon-app"
+              h={17}
+              w={11}
+            />
+          </HStack>
+        </HStack>
       </HStack>
       <ScrollView bg={colors.bgWhite} px={5}>
         {data === null ? (
@@ -167,15 +183,20 @@ const HomeScreen = ({navigation}) => {
               </HStack>
             ) : (
               <HStack my={5} justifyContent={'space-between'}>
-                <VStack style={styles.dataKaryawanProgress}>
+                <VStack
+                  alignItems={'center'}
+                  bg={colors.white}
+                  w={105}
+                  py={5}
+                  borderRadius={15}>
                   <Progress.Circle
                     strokeCap="round"
                     animated={false}
-                    size={80}
+                    size={50}
                     borderWidth={0}
                     color={colors.danger}
                     unfilledColor="rgba(200, 200, 200, 0.2)"
-                    thickness={6}
+                    thickness={4}
                     progress={3 / 10}
                     fill={'transparent'}
                     showsText={true}
@@ -186,15 +207,20 @@ const HomeScreen = ({navigation}) => {
                   />
                   <Text style={styles.dataKaryawanTitle}>Sisa Cuti</Text>
                 </VStack>
-                <VStack style={styles.dataKaryawanProgress}>
+                <VStack
+                  alignItems={'center'}
+                  bg={colors.white}
+                  w={105}
+                  py={5}
+                  borderRadius={15}>
                   <Progress.Circle
                     strokeCap="round"
                     animated={false}
-                    size={80}
+                    size={50}
                     borderWidth={0}
                     color={colors.success}
                     unfilledColor="rgba(200, 200, 200, 0.2)"
-                    thickness={6}
+                    thickness={4}
                     progress={8 / 10}
                     fill={'transparent'}
                     showsText={true}
@@ -205,15 +231,20 @@ const HomeScreen = ({navigation}) => {
                   />
                   <Text style={styles.dataKaryawanTitle}>Jam Lembur</Text>
                 </VStack>
-                <VStack style={styles.dataKaryawanProgress}>
+                <VStack
+                  alignItems={'center'}
+                  bg={colors.white}
+                  w={105}
+                  py={5}
+                  borderRadius={15}>
                   <Progress.Circle
                     strokeCap="round"
                     animated={false}
-                    size={80}
+                    size={50}
                     borderWidth={0}
                     color={colors.blue}
                     unfilledColor="rgba(200, 200, 200, 0.2)"
-                    thickness={6}
+                    thickness={4}
                     progress={5 / 10}
                     fill={'transparent'}
                     showsText={true}
@@ -245,17 +276,17 @@ const HomeScreen = ({navigation}) => {
                   flexWrap={'wrap'}>
                   <Feature
                     title={'Absensi'}
-                    icon={'calendar-month'}
+                    icon={'calendar'}
                     onPress={() => navigation.navigate('AbsensiStack')}
                   />
                   <Feature
                     title={'Jam Terbuang'}
-                    icon={'timelapse'}
+                    icon={'outlline-timelapse'}
                     onPress={() => navigation.navigate('JamTerbuang')}
                   />
                   <Feature
                     title={'Kesehatan'}
-                    icon={'heart-plus-outline'}
+                    icon={'heart-plus'}
                     onPress={showToast}
                   />
                 </HStack>
@@ -276,20 +307,16 @@ const HomeScreen = ({navigation}) => {
                   justifyContent={'space-between'}
                   alignItems={'center'}
                   flexWrap={'wrap'}>
-                  <Feature
-                    onPress={showToast}
-                    title={'Gaji'}
-                    icon={'hand-coin'}
-                  />
+                  <Feature onPress={showToast} title={'Gaji'} icon={'paid'} />
                   <Feature
                     onPress={showToast}
                     title={'Penghasilan Lain'}
-                    icon={'hand-coin-outline'}
+                    icon={'toll'}
                   />
                   <Feature
                     onPress={showToast}
                     title={'Saldo Depan'}
-                    icon={'content-paste'}
+                    icon={'content_paste'}
                   />
                   <Feature
                     onPress={showToast}
@@ -299,7 +326,7 @@ const HomeScreen = ({navigation}) => {
                   <Feature
                     onPress={showToast}
                     title={'Bukti Potong 1721'}
-                    icon={'credit-card-outline'}
+                    icon={'credit_card'}
                   />
                 </HStack>
               )}
@@ -314,14 +341,9 @@ const HomeScreen = ({navigation}) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  dataKaryawanProgress: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
   dataKaryawanTitle: {
     fontFamily: fonts.poppins_m,
-    fontSize: 14,
+    fontSize: 11,
     marginTop: 10,
     textAlign: 'center',
   },
@@ -341,24 +363,8 @@ const styles = StyleSheet.create({
   featureIcon: {marginLeft: -10, paddingRight: 10},
   featureTitle: {
     fontFamily: fonts.poppins_sb,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: 'bold',
-  },
-  notification: {
-    backgroundColor: colors.dark,
-    borderRadius: 20,
-    padding: 8,
-    position: 'relative',
-  },
-  notificationDot: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    height: 8,
-    position: 'absolute',
-    right: 10,
-    top: 10,
-    width: 8,
-    zIndex: 10,
   },
   profileCardBody: {
     alignItems: 'center',
@@ -368,7 +374,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingVertical: 30,
   },
-  progressText: {fontSize: 12, fontWeight: 'bold'},
+  progressText: {fontSize: 10, fontWeight: 'bold'},
   subTitle: {
     fontFamily: fonts.poppins_sb,
     fontSize: 16,

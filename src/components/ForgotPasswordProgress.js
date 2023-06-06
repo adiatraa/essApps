@@ -1,7 +1,8 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from './Theme';
+import {Text} from 'native-base';
 
 const ForgotPasswordProgress = ({status}) => {
   return (
@@ -29,7 +30,7 @@ const ForgotPasswordProgress = ({status}) => {
             style={{
               fontWeight: 'bold',
               fontSize: 12,
-              color: status === 'send' ? colors.black : styles.dark,
+              color: status === 'send' ? colors.black : colors.dark,
             }}>
             Email Address
           </Text>
@@ -47,7 +48,7 @@ const ForgotPasswordProgress = ({status}) => {
             style={{
               fontWeight: 'bold',
               fontSize: 12,
-              color: status === 'verify' ? colors.black : styles.dark,
+              color: status === 'verify' ? colors.black : colors.dark,
             }}>
             Get OTP Code
           </Text>
@@ -65,7 +66,7 @@ const ForgotPasswordProgress = ({status}) => {
             style={{
               fontWeight: 'bold',
               fontSize: 12,
-              color: status === 'change' ? colors.black : styles.dark,
+              color: status === 'change' ? colors.black : colors.dark,
             }}>
             Create New
           </Text>

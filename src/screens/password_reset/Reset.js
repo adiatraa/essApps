@@ -1,6 +1,5 @@
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   StatusBar,
@@ -14,7 +13,7 @@ import {colors, fonts} from '../../components/Theme';
 import ForgotPasswordProgress from '../../components/ForgotPasswordProgress';
 import {BASE_URL} from '../../../config';
 import axios from 'axios';
-import {useToast} from 'native-base';
+import {Text, useToast} from 'native-base';
 import Toast from '../../components/Toast';
 
 const Reset = ({navigation, route}) => {

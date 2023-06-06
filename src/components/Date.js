@@ -136,6 +136,21 @@ const convertMonth = month => {
   }
   return bulan;
 };
+const convertTime = time => {
+  let tempTime = time.split(':');
+  let tm = new Date();
+  let result;
+  tm.setHours(tempTime[0]);
+  tm.setMinutes(tempTime[1]);
+  tm.setSeconds(tempTime[2]);
+  if (tempTime[0] == 0 && tempTime[1] == 0 && tempTime[2] == 0) {
+    result = ' -';
+  } else {
+    result = tm.getHours() + ' Jam ' + tm.getMinutes() + ' Menit ';
+  }
+  return result;
+};
+
 const getTime = date => {
   return (
     (date.getHours() <= 9 ? '0' : '') +
@@ -178,4 +193,12 @@ const getAge = dateString => {
   return '' + age;
 };
 
-export {getTime, getDate, getDateWDay, getAge, converDate, convertMonth};
+export {
+  getTime,
+  getDate,
+  getDateWDay,
+  getAge,
+  converDate,
+  convertMonth,
+  convertTime,
+};

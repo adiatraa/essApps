@@ -8,6 +8,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {Text} from 'native-base';
+
 export default function Success({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
@@ -19,7 +20,7 @@ export default function Success({navigation}) {
           Selamat password Anda berhasil diganti!
         </Text>
       </View>
-      <TouchableOpacity onPress={() => navigation.replace('Login')}>
+      <TouchableOpacity onPress={() => navigation.replace('ProfileSetting')}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>GET STARTED</Text>
         </View>

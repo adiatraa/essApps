@@ -3,20 +3,11 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../components/Theme';
-import AbsensiScreen from '../screens/absensi/AbsensiScreen';
 import HomeScreen from '../screens/home/HomeScreen';
-import AbsensiDetailScreen from '../screens/absensi/AbsensiDetailScreen';
-import JamTerbuangScreen from '../screens/jamterbuang/JamTerbuangScreen';
-import DetailScreen from '../screens/jamterbuang/DetailScreen';
-import UserProfileScreen from '../screens/profile/UserProfileScreen';
-import DetailProfileScreen from '../screens/profile/DetailProfileScreen';
-import SettingProfile from '../screens/profile/SettingProfile';
-import EditProfileScreen from '../screens/profile/EditProfileScreen';
-import ChangePassScreen from '../screens/password_change/ChangePassScreen';
-import ConfirmChangePassScreen from '../screens/password_change/ConfirmChangePassScreen';
-import SuccessChangePassScreen from '../screens/password_change/SuccessChangePassScreen';
-import NotificationScreen from '../screens/home/NotificationScreen';
-import CVScreen from '../screens/profile/CVScreen';
+import * as Absensi from '../screens/absensi';
+import * as JamTerbuang from '../screens/jamterbuang';
+import * as Profile from '../screens/profile';
+import * as ChangePassword from '../screens/password_change';
 
 const Tab = createBottomTabNavigator();
 const HomeTabs = () => {
@@ -55,10 +46,11 @@ const HomeTabs = () => {
             : {display: 'none'},
         tabBarShowLabel: false,
         headerShown: false,
+        unmountOnBlur: true,
       })}>
       <Tab.Screen name="HomeStack" component={HomeScreen} />
-      <Tab.Screen name="AbsensiStack" component={AbsensiScreen} />
-      <Tab.Screen name="ProfileStack" component={SettingProfile} />
+      <Tab.Screen name="AbsensiStack" component={Absensi.Landing} />
+      <Tab.Screen name="ProfileStack" component={Profile.Landing} />
     </Tab.Navigator>
   );
 };
@@ -66,19 +58,19 @@ const HomeTabs = () => {
 const Stack = createNativeStackNavigator();
 const AppStack = () => {
   const page = [
-    {name: 'Notification', component: NotificationScreen},
-    {name: 'ProfileSetting', component: SettingProfile},
-    {name: 'UserProfile', component: UserProfileScreen},
-    {name: 'DetailProfile', component: DetailProfileScreen},
-    {name: 'EditProfile', component: EditProfileScreen},
-    {name: 'CVScreen', component: CVScreen},
-    {name: 'Absensi', component: AbsensiScreen},
-    {name: 'AbsensiDetail', component: AbsensiDetailScreen},
-    {name: 'JamTerbuang', component: JamTerbuangScreen},
-    {name: 'JamTerbuangDetail', component: DetailScreen},
-    {name: 'ChangePassScreen', component: ChangePassScreen},
-    {name: 'ConfirmChangePassScreen', component: ConfirmChangePassScreen},
-    {name: 'SuccessChangePassScreen', component: SuccessChangePassScreen},
+    {name: 'ProfileSetting', component: Profile.Landing},
+    {name: 'UserProfile', component: Profile.Menu},
+    {name: 'DetailProfile', component: Profile.DetailProfile},
+    {name: 'CVScreen', component: Profile.ExternalCV},
+    {name: 'Absensi', component: Absensi.Landing},
+    {name: 'AbsensiDetail', component: Absensi.Detail},
+    {name: 'ClockIn', component: Absensi.ClockIn},
+    {name: 'ClockOut', component: Absensi.ClockOut},
+    {name: 'JamTerbuang', component: JamTerbuang.Landing},
+    {name: 'JamTerbuangDetail', component: JamTerbuang.Detail},
+    {name: 'ChangePassScreen', component: ChangePassword.Verify},
+    {name: 'ConfirmChangePassScreen', component: ChangePassword.Update},
+    {name: 'SuccessChangePassScreen', component: ChangePassword.Success},
   ];
   return (
     <Stack.Navigator>

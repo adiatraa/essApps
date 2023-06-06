@@ -5,11 +5,11 @@ import {NativeBaseProvider} from 'native-base';
 
 const App = () => {
   return (
-    <AuthProvider>
-      <NativeBaseProvider>
+    <NativeBaseProvider>
+      <AuthProvider>
         <AppNav />
-      </NativeBaseProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </NativeBaseProvider>
   );
 };
 

@@ -18,7 +18,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {Text} from 'native-base';
 import Spinner from '../../components/Spinner';
 
-const PDFGen = ({navigation}) => {
+const ExternalCV = ({navigation}) => {
   const isFocused = useIsFocused();
   const [generated, setGenerated] = useState(false);
   const {userInfo, userToken} = useContext(AuthContext);
@@ -36,6 +36,10 @@ const PDFGen = ({navigation}) => {
       .then(response => {
         // console.log(response.data.data);
         createPDF(response.data.data);
+        setSource({
+          uri: 'file:///storage/emulated/0/Android/data/com.ess/files/Documents/CV.pdf',
+          cache: false,
+        });
         setIsLoading(false);
       })
       .catch(e => {
@@ -237,15 +241,11 @@ const PDFGen = ({navigation}) => {
 
     let file = await RNHTMLtoPDF.convert(options);
     // console.log(file.filePath);
-    alert('CV berhasil digenerat, lokasi file : ' + file.filePath);
+    alert('CV berhasil digenerate, lokasi file : ' + file.filePath);
   };
 
   useEffect(() => {
     getCVData();
-    setSource({
-      uri: 'file:///storage/emulated/0/Android/data/com.ess/files/Documents/CV.pdf',
-      cache: false,
-    });
   }, [isFocused, generated]);
 
   if (isLoading) {
@@ -296,7 +296,7 @@ const PDFGen = ({navigation}) => {
   );
 };
 
-export default PDFGen;
+export default ExternalCV;
 
 const styles = StyleSheet.create({
   btnCreate: {

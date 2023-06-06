@@ -3,10 +3,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, {createContext, useEffect, useState} from 'react';
 import {BASE_URL} from '../../config';
+import {useToast} from 'native-base';
+import Toast from '../components/Toast';
+import {colors} from '../components/Theme';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -25,7 +29,21 @@ export const AuthProvider = ({children}) => {
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo.data.user));
         AsyncStorage.setItem('userToken', userInfo.data.token);
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        toast.show({
+          render: () => {
+            return (
+              <Toast
+                message={'NPP atau password salah!'}
+                bgColor={colors.danger}
+                color={colors.white}
+                icon={'alert-outline'}
+              />
+            );
+          },
+          placement: 'top',
+        });
+      });
     setIsLoading(false);
   };
 
