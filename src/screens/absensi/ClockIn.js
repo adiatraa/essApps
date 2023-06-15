@@ -43,7 +43,7 @@ const SuccessDialog = () => {
         <Icon name="check" color={colors.white} size={36} />
       </Box>
       <Text fontFamily={fonts.poppins_sb} fontSize={20} textAlign={'center'}>
-        Absensi Berhasil!
+        Clock In Berhasil!
       </Text>
       <Text fontFamily={fonts.poppins} fontSize={12} textAlign={'center'}>
         Semangat & selalu berikan pelayanan terbaik untuk kita semua.

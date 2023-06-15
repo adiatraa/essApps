@@ -1,8 +1,7 @@
-import {StyleSheet, StatusBar, Alert} from 'react-native';
+import {StyleSheet, StatusBar} from 'react-native';
 import React, {useState, useContext, useRef} from 'react';
 import Icon from 'react-native-vector-icons/Octicons';
 import * as Animatable from 'react-native-animatable';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {AuthContext} from '../context/AuthContext';
 import {colors, fonts} from '../components/Theme';
 import {
@@ -15,10 +14,11 @@ import {
   Input,
   FormControl,
   Pressable,
-  HStack,
   Spinner,
+  HStack,
 } from 'native-base';
 import Toast from '../components/Toast';
+import {Platform} from 'react-native';
 
 export default function LoginPage({navigation}) {
   const {login, isLoading} = useContext(AuthContext);
@@ -29,6 +29,7 @@ export default function LoginPage({navigation}) {
   const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
   const [eyeStatus, setEyeStatus] = useState('eye-closed');
+  const [heightForm, setHeightForm] = useState('4/6');
 
   //Set password visible or invisible
   const eyeStatusHandler = () => {
@@ -160,11 +161,11 @@ export default function LoginPage({navigation}) {
             delay={1500}
             duration={2000}
             easing="ease-in-out"
-            source={require('../assets/essp.png')}
+            source={require('../assets/ess-logo.webp')}
             alt="logo"
             style={{
               tintColor: colors.dark10,
-              width: 66,
+              width: 68,
               height: 100,
               position: 'absolute',
               left: '50%',
@@ -194,10 +195,10 @@ export default function LoginPage({navigation}) {
       <StatusBar backgroundColor={colors.secondary} />
       <VStack alignItems={'center'}>
         <Image
-          source={require('../assets/essp.png')}
+          source={require('../assets/ess-logo.webp')}
           alt="logo"
           tintColor={colors.dark}
-          w={66}
+          w={68}
           h={100}
           mb={5}
         />
@@ -212,7 +213,7 @@ export default function LoginPage({navigation}) {
       <VStack
         alignItems={'center'}
         w={'100%'}
-        h={'3/5'}
+        h={heightForm}
         bg={colors.white}
         py={10}
         px={12}
@@ -224,7 +225,9 @@ export default function LoginPage({navigation}) {
         <Text fontFamily={fonts.poppins} fontSize={11} mb={10}>
           Welcome back you’ve been missed!
         </Text>
-        <KeyboardAvoidingView behavior="padding" w={'100%'}>
+        <KeyboardAvoidingView
+          w={'100%'}
+          behavior={Platform.OS === 'ios' ? 'padding' : null}>
           <FormControl style={styles.userForm}>
             <Input
               size={'lg'}
@@ -242,7 +245,10 @@ export default function LoginPage({navigation}) {
               borderWidth={0}
               _focus={{backgroundColor: colors.white, borderWidth: 0}}
               onChangeText={text => setNPP(text)}
-              onSubmitEditing={() => refPassword.current.focus()}
+              onSubmitEditing={() => {
+                refPassword.current.focus();
+              }}
+              onFocus={() => setHeightForm('4/5')}
             />
           </FormControl>
           <FormControl style={styles.passwordForm}>
@@ -274,21 +280,25 @@ export default function LoginPage({navigation}) {
               borderWidth={0}
               _focus={{backgroundColor: colors.white, borderWidth: 0}}
               onChangeText={text => setPassword(text)}
-              onSubmitEditing={handleLogin}
+              onSubmitEditing={() => {
+                setHeightForm('4/6');
+                handleLogin();
+              }}
             />
           </FormControl>
         </KeyboardAvoidingView>
-        <Pressable
-          w={'100%'}
-          onPress={() => navigation.navigate('PasswordResetSendEmail')}>
-          <Text
-            fontFamily={fonts.poppins}
-            fontSize={14}
-            textAlign={'right'}
-            my={5}>
-            Forgot Password?
-          </Text>
-        </Pressable>
+        <HStack w={'100%'} justifyContent={'flex-end'}>
+          <Pressable
+            onPress={() => navigation.navigate('PasswordResetSendEmail')}>
+            <Text
+              fontFamily={fonts.poppins}
+              fontSize={14}
+              textAlign={'right'}
+              my={5}>
+              Forgot Password?
+            </Text>
+          </Pressable>
+        </HStack>
         <Button
           disabled={isButtonLoading}
           _pressed={{bg: colors.primary}}
@@ -308,144 +318,41 @@ export default function LoginPage({navigation}) {
             </Text>
           )}
         </Button>
+        <HStack alignItems={'center'} mt={16} space={3}>
+          <Text fontFamily={fonts.poppins} fontSize={10} mb={-1}>
+            Colaboration with
+          </Text>
+          <Image
+            source={require('../assets/logo-uns.webp')}
+            alt="logo-uns"
+            w={6}
+            h={6}
+          />
+          <Image
+            source={require('../assets/logo-sv-dark.webp')}
+            alt="logo-uns"
+            w={6}
+            h={6}
+          />
+          <Image
+            source={require('../assets/logo-ti.webp')}
+            alt="logo-uns"
+            w={6}
+            h={6}
+          />
+          <Image
+            source={require('../assets/logo-pindad.webp')}
+            alt="logo-uns"
+            w={6}
+            h={6}
+          />
+        </HStack>
       </VStack>
     </VStack>
-    // <SafeAreaView style={styles.body}>
-    //   <StatusBar backgroundColor="#FFD60A" />
-    //   <Animatable.View
-    //     style={styles.circleA}
-    //     animation={circleA}
-    //     easing="ease-out"
-    //     duration={3000}
-    //   />
-    //   <Animatable.View
-    //     style={styles.circleB}
-    //     easing="ease-out"
-    //     animation={circleB}
-    //     duration={3000}
-    //   />
-    //   <Animatable.Image
-    //     animation={logoFadeIn}
-    //     delay={1500}
-    //     duration={2000}
-    //     easing="ease-in-out"
-    //     source={require('../assets/essp.png')}
-    //     style={{
-    //       tintColor: colors.dark10,
-    //       width: 66,
-    //       height: 100,
-    //       position: 'absolute',
-    //       left: '50%',
-    //       marginLeft: -33,
-    //       top: '50%',
-    //       marginTop: -50,
-    //     }}
-    //   />
-    //   <Animatable.Text
-    //     animation="fadeIn"
-    //     delay={3500}
-    //     duration={1000}
-    //     easing="ease-in-out"
-    //     style={{
-    //       fontSize: 18,
-    //       color: colors.dark10,
-    //       marginBottom: 60,
-    //       marginTop: '50%',
-    //       fontWeight: 'bold',
-    //       textAlign: 'center',
-    //     }}>
-    //     EMPLOYEE SELF SERVICE {'\n'}PT. PINDAD
-    //   </Animatable.Text>
-    //   <Animatable.View
-    //     animation="bounceInUp"
-    //     delay={3500}
-    //     duration={2500}
-    //     easing="ease-in"
-    //     style={styles.formBox}>
-    //     <Text h1={true}>LOGIN</Text>
-    //     <Text style={{fontSize: 14}}>Welcome back you’ve been missed!</Text>
-    //     <KeyboardAvoidingView behavior="padding" style={{alignItems: 'center'}}>
-    //       <Input
-    //         inputContainerStyle={styles.userForm}
-    //         containerStyle={{width: 300}}
-    //         placeholder="NPP"
-    //         placeholderTextColor="#666"
-    //         value={NPP}
-    //         leftIcon={
-    //           <Icon
-    //             name="person"
-    //             size={18}
-    //             color="#333"
-    //             style={{marginRight: 5}}
-    //           />
-    //         }
-    //         onChangeText={text => setNPP(text)}
-    //         onSubmitEditing={()=>refPassword.current.focus()}
-    //       />
-    //       <Input
-    //       ref={refPassword}
-    //         secureTextEntry={secureText}
-    //         textContentType="password"
-    //         inputContainerStyle={styles.passwordForm}
-    //         containerStyle={{width: 300, margin: -28}}
-    //         placeholder="Password"
-    //         placeholderTextColor="#666"
-    //         value={password}
-    //         rightIcon={
-    //           <Icon
-    //             name={eyeStatus}
-    //             size={18}
-    //             color="#333"
-    //             style={{marginLeft: 5}}
-    //             onPress={eyeStatusHandler}
-    //           />
-    //         }
-    //         leftIcon={
-    //           <Icon
-    //             name="lock"
-    //             size={18}
-    //             color="#333"
-    //             style={{marginRight: 5}}
-    //           />
-    //         }
-    //         onChangeText={text => setPassword(text)}
-    //         onSubmitEditing={handleLogin}
-    //       />
-    //     </KeyboardAvoidingView>
-    //     <Text style={{marginVertical: 20, textAlign: 'right', width: 280}} onPress={()=>
-    //       navigation.navigate('PasswordResetSendEmail')}
-    //        >
-    //       Forgot Password?
-    //     </Text>
-    //     <Button
-    //       title="Log In"
-    //       titleStyle={{fontWeight: 'bold', fontSize: 18, color: '#333'}}
-    //       loading={isButtonLoading}
-    //       loadingStyle={{marginHorizontal: 15}}
-    //       buttonStyle={{
-    //         paddingHorizontal: 116,
-    //         paddingVertical: 10,
-    //         backgroundColor: '#FFD60A',
-    //         borderRadius: 10,
-    //       }}
-    //       containerStyle={{marginBottom: 150}}
-    //       onPress={handleLogin}
-    //     />
-    //   </Animatable.View>
-    // </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  body: {
-    alignItems: 'center',
-    backgroundColor: '#FFD60A',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    justifyContent: 'flex-start',
-    width: '100%',
-  },
   circleA: {
     backgroundColor: colors.dark10,
     borderRadius: 25,

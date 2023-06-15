@@ -15,14 +15,48 @@ import {BASE_URL} from '../../../config';
 import {AuthContext} from '../../context/AuthContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useIsFocused} from '@react-navigation/native';
-import {Text} from 'native-base';
+import {Box, Button, Center, Pressable, Text, useToast} from 'native-base';
 import Spinner from '../../components/Spinner';
+
+const SuccessDialog = ({path}) => {
+  return (
+    <Center
+      bg={colors.white}
+      px={10}
+      py={16}
+      mx={5}
+      mb={5}
+      borderRadius={20}
+      borderColor={colors.dark30}
+      borderWidth={0.5}>
+      <Box
+        position={'absolute'}
+        top={-30}
+        bg={colors.primary}
+        p={5}
+        borderRadius={10}
+        borderColor={colors.dark30}
+        borderWidth={0.5}>
+        <Icon name="check" color={colors.white} size={36} />
+      </Box>
+      <Text fontFamily={fonts.poppins_sb} fontSize={20} textAlign={'center'}>
+        Download CV Berhasil!
+      </Text>
+      <Text fontFamily={fonts.poppins} fontSize={12} textAlign={'center'}>
+        Lokasi file : {path}.
+      </Text>
+    </Center>
+  );
+};
 
 const ExternalCV = ({navigation}) => {
   const isFocused = useIsFocused();
+  const toast = useToast();
   const [generated, setGenerated] = useState(false);
   const {userInfo, userToken} = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState({});
+  const [path, setPath] = useState('');
   const [source, setSource] = useState({
     uri: 'file:///storage/emulated/0/Android/data/com.ess/files/Documents/CV.pdf',
     cache: false,
@@ -36,11 +70,14 @@ const ExternalCV = ({navigation}) => {
       .then(response => {
         // console.log(response.data.data);
         createPDF(response.data.data);
-        setSource({
-          uri: 'file:///storage/emulated/0/Android/data/com.ess/files/Documents/CV.pdf',
-          cache: false,
-        });
-        setIsLoading(false);
+        setTimeout(() => {
+          setData(response.data.data);
+          setSource({
+            uri: 'file:///storage/emulated/0/Android/data/com.ess/files/Documents/CV.pdf',
+            cache: false,
+          });
+          setIsLoading(false);
+        }, 2000);
       })
       .catch(e => {
         // logout(); // Apabla terdapat error maka akan logout
@@ -240,8 +277,17 @@ const ExternalCV = ({navigation}) => {
     };
 
     let file = await RNHTMLtoPDF.convert(options);
-    // console.log(file.filePath);
-    alert('CV berhasil digenerate, lokasi file : ' + file.filePath);
+    setPath(file.filePath);
+  };
+
+  const downloadPDF = () => {
+    createPDF(data);
+    toast.show({
+      render: () => {
+        return <SuccessDialog path={path} />;
+      },
+      placement: 'bottom',
+    });
   };
 
   useEffect(() => {
@@ -265,31 +311,25 @@ const ExternalCV = ({navigation}) => {
         <Text style={styles.headerTitle}>CV External</Text>
       </View>
       <View style={styles.container}>
-        <Pdf
-          source={source}
-          onLoadComplete={(numberOfPages, filePath) => {
-            console.log(`Number of pages: ${numberOfPages}`);
-          }}
-          onPageChanged={(page, numberOfPages) => {
-            console.log(`Current page: ${page}`);
-          }}
-          onError={error => {
-            console.log(error);
-          }}
-          onPressLink={uri => {
-            console.log(`Link pressed: ${uri}`);
-          }}
-          style={styles.pdf}
-        />
+        <Pdf source={source} style={styles.pdf} />
         <View>
-          <TouchableHighlight
-            onPress={() => {
-              getCVData();
-              setGenerated(!generated);
+          <Pressable onPress={downloadPDF}>
+            {({isPressed}) => {
+              return (
+                <Box
+                  style={[
+                    styles.btnCreate,
+                    {
+                      backgroundColor: isPressed
+                        ? colors.white
+                        : colors.bgWhite,
+                    },
+                  ]}>
+                  <Text>Download PDF</Text>
+                </Box>
+              );
             }}
-            style={styles.btnCreate}>
-            <Text>Generate New PDF</Text>
-          </TouchableHighlight>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
@@ -300,7 +340,6 @@ export default ExternalCV;
 
 const styles = StyleSheet.create({
   btnCreate: {
-    backgroundColor: colors.white,
     borderRadius: 15,
     elevation: 5,
     marginTop: 30,

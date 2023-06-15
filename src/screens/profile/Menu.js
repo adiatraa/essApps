@@ -20,31 +20,38 @@ import {
   useToast,
   Text,
 } from 'native-base';
+import {CustomIcon} from '../../components/CustomIcon';
 
 const Navigation = ({onPress, icon, title}) => {
   return (
     <Pressable onPress={onPress}>
-      {({isHovered, isPressed}) => {
+      {({isPressed}) => {
         return (
           <HStack
-            bg={
-              isHovered
-                ? colors.bgPrimary
-                : isPressed
-                ? colors.bgPrimary
-                : colors.white
-            }
+            bg={isPressed ? colors.primary : colors.white}
             px={4}
             py={2}
             alignItems={'center'}
             space={3}
             borderRadius={10}>
-            <Icon name={icon} size={32} color={colors.secondary} />
-            <Text color={colors.dark20} fontWeight={'semibold'} pb={2} mt={2}>
+            <CustomIcon
+              name={icon}
+              size={24}
+              color={isPressed ? colors.white : colors.primary}
+            />
+            <Text
+              color={isPressed ? colors.white : colors.dark20}
+              fontWeight={'semibold'}
+              pb={2}
+              mt={2}>
               {title}
             </Text>
             <Box position={'absolute'} right={3}>
-              <Icon name={'chevron-right'} size={20} />
+              <Icon
+                name={'chevron-right'}
+                color={isPressed ? colors.white : colors.dark20}
+                size={20}
+              />
             </Box>
           </HStack>
         );
@@ -64,6 +71,7 @@ const Menu = ({navigation, route}) => {
           <Toast
             message={'Fitur masih dalam proses pengembangan!'}
             bgColor={colors.bgPrimary}
+            color={colors.white}
           />
         );
       },
@@ -85,7 +93,7 @@ const Menu = ({navigation, route}) => {
       <ScrollView bg={colors.bgWhite} px={7}>
         <Box mt={5}>
           <ImageBackground
-            source={require('../../assets/backgroundCard.png')}
+            source={require('../../assets/card.webp')}
             resizeMode={'cover'}
             borderRadius={20}
             style={styles.profileCardBody}>
@@ -125,7 +133,7 @@ const Menu = ({navigation, route}) => {
               borderColor={colors.dark40}
               px={5}
               h={70}
-              w={230}>
+              w={250}>
               <Text
                 fontFamily={fonts.poppins_b}
                 fontSize={18}
@@ -149,7 +157,7 @@ const Menu = ({navigation, route}) => {
               borderColor={colors.dark40}
               px={5}
               h={70}
-              w={230}>
+              w={250}>
               <Text
                 fontFamily={fonts.poppins_b}
                 fontSize={14}
@@ -173,7 +181,7 @@ const Menu = ({navigation, route}) => {
               px={5}
               space={1}
               h={70}
-              w={230}>
+              w={250}>
               <HStack justifyContent={'space-between'} alignItems={'center'}>
                 <Text
                   fontFamily={fonts.poppins_b}
@@ -198,7 +206,7 @@ const Menu = ({navigation, route}) => {
                   </Text>
                 </HStack>
               </HStack>
-              <Progress.Bar progress={0.3} width={200} color={'#9747FF'} />
+              <Progress.Bar progress={0.3} width={205} color={'#9747FF'} />
             </VStack>
             <VStack
               justifyContent={'center'}
@@ -209,7 +217,7 @@ const Menu = ({navigation, route}) => {
               px={5}
               space={1}
               h={70}
-              w={230}>
+              w={250}>
               <HStack justifyContent={'space-between'} alignItems={'center'}>
                 <Text
                   fontFamily={fonts.poppins_b}
@@ -234,13 +242,13 @@ const Menu = ({navigation, route}) => {
                   </Text>
                 </HStack>
               </HStack>
-              <Progress.Bar progress={0.3} width={200} color={'#18A0FB'} />
+              <Progress.Bar progress={0.3} width={205} color={'#18A0FB'} />
             </VStack>
           </HStack>
         </ScrollView>
         <HStack justifyContent={'space-between'} alignItems={'center'} my={3}>
           <TouchableOpacity style={styles.cvMenu} onPress={showToast}>
-            <Icon name="text-account" size={32} color="#FFC700" />
+            <CustomIcon name="memo-user" size={32} color="#FFC700" />
             <Text style={styles.menuText}>CV Internal</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -248,36 +256,36 @@ const Menu = ({navigation, route}) => {
             onPress={() => {
               navigation.navigate('CVScreen');
             }}>
-            <Icon name="account-details-outline" size={32} color="#FFC700" />
+            <CustomIcon name="memo-user-alt" size={32} color="#FFC700" />
             <Text style={styles.menuText}>CV Eksternal</Text>
           </TouchableOpacity>
         </HStack>
         <VStack space={3} mt={3} mb={100}>
           <Navigation
             title={'Profile'}
-            icon={'account-circle-outline'}
+            icon={'profile-circle'}
             onPress={() => {
               navigation.navigate('DetailProfile', {data: data});
             }}
           />
           <Navigation
             title={'Pendidikan'}
-            icon={'school'}
+            icon={'graduation-hat'}
             onPress={showToast}
           />
           <Navigation
             title={'Kepegawaian'}
-            icon={'briefcase-variant'}
+            icon={'briefcase'}
             onPress={showToast}
           />
           <Navigation
             title={'Ketenagakerjaan'}
-            icon={'account-multiple-plus'}
+            icon={'user-plus'}
             onPress={showToast}
           />
           <Navigation
             title={'Kinerja'}
-            icon={'clipboard-outline'}
+            icon={'clipboard-text'}
             onPress={showToast}
           />
         </VStack>

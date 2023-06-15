@@ -11,6 +11,7 @@ import {colors, fonts} from '../../components/Theme';
 import {Text} from '@rneui/themed';
 import Timeline from '../../components/Timeline';
 import {getDate} from '../../components/Date';
+import {Box, HStack, VStack} from 'native-base';
 
 const Detail = ({route, navigation}) => {
   const {date, t} = route.params; // Get data parameter dari props
@@ -18,27 +19,39 @@ const Detail = ({route, navigation}) => {
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.secondary} />
-      <View>
-        <View style={styles.header}>
-          <Icon
-            name="arrow-left"
-            size={24}
-            color={colors.white}
-            onPress={() => navigation.goBack()}
-          />
+      <Box>
+        <HStack
+          bg={colors.secondary}
+          px={5}
+          pt={7}
+          space={1}
+          alignItems={'center'}>
+          <HStack
+            bg={colors.bgPrimary}
+            p={3}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderRadius={30}>
+            <Icon
+              name="chevron-left"
+              size={28}
+              color={colors.white}
+              onPress={() => navigation.goBack()}
+            />
+          </HStack>
           <Text style={styles.headerTitle}>Detail Absensi</Text>
-        </View>
-        <View style={styles.headerDescription}>
+        </HStack>
+        <HStack bg={colors.secondary} pl={24} pt={1} pb={7}>
           <Icon name="calendar-month-outline" size={22} color={colors.white} />
           <Text style={styles.headerDate}>{getDate(new Date(date))}</Text>
-        </View>
-      </View>
+        </HStack>
+      </Box>
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
           {t.map((t, index) => {
             return t != null ? (
               <Timeline
-                key={index}
+                key={index + index}
                 title={index % 2 !== 1 ? 'Clock In' : 'Clock Out'}
                 description={t + ' WIB'}
                 status={index % 2 !== 1 ? 'success' : 'danger'}
@@ -61,19 +74,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 80,
     marginBottom: 100,
     marginTop: 20,
-    minHeight: 700,
+    minHeight: 900,
     paddingHorizontal: 30,
     paddingVertical: 80,
     width: '100%',
-  },
-  header: {
-    alignItems: 'center',
-    backgroundColor: colors.secondary,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 20,
-    paddingTop: 30,
   },
   headerDate: {
     color: colors.white,
@@ -81,16 +85,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: -5,
     marginLeft: 10,
-  },
-  headerDescription: {
-    alignItems: 'center',
-    backgroundColor: colors.secondary,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    paddingBottom: 40,
-    paddingLeft: 60,
-    paddingTop: 10,
   },
   headerTitle: {
     color: colors.white,

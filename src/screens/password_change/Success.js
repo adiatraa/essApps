@@ -7,17 +7,27 @@ import {
   Dimensions,
   SafeAreaView,
 } from 'react-native';
-import {Text} from 'native-base';
+import {Image, Text} from 'native-base';
+import {fonts} from '../../components/Theme';
 
 export default function Success({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={'#FFD60A'} />
       <View style={styles.content}>
-        {/* <Image source={require('../assets/forget.png')} /> */}
-        <Text style={styles.contentText}>Your Password has been set up!</Text>
-        <Text style={styles.subText}>
-          Selamat password Anda berhasil diganti!
+        <Image
+          source={require('../../assets/successful.webp')}
+          alt="success"
+          w={40}
+          h={40}
+        />
+        <Text
+          fontFamily={fonts.poppins_sb}
+          fontWeight={'semibold'}
+          fontSize={30}
+          textAlign={'center'}
+          mt={7}>
+          Password Anda Berhasil Diubah!
         </Text>
       </View>
       <TouchableOpacity onPress={() => navigation.replace('ProfileSetting')}>
@@ -56,18 +66,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-  },
-  contentText: {
-    color: '#000',
-    fontSize: 35,
-    fontWeight: 'bold',
-    marginTop: 20,
-    textAlign: 'center',
-  },
-  subText: {
-    color: '#000',
-    fontSize: 20,
-    marginTop: 17,
-    textAlign: 'center',
   },
 });

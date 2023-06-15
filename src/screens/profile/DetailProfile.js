@@ -129,7 +129,7 @@ export default function DetailProfile({navigation}) {
       <ScrollView px={5} bg={colors.bgWhite}>
         <Box>
           <ImageBackground
-            source={require('../../assets/backgroundCard.png')}
+            source={require('../../assets/card.webp')}
             resizeMode={'cover'}
             borderRadius={20}
             style={styles.profileCardBody}>

@@ -26,14 +26,44 @@ import Toast from '../../components/Toast';
 import {AuthContext} from '../../context/AuthContext';
 import {CustomIcon} from '../../components/CustomIcon';
 
+const SuccessDialog = () => {
+  return (
+    <Center
+      bg={colors.white}
+      px={10}
+      py={16}
+      mx={5}
+      mb={5}
+      borderRadius={20}
+      borderColor={colors.dark30}
+      borderWidth={0.5}>
+      <Box
+        position={'absolute'}
+        top={-30}
+        bg={colors.primary}
+        p={5}
+        borderRadius={10}
+        borderColor={colors.dark30}
+        borderWidth={0.5}>
+        <Icon name="check" color={colors.white} size={36} />
+      </Box>
+      <Text fontFamily={fonts.poppins_sb} fontSize={20} textAlign={'center'}>
+        Clock Out Berhasil!
+      </Text>
+      <Text fontFamily={fonts.poppins} fontSize={12} textAlign={'center'}>
+        Semangat & selalu berikan pelayanan terbaik untuk kita semua.
+      </Text>
+    </Center>
+  );
+};
+
 const DangerDialog = () => {
   return (
     <Center
       bg={colors.white}
-      mx={1}
+      mx={5}
       px={10}
       py={16}
-      mb={10}
       borderRadius={20}
       borderColor={colors.dark30}
       borderWidth={0.5}>
@@ -48,10 +78,11 @@ const DangerDialog = () => {
         <Icon name="close" color={colors.white} size={36} />
       </Box>
       <Text fontFamily={fonts.poppins_sb} fontSize={20} textAlign={'center'}>
-        Peringatan!
+        Anda Di Luar Jangkauan!
       </Text>
-      <Text fontFamily={fonts.poppins} fontSize={12} textAlign={'center'}>
-        Mohon untuk berada dalam radius 1 km PT PINDAD .
+      <Text fontFamily={fonts.poppins_m} fontSize={10} textAlign={'center'}>
+        Mohon Maaf Anda Berada Di Luar Jangkauan Wilayah PT. PINDAD, Silahkan
+        Memasuki Wilayah yang Telah Ditentukan!
       </Text>
     </Center>
   );
@@ -173,15 +204,9 @@ const ClockOut = ({navigation}) => {
         .then(response => {
           toast.show({
             render: () => {
-              return (
-                <Toast
-                  message={'Anda berhasil Clock Out !'}
-                  bgColor={colors.bgDanger}
-                  icon={'check-all'}
-                />
-              );
+              return <SuccessDialog />;
             },
-            placement: 'top',
+            placement: 'bottom',
           });
           navigation.goBack();
         });

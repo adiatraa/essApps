@@ -1,10 +1,10 @@
 @font-face {
-  font-family: 'iconess';
-  src:  url('fonts/iconess.eot?yxhnk6');
-  src:  url('fonts/iconess.eot?yxhnk6#iefix') format('embedded-opentype'),
-    url('fonts/iconess.ttf?yxhnk6') format('truetype'),
-    url('fonts/iconess.woff?yxhnk6') format('woff'),
-    url('fonts/iconess.svg?yxhnk6#iconess') format('svg');
+  font-family: 'iconessyes';
+  src:  url('fonts/iconessyes.eot?uqxmx9');
+  src:  url('fonts/iconessyes.eot?uqxmx9#iefix') format('embedded-opentype'),
+    url('fonts/iconessyes.ttf?uqxmx9') format('truetype'),
+    url('fonts/iconessyes.woff?uqxmx9') format('woff'),
+    url('fonts/iconessyes.svg?uqxmx9#iconessyes') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -12,7 +12,7 @@
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'iconess' !important;
+  font-family: 'iconessyes' !important;
   speak: never;
   font-style: normal;
   font-weight: normal;
@@ -25,6 +25,27 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-clock-in:before {
+  content: "\e92d";
+}
+.icon-user-fill:before {
+  content: "\e92e";
+  color: #000;
+}
+.icon-home-fill:before {
+  content: "\e92f";
+  color: #000;
+}
+.icon-clock:before {
+  content: "\e930";
+  color: #000;
+}
+.icon-user:before {
+  content: "\e931";
+}
+.icon-home:before {
+  content: "\e932";
+}
 .icon-calendar:before {
   content: "\e900";
 }

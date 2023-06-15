@@ -12,29 +12,41 @@ const Detail = ({navigation, route}) => {
     <SafeAreaView>
       <StatusBar backgroundColor={colors.secondary} />
       <Box>
-        <HStack alignItems={'center'} px={5} pt={5} bg={colors.secondary}>
-          <Icon
-            name="arrow-left"
-            size={24}
-            color={colors.white}
-            onPress={() => navigation.goBack()}
-          />
+        <HStack
+          bg={colors.secondary}
+          px={5}
+          pt={7}
+          space={1}
+          alignItems={'center'}>
+          <HStack
+            bg={colors.bgPrimary}
+            p={3}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderRadius={30}>
+            <Icon
+              name="chevron-left"
+              size={28}
+              color={colors.white}
+              onPress={() => navigation.goBack()}
+            />
+          </HStack>
           <Text style={styles.headerTitle}>Detail Jam Terbuang</Text>
         </HStack>
-        <Box style={styles.headerDescription}>
+        <HStack bg={colors.secondary} pl={24} pt={1} pb={7}>
           <Icon name="calendar-month-outline" size={22} color={colors.white} />
           <Text style={styles.headerDate}>
             {getDate(new Date(data.tanggal))}
           </Text>
-        </Box>
+        </HStack>
       </Box>
       <ScrollView bg={colors.secondary} minH={'100%'}>
         <VStack
           bg={colors.bgWhite}
           borderTopLeftRadius={80}
           px={7}
-          py={16}
-          mb={200}>
+          pt={16}
+          pb={300}>
           <Timeline
             title={'Jam Telat'}
             description={convertTime(data.jam_telat)}
@@ -71,16 +83,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: -5,
     marginLeft: 10,
-  },
-  headerDescription: {
-    alignItems: 'center',
-    backgroundColor: colors.secondary,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    paddingBottom: 40,
-    paddingLeft: 60,
-    paddingTop: 10,
   },
   headerTitle: {
     color: colors.white,

@@ -8,6 +8,7 @@ import * as Absensi from '../screens/absensi';
 import * as JamTerbuang from '../screens/jamterbuang';
 import * as Profile from '../screens/profile';
 import * as ChangePassword from '../screens/password_change';
+import {CustomIcon} from '../components/CustomIcon';
 
 const Tab = createBottomTabNavigator();
 const HomeTabs = () => {
@@ -16,19 +17,34 @@ const HomeTabs = () => {
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
+          let iconActive;
 
           if (route.name === 'HomeStack') {
-            iconName = 'home-variant';
+            iconName = 'home';
+            iconActive = 'home-fill';
           } else if (route.name === 'AbsensiStack') {
-            iconName = 'clock-outline';
-          } else if (route.name === 'Login') {
-            iconName = 'login';
+            iconName = 'clock-in';
+            iconActive = 'clock';
           } else if (route.name === 'ProfileStack') {
-            iconName = 'account';
+            iconName = 'user';
+            iconActive = 'user-fill';
           }
 
           // You can return any component that you like here!
-          return <Icon name={iconName} size={32} color={color} />;
+          return (
+            <CustomIcon
+              name={color == colors.primary ? iconActive : iconName}
+              size={24}
+              color={color}
+              style={{
+                borderBottomColor: colors.secondary,
+                paddingBottom: 5,
+                marginBottom: -3,
+                paddingHorizontal: 3,
+                borderBottomWidth: color == colors.primary ? 2 : 0,
+              }}
+            />
+          );
         },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.dark20,

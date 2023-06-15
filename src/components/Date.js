@@ -137,6 +137,9 @@ const convertMonth = month => {
   return bulan;
 };
 const convertTime = time => {
+  if (time === undefined) {
+    return;
+  }
   let tempTime = time.split(':');
   let tm = new Date();
   let result;

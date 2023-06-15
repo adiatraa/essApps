@@ -3,10 +3,10 @@ import React, {useEffect, useState, useContext} from 'react';
 import * as Progress from 'react-native-progress';
 import {SafeAreaView} from 'react-native';
 import {colors, fonts} from '../../components/Theme';
-import Logo from '../../assets/logo_2.svg';
 import {ImageBackground} from 'react-native';
 import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
+import {useIsFocused} from '@react-navigation/native';
 import {BASE_URL} from '../../../config';
 import {
   Avatar,
@@ -21,7 +21,6 @@ import {
   useToast,
 } from 'native-base';
 import Toast from '../../components/Toast';
-import {useIsFocused} from '@react-navigation/native';
 import {CustomIcon} from '../../components/CustomIcon';
 
 const Feature = ({icon, title, onPress}) => {
@@ -62,7 +61,6 @@ const Feature = ({icon, title, onPress}) => {
 const HomeScreen = ({navigation}) => {
   const {userInfo, userToken, logout} = useContext(AuthContext); // Memanggil user info dan user token dari context
   const toast = useToast();
-  // const data = userProfile;
   const [data, setData] = useState(null);
   const isFocused = useIsFocused();
 
@@ -73,6 +71,7 @@ const HomeScreen = ({navigation}) => {
           <Toast
             message={'Fitur masih dalam proses pengembangan!'}
             bgColor={colors.bgPrimary}
+            color={colors.white}
           />
         );
       },
@@ -81,25 +80,25 @@ const HomeScreen = ({navigation}) => {
   };
 
   const getDataProfile = async () => {
-    axios
-      .get(BASE_URL + '/user-profile/' + userInfo.npp, {
-        headers: {'x-access-token': userToken},
-      }) // Get API dengan parameter NPP dengan keamanan x-access-token token
-      .then(response => {
-        setData(response.data.data); // Mengisi data dengan data dari response API
-      })
-      .catch(e => {
-        logout();
-      });
+    try {
+      axios
+        .get(BASE_URL + '/user-profile/' + userInfo?.npp, {
+          headers: {'x-access-token': userToken},
+        }) // Get API dengan parameter NPP dengan keamanan x-access-token token
+        .then(response => {
+          setData(response.data.data); // Mengisi data dengan data dari response API
+        })
+        .catch(e => {
+          logout();
+        });
+    } catch (error) {}
   };
 
   useEffect(() => {
-    getDataProfile();
-  });
-
-  // if (data === null) {
-  //   return <HomeSkeleton />; // Apabila status loading true maka akan menampilkan Skeleton
-  // }
+    if (userInfo != null) {
+      getDataProfile();
+    }
+  }, [userInfo]);
 
   return (
     <SafeAreaView>
@@ -109,7 +108,12 @@ const HomeScreen = ({navigation}) => {
         bg={colors.bgWhite}
         justifyContent={'space-between'}
         alignItems={'center'}>
-        <Logo width={60} height={40} />
+        <Image
+          source={require('../../assets/logo-pindad.webp')}
+          alt="logo-pindad"
+          w={53}
+          h={53}
+        />
         <HStack space={2}>
           <VStack justifyContent={'center'} alignItems={'flex-end'}>
             <Text fontFamily={fonts.poppins_b} fontWeight={'bold'} fontSize={8}>
@@ -123,20 +127,12 @@ const HomeScreen = ({navigation}) => {
               PT PINDAD
             </Text>
           </VStack>
-          <HStack
-            w={30}
-            h={30}
-            bg={colors.black}
-            justifyContent={'center'}
-            alignItems={'center'}
-            borderRadius={30}>
-            <Image
-              source={require('../../assets/essp.png')}
-              alt="icon-app"
-              h={17}
-              w={11}
-            />
-          </HStack>
+          <Image
+            source={require('../../assets/ess-logo-circle.webp')}
+            alt="icon-app"
+            h={27}
+            w={27}
+          />
         </HStack>
       </HStack>
       <ScrollView bg={colors.bgWhite} px={5}>
@@ -145,7 +141,7 @@ const HomeScreen = ({navigation}) => {
         ) : (
           <Box>
             <ImageBackground
-              source={require('../../assets/backgroundCard.png')}
+              source={require('../../assets/card.webp')}
               resizeMode={'cover'}
               borderRadius={20}
               style={styles.profileCardBody}>
@@ -153,7 +149,7 @@ const HomeScreen = ({navigation}) => {
                 size={'lg'}
                 bg={colors.primary}
                 source={{
-                  uri: 'https://berita.99.co/wp-content/uploads/2022/06/foto-profil-keren.jpg',
+                  uri: 'https://instagram.fsrg5-1.fna.fbcdn.net/v/t51.2885-19/352413582_1288172718746389_4767104345431996126_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fsrg5-1.fna.fbcdn.net&_nc_cat=101&_nc_ohc=KJINafp28qsAX-6zdrw&edm=AAAAAAABAAAA&ccb=7-5&oh=00_AfDwRlpCsuhTNjnylsz-m8dToOR9ljeSj9UjaOhnxeyoog&oe=64861552',
                 }}
               />
               <VStack ml={3}>
@@ -172,7 +168,7 @@ const HomeScreen = ({navigation}) => {
             </ImageBackground>
           </Box>
         )}
-        <Box mb={100} px={2}>
+        <Box mb={100} mt={3} px={2}>
           <Box>
             <Text style={styles.subTitle}>Data Karyawan</Text>
             {data === null ? (

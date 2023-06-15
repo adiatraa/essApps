@@ -31,13 +31,7 @@ const Card = ({onPress, tanggal, jam}) => {
             justifyContent={'space-between'}
             px={3}
             py={4}
-            bg={
-              isHovered
-                ? colors.bgPrimary
-                : isPressed
-                ? colors.bgPrimary
-                : colors.white
-            }
+            bg={isPressed ? colors.dark60 : colors.white}
             borderRadius={15}>
             <VStack pl={4}>
               <HStack my={1}>

@@ -1,6 +1,6 @@
 const colors = {
-  primary: '#FFD60A',
-  bgPrimary: 'rgba(254, 208, 58, 0.6)',
+  primary: '#FFC100',
+  bgPrimary: '#DDA700',
   secondary: '#FFC100',
   dark: '#111111',
   dark10: '#333333',

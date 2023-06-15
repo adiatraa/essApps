@@ -65,8 +65,9 @@ const HistoryCard = ({
               </Text>
               <HStack
                 alignItems={'center'}
-                justifyContent={'space-between'}
+                justifyContent={'flex-start'}
                 flexWrap={'wrap'}
+                space={2}
                 w={'90%'}>
                 <HStack alignItems={'center'}>
                   <CustomIcon name="calendar-circle-plus" color={colors.dark} />
@@ -83,7 +84,7 @@ const HistoryCard = ({
                 </HStack>
                 {/* <Icon name={'circle-small'} color={colors.black} /> */}
                 <Text fontSize={10} pb={0.5} color={colors.dark20}>
-                  ●
+                  |
                 </Text>
                 <HStack alignItems={'center'}>
                   <CustomIcon
@@ -288,7 +289,7 @@ const Landing = ({navigation, route}) => {
               render: () => {
                 return (
                   <Toast
-                    message={'Anda sudah Clock Out !'}
+                    message={'Anda belum Clock In !'}
                     bgColor={colors.bgDanger}
                     icon={'alert-outline'}
                   />
@@ -350,10 +351,19 @@ const Landing = ({navigation, route}) => {
           />
         </Dialog.Actions>
       </Dialog>
+      <HStack alignItems={'center'} px={5} py={7} bg={colors.bgWhite}>
+        <CustomIcon
+          name="left-small"
+          size={20}
+          color={colors.black}
+          onPress={() => navigation.goBack()}
+        />
+        <Text style={styles.headerTitle}>Absensi</Text>
+      </HStack>
       <ScrollView px={5} bg={colors.bgWhite} minH={600}>
-        <Box mt={7}>
+        <Box>
           <ImageBackground
-            source={require('../../assets/backgroundCard.png')}
+            source={require('../../assets/card.webp')}
             resizeMode={'stretch'}
             borderRadius={30}
             style={styles.mainCardBackground}>
@@ -365,6 +375,7 @@ const Landing = ({navigation, route}) => {
                   size={'sm'}
                   colorScheme={'dark'}
                   bg={colors.white}
+                  borderRadius={10}
                   disabled={inLoading}
                   leftIcon={
                     inLoading === true ? (
@@ -388,6 +399,7 @@ const Landing = ({navigation, route}) => {
                   size={'sm'}
                   colorScheme={'dark'}
                   bg={colors.white}
+                  borderRadius={10}
                   disabled={outLoading}
                   leftIcon={
                     outLoading === true ? (
@@ -452,7 +464,7 @@ const Landing = ({navigation, route}) => {
             />
           </VStack>
         </Box>
-        <Box mb={50}>
+        <Box mb={100}>
           <HStack justifyContent={'space-between'} alignItems={'center'} px={2}>
             <Text style={styles.subTitle}>Riwayat</Text>
             <Pressable onPress={() => setDatePickerVisible(true)}>
@@ -542,6 +554,12 @@ const styles = StyleSheet.create({
   chooseDateIcon: {
     marginLeft: -5,
     paddingRight: 10,
+  },
+  headerTitle: {
+    fontFamily: fonts.poppins_b,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 20,
   },
   mainCardDate: {
     fontFamily: fonts.poppins,
