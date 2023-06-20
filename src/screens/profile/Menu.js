@@ -160,7 +160,7 @@ const Menu = ({navigation, route}) => {
                 fontFamily={fonts.poppins_b}
                 fontSize={14}
                 fontWeight={'bold'}>
-                Poin Tahun Penilaian 2022
+                Poin Tahun Penilaian {new Date().getFullYear()}
               </Text>
               <Text
                 fontFamily={fonts.poppins_b}

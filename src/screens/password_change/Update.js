@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -20,6 +20,7 @@ export default function Update({navigation}) {
   const [newPassword, setNewPassword] = useState('');
   const [newConfirmPassword, setNewConfirmPassword] = useState('');
   const {userToken, userInfo} = useContext(AuthContext);
+  const confirmRef = useRef();
   const toast = useToast();
 
   const handleSend = async () => {
@@ -95,6 +96,7 @@ export default function Update({navigation}) {
               placeholder="New Password"
               style={{height: 50}}
               onChangeText={text => setNewPassword(text)}
+              onSubmitEditing={() => confirmRef.current.focus()}
             />
           </View>
         </View>
@@ -104,6 +106,7 @@ export default function Update({navigation}) {
           </View>
           <View style={styles.menuBar}>
             <TextInput
+              ref={confirmRef}
               secureTextEntry={true}
               value={newConfirmPassword}
               placeholder="Confirm New Password"

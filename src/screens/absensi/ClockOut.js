@@ -166,35 +166,49 @@ const ClockOut = ({navigation}) => {
               lng: position.coords.longitude,
             };
             axios
-              .get(BASE_URL + '/center-location/?kode_lokasi=M', {
+              .get(BASE_URL + '/user-profile?npp=' + userInfo?.npp, {
                 headers: {'x-access-token': userToken},
-              })
-              .then(response => {
-                if (
-                  getDistanceBetweenTwoPoints(
-                    location,
-                    response.data.data,
-                    'K',
-                  ) <= 3
-                ) {
-                  setRadius(
-                    getDistanceBetweenTwoPoints(
-                      location,
-                      response.data.data,
-                      'K',
-                    ).toFixed(2),
-                  );
-                  setSubmitVisible(true);
-                } else {
-                  setSubmitVisible(false);
-                  setIsLoading(false);
-                  toast.show({
-                    render: () => {
-                      return <DangerDialog />;
+              }) // Get API dengan parameter NPP dengan keamanan x-access-token token
+              .then(res => {
+                axios
+                  .get(
+                    BASE_URL +
+                      '/center-location/?kode_lokasi=' +
+                      res.data.data.kode_lokasi_tugas,
+                    {
+                      headers: {'x-access-token': userToken},
                     },
-                    placement: 'bottom',
+                  )
+                  .then(response => {
+                    if (
+                      getDistanceBetweenTwoPoints(
+                        location,
+                        response.data.data,
+                        'K',
+                      ) <= 2
+                    ) {
+                      setRadius(
+                        getDistanceBetweenTwoPoints(
+                          location,
+                          response.data.data,
+                          'K',
+                        ).toFixed(2),
+                      );
+                      setSubmitVisible(true);
+                    } else {
+                      setSubmitVisible(false);
+                      setIsLoading(false);
+                      toast.show({
+                        render: () => {
+                          return <DangerDialog />;
+                        },
+                        placement: 'bottom',
+                      });
+                    }
                   });
-                }
+              })
+              .catch(e => {
+                console.log(e.response.data);
               });
           },
           error => {

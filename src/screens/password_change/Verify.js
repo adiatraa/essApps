@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import {BASE_URL} from '../../../config';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, fonts} from '../../components/Theme';
 import {AuthContext} from '../../context/AuthContext';
 import {Text, useToast} from 'native-base';
@@ -23,37 +22,79 @@ export default function Verify({navigation}) {
   const toast = useToast();
 
   const handleSend = async () => {
-    try {
-      axios
-        .post(
-          BASE_URL + '/change-password',
-          {npp: userInfo.npp, password: oldPassword},
-          {
-            headers: {'x-access-token': userToken},
-          },
-        )
-        .then(response => {
-          let isValid =
-            response.data.message === 'password is valid' ? true : false;
-          if (!isValid) {
-            toast.show({
-              render: () => {
-                return (
-                  <Toast
-                    message={'Password salah !'}
-                    bgColor={colors.danger}
-                    color={colors.white}
-                    icon={'alert-outline'}
-                  />
-                );
-              },
-              placement: 'top',
-            });
-          } else {
+    if (oldPassword.length < 8) {
+      toast.show({
+        render: () => {
+          return (
+            <Toast
+              message={'Password minimal 8 karakter !'}
+              bgColor={colors.danger}
+              color={colors.white}
+              icon={'alert-outline'}
+            />
+          );
+        },
+        placement: 'top',
+      });
+    } else {
+      try {
+        axios
+          .post(
+            BASE_URL + '/change-password',
+            {npp: userInfo.npp, password: oldPassword},
+            {
+              headers: {'x-access-token': userToken},
+            },
+          )
+          .then(response => {
             navigation.replace('ConfirmChangePassScreen');
-          }
-        });
-    } catch {}
+          })
+          .catch(err => {
+            if (err.response.data.message === 'invalid password') {
+              toast.show({
+                render: () => {
+                  return (
+                    <Toast
+                      message={'Password salah !'}
+                      bgColor={colors.danger}
+                      color={colors.white}
+                      icon={'alert-outline'}
+                    />
+                  );
+                },
+                placement: 'top',
+              });
+            } else {
+              toast.show({
+                render: () => {
+                  return (
+                    <Toast
+                      message={'Password salah !'}
+                      bgColor={colors.danger}
+                      color={colors.white}
+                      icon={'alert-outline'}
+                    />
+                  );
+                },
+                placement: 'top',
+              });
+              toast.show({
+                render: () => {
+                  return (
+                    <Toast
+                      message={'Terjadi kesalahan, coba beberapa saat lagi !'}
+                      bgColor={colors.danger}
+                      color={colors.white}
+                      icon={'alert-outline'}
+                    />
+                  );
+                },
+                placement: 'top',
+              });
+            }
+          });
+      } catch {}
+    }
   };
 
   return (
@@ -87,7 +128,9 @@ export default function Verify({navigation}) {
             />
           </View>
         </View>
-        <TouchableOpacity onPress={handleSend}>
+        <TouchableOpacity
+          disabled={oldPassword.length < 1 ? true : false}
+          onPress={handleSend}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Lanjutkan</Text>
           </View>

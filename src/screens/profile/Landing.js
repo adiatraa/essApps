@@ -130,7 +130,7 @@ export default function Landing({navigation, route}) {
               onPress={() => navigation.navigate('UserProfile', {data: data})}
             />
             <Navigation
-              title={'Change Passsword'}
+              title={'Change Password'}
               icon={'key'}
               onPress={() => navigation.navigate('ChangePassScreen')}
             />

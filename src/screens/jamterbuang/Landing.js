@@ -52,7 +52,9 @@ const Card = ({onPress, tanggal, jam}) => {
 };
 
 const Landing = ({navigation}) => {
-  const [selectedDate, setSelectedDate] = useState(); // Menyimpan tanggal terpilih filter Choose Date
+  const [selectedDate, setSelectedDate] = useState(
+    getFormatedDate(new Date(), 'YYYY-MM-DD'),
+  ); // Menyimpan tanggal terpilih filter Choose Date
   const [datePickerVisible, setDatePickerVisible] = useState(false); // Status visible datepicker
   const {userToken, userInfo} = useContext(AuthContext);
   const [data, setData] = useState([]);

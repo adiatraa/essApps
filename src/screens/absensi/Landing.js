@@ -52,7 +52,7 @@ const HistoryCard = ({
       {({isHovered, isPressed}) => {
         return (
           <Box
-            bg={colors.white}
+            bg={isPressed ? colors.dark60 : colors.white}
             px={8}
             py={7}
             borderRadius={10}
@@ -71,9 +71,8 @@ const HistoryCard = ({
                 <HStack
                   alignItems={'center'}
                   justifyContent={'flex-start'}
-                  flexWrap={'wrap'}
                   space={2}
-                  w={'90%'}>
+                  w={'100%'}>
                   <HStack alignItems={'center'}>
                     <CustomIcon
                       name="calendar-circle-plus"
@@ -188,7 +187,9 @@ const Landing = ({navigation, route}) => {
   const toast = useToast();
   const isFocused = useIsFocused();
   const {userToken, userInfo} = useContext(AuthContext);
-  const [selectedDate, setSelectedDate] = useState(); // Menyimpan tanggal terpilih filter Choose Date
+  const [selectedDate, setSelectedDate] = useState(
+    getFormatedDate(new Date(), 'YYYY-MM-DD'),
+  ); // Menyimpan tanggal terpilih filter Choose Date
   const [datePickerVisible, setDatePickerVisible] = useState(false); // Status visible datepicker
   const [date, setDate] = useState(new Date());
   const [data, setData] = useState([]);
@@ -298,6 +299,24 @@ const Landing = ({navigation, route}) => {
             navigation.navigate('ClockOut');
             setOutLoading(false);
           } else {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast
+                    message={'Anda belum Clock In !'}
+                    bgColor={colors.bgDanger}
+                    icon={'alert-outline'}
+                  />
+                );
+              },
+              placement: 'top',
+            });
+            setOutLoading(false);
+          }
+        })
+        .catch(err => {
+          // console.log(err.response.data.message);
+          if (err.response.data.message === 'attendance not found') {
             toast.show({
               render: () => {
                 return (
