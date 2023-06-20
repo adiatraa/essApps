@@ -58,12 +58,12 @@ react {
  * use App Bundles (https://developer.android.com/guide/app-bundle/)
  * and want to have separate APKs to upload to the Play Store.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -93,9 +93,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.essapps"
+    namespace "com.ess"
     defaultConfig {
-        applicationId "com.essapps"
+        applicationId "com.ess"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -165,6 +165,9 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
