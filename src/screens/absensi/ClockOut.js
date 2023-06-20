@@ -102,8 +102,8 @@ const ClockOut = ({navigation}) => {
   function getDistanceBetweenTwoPoints(cord1, cord2, unit) {
     const lat1 = cord1.lat;
     const lon1 = cord1.lng;
-    const lat2 = cord2.lat;
-    const lon2 = cord2.lng;
+    const lat2 = cord2.latitude;
+    const lon2 = cord2.longitude;
 
     if (lat1 === lat2 && lon1 === lon2) {
       return 0;
@@ -165,25 +165,53 @@ const ClockOut = ({navigation}) => {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             };
-            if (getDistanceBetweenTwoPoints(location, centerPoint, 'K') <= 3) {
-              setRadius(
-                getDistanceBetweenTwoPoints(location, centerPoint, 'K').toFixed(
-                  2,
-                ),
-              );
-              setSubmitVisible(true);
-            } else {
-              toast.show({
-                render: () => {
-                  return <DangerDialog />;
-                },
-                placement: 'bottom',
+            axios
+              .get(BASE_URL + '/center-location/?kode_lokasi=M', {
+                headers: {'x-access-token': userToken},
+              })
+              .then(response => {
+                if (
+                  getDistanceBetweenTwoPoints(
+                    location,
+                    response.data.data,
+                    'K',
+                  ) <= 3
+                ) {
+                  setRadius(
+                    getDistanceBetweenTwoPoints(
+                      location,
+                      response.data.data,
+                      'K',
+                    ).toFixed(2),
+                  );
+                  setSubmitVisible(true);
+                } else {
+                  setSubmitVisible(false);
+                  setIsLoading(false);
+                  toast.show({
+                    render: () => {
+                      return <DangerDialog />;
+                    },
+                    placement: 'bottom',
+                  });
+                }
               });
-            }
           },
           error => {
             // See error code charts below.
-            setLocation(false);
+            toast.show({
+              render: () => {
+                return (
+                  <Toast
+                    message={'Lokasi gagal didapatkan!'}
+                    bgColor={colors.bgPrimary}
+                    icon={'map-marker-outline'}
+                  />
+                );
+              },
+              placement: 'top',
+            });
+            setIsLoading(false);
           },
           {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
         );
@@ -194,7 +222,7 @@ const ClockOut = ({navigation}) => {
   const handleSend = async () => {
     try {
       axios
-        .put(
+        .post(
           BASE_URL + '/clock-out',
           {npp: userInfo.npp, kode_unit: userInfo.kode_unit},
           {

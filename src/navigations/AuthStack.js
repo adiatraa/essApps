@@ -6,11 +6,11 @@ import * as PasswordReset from '../screens/password_reset';
 const Stack = createNativeStackNavigator();
 const AuthStack = () => {
   const page = [
-    {name: 'PasswordResetSuccess', component: PasswordReset.Success},
     {name: 'Login', component: LoginPage},
     {name: 'PasswordReset', component: PasswordReset.Reset},
     {name: 'PasswordResetSendEmail', component: PasswordReset.SendEmail},
     {name: 'PasswordResetVerify', component: PasswordReset.Verify},
+    {name: 'PasswordResetSuccess', component: PasswordReset.Success},
   ];
   return (
     <Stack.Navigator>

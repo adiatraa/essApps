@@ -159,21 +159,21 @@ const ClockIn = ({navigation, route}) => {
               lng: position.coords.longitude,
             };
             axios
-              .get(BASE_URL + '/center-location/M', {
+              .get(BASE_URL + '/center-location/?kode_lokasi=M', {
                 headers: {'x-access-token': userToken},
               })
               .then(response => {
                 if (
                   getDistanceBetweenTwoPoints(
                     location,
-                    response.data.data.location,
+                    response.data.data,
                     'K',
                   ) <= 3
                 ) {
                   setRadius(
                     getDistanceBetweenTwoPoints(
                       location,
-                      response.data.data.location,
+                      response.data.data,
                       'K',
                     ).toFixed(2),
                   );
@@ -236,9 +236,9 @@ const ClockIn = ({navigation, route}) => {
     } else if (status === 'Isi') {
       try {
         axios
-          .put(
-            BASE_URL + '/clock-in',
-            {npp: userInfo.npp, kode_unit: userInfo.kode_unit},
+          .post(
+            BASE_URL + '/re-clock-in',
+            {npp: userInfo.npp},
             {
               headers: {'x-access-token': userToken},
             },

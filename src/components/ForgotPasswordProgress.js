@@ -3,6 +3,7 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from './Theme';
 import {Text} from 'native-base';
+import {CustomIcon} from './CustomIcon';
 
 const ForgotPasswordProgress = ({status}) => {
   return (
@@ -24,7 +25,7 @@ const ForgotPasswordProgress = ({status}) => {
       <View style={styles.progress}>
         <View style={styles.progressDetail}>
           <View style={styles.progressIconActive}>
-            <Icon name="email" color={colors.black} size={16} />
+            <CustomIcon name="email" color={colors.black} size={16} />
           </View>
           <Text
             style={{
@@ -42,7 +43,7 @@ const ForgotPasswordProgress = ({status}) => {
                 ? styles.progressIconActive
                 : styles.progressIcon
             }>
-            <Icon name="email-newsletter" color={colors.black} size={16} />
+            <CustomIcon name="pay-code" color={colors.black} size={16} />
           </View>
           <Text
             style={{
@@ -60,7 +61,7 @@ const ForgotPasswordProgress = ({status}) => {
                 ? styles.progressIconActive
                 : styles.progressIcon
             }>
-            <Icon name="key-change" color={colors.black} size={16} />
+            <CustomIcon name="bank-card" color={colors.black} size={16} />
           </View>
           <Text
             style={{

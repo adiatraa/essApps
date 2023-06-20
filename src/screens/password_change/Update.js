@@ -8,13 +8,13 @@ import {
   Dimensions,
   SafeAreaView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import {BASE_URL} from '../../../config';
 import {AuthContext} from '../../context/AuthContext';
 import {Text, useToast} from 'native-base';
 import Toast from '../../components/Toast';
-import {colors} from '../../components/Theme';
+import {colors, fonts} from '../../components/Theme';
+import {CustomIcon} from '../../components/CustomIcon';
 
 export default function Update({navigation}) {
   const [newPassword, setNewPassword] = useState('');
@@ -54,7 +54,7 @@ export default function Update({navigation}) {
     } else {
       try {
         axios
-          .put(
+          .post(
             BASE_URL + '/update-password',
             {npp: userInfo.npp, new_password: newPassword},
             {
@@ -69,44 +69,55 @@ export default function Update({navigation}) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>
-        Masukkan password baru yang ingin Anda ganti
-      </Text>
-      <View style={styles.menuContainer}>
-        <View style={styles.menuIcon}>
-          <Icon name="lock-outline" size={26} color="#373737" />
-        </View>
-        <View style={styles.menuBar}>
-          <TextInput
-            secureTextEntry={true}
-            value={newPassword}
-            placeholder="New Password"
-            style={{height: 50}}
-            onChangeText={text => setNewPassword(text)}
-          />
-        </View>
+    <SafeAreaView>
+      <StatusBar backgroundColor={colors.bgWhite} barStyle={'dark-content'} />
+      <View style={styles.header}>
+        <CustomIcon
+          name="left-small"
+          size={16}
+          color={colors.black}
+          onPress={() => navigation.goBack()}
+        />
+        <Text style={styles.headerTitle}>Change Password</Text>
       </View>
-      <View style={styles.menuContainer}>
-        <View style={styles.menuIcon}>
-          <Icon name="lock-outline" size={26} color="#373737" />
+      <View style={styles.container}>
+        <Text fontFamily={fonts.poppins} fontSize={14} my={7}>
+          Buat password baru, kemudian konfirmasi password yang telah anda buat
+        </Text>
+        <View style={styles.menuContainer}>
+          <View style={styles.menuIcon}>
+            <CustomIcon name="lock" size={20} color="#373737" />
+          </View>
+          <View style={styles.menuBar}>
+            <TextInput
+              secureTextEntry={true}
+              value={newPassword}
+              placeholder="New Password"
+              style={{height: 50}}
+              onChangeText={text => setNewPassword(text)}
+            />
+          </View>
         </View>
-        <View style={styles.menuBar}>
-          <TextInput
-            secureTextEntry={true}
-            value={newConfirmPassword}
-            placeholder="Confirm New Password"
-            style={{height: 50}}
-            onChangeText={text => setNewConfirmPassword(text)}
-          />
+        <View style={styles.menuContainer}>
+          <View style={styles.menuIcon}>
+            <CustomIcon name="lock" size={20} color="#373737" />
+          </View>
+          <View style={styles.menuBar}>
+            <TextInput
+              secureTextEntry={true}
+              value={newConfirmPassword}
+              placeholder="Confirm New Password"
+              style={{height: 50}}
+              onChangeText={text => setNewConfirmPassword(text)}
+            />
+          </View>
         </View>
+        <TouchableOpacity onPress={handleSend}>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>Simpan</Text>
+          </View>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={handleSend}>
-        <View style={styles.button}>
-          <Text style={styles.buttonText}>Finish</Text>
-        </View>
-      </TouchableOpacity>
-      <StatusBar style="auto" />
     </SafeAreaView>
   );
 }
@@ -129,14 +140,28 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     backgroundColor: '#f6f6f6',
-    flex: 1,
     paddingHorizontal: 50,
-    paddingTop: 40,
+  },
+  header: {
+    alignItems: 'center',
+    backgroundColor: colors.bgWhite,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 30,
+    paddingTop: 30,
+  },
+  headerTitle: {
+    color: colors.dark,
+    fontFamily: fonts.poppins_b,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 20,
+    paddingBottom: 1,
   },
   menuBar: {
     height: 30,
     justifyContent: 'center',
-    marginLeft: 20,
     width: 200,
   },
   menuContainer: {
@@ -156,12 +181,5 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: 'center',
     width: 30,
-  },
-  text: {
-    color: '#000',
-    fontSize: 17,
-    fontWeight: '500',
-    lineHeight: 20,
-    marginBottom: 20,
   },
 });

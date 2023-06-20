@@ -8,10 +8,17 @@ import {
 import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
 import {BASE_URL} from '../../../config';
-import {Text, Avatar, Box, HStack, Pressable, VStack} from 'native-base';
+import {
+  Text,
+  Avatar,
+  Box,
+  HStack,
+  Pressable,
+  VStack,
+  Skeleton,
+} from 'native-base';
 import {colors, fonts} from '../../components/Theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Spinner from '../../components/Spinner';
 import {CustomIcon} from '../../components/CustomIcon';
 
 const Navigation = ({onPress, icon, title}) => {
@@ -32,8 +39,8 @@ const Navigation = ({onPress, icon, title}) => {
               color={isPressed ? colors.white : colors.secondary}
             />
             <Text
+              fontFamily={fonts.poppins}
               color={isPressed ? colors.white : colors.dark20}
-              fontWeight={'semibold'}
               pb={2}
               mt={2}>
               {title}
@@ -58,7 +65,7 @@ export default function Landing({navigation, route}) {
 
   const getDataProfile = async () => {
     axios
-      .get(BASE_URL + '/user-profile/' + userInfo.npp, {
+      .get(BASE_URL + '/user-profile?npp=' + userInfo?.npp, {
         headers: {'x-access-token': userToken},
       }) // Get API dengan parameter NPP dengan keamanan x-access-token token
       .then(response => {
@@ -75,56 +82,63 @@ export default function Landing({navigation, route}) {
     }
   }, [userInfo]);
 
-  if (data === null) {
-    return <Spinner />; // Apabila status loading true maka akan menampilkan Skeleton
-  }
-
   return (
     <SafeAreaView style={{backgroundColor: colors.bgWhite}}>
-      <Box px={5} mt={5}>
-        <Box my={5}>
-          <ImageBackground
-            source={require('../../assets/card.webp')}
-            resizeMode={'cover'}
-            borderRadius={20}
-            style={styles.profileCardBody}>
-            <Avatar
-              size={'lg'}
-              bg={colors.primary}
-              source={{
-                uri: 'https://berita.99.co/wp-content/uploads/2022/06/foto-profil-keren.jpg',
-              }}
-            />
-            <VStack ml={3}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: fonts.poppins_b,
-                  fontWeight: 'bold',
-                }}>
-                {data.nama_lengkap}
-              </Text>
-              <Text style={{fontSize: 12, fontFamily: fonts.poppins}}>
-                {data.npp}
-              </Text>
-            </VStack>
-          </ImageBackground>
-        </Box>
-        <VStack space={5}>
-          <Navigation
-            title={'User Profile'}
-            icon={'profile-circle'}
-            onPress={() => navigation.navigate('UserProfile', {data: data})}
-          />
-          <Navigation
-            title={'Change Passsword'}
-            icon={'key'}
-            onPress={() => navigation.navigate('ChangePassScreen')}
-          />
-          <Navigation title={'Logout'} icon={'logout'} onPress={logout} />
+      {data === null ? (
+        <VStack px={5} mt={5}>
+          <Skeleton h="130" my={5} rounded={'2xl'} />
+          <VStack space={5}>
+            <Skeleton h={50} rounded={'md'} />
+            <Skeleton h={50} rounded={'md'} />
+            <Skeleton h={50} rounded={'md'} />
+          </VStack>
         </VStack>
-        <StatusBar style="auto" />
-      </Box>
+      ) : (
+        <VStack px={5} mt={5}>
+          <Box my={5}>
+            <ImageBackground
+              source={require('../../assets/card.webp')}
+              resizeMode={'cover'}
+              borderRadius={20}
+              style={styles.profileCardBody}>
+              <Avatar
+                size={'lg'}
+                bg={colors.primary}
+                source={{
+                  uri: data.foto,
+                }}
+              />
+              <VStack ml={3}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: fonts.poppins_b,
+                    fontWeight: 'bold',
+                  }}>
+                  {data.nama_lengkap}
+                </Text>
+                <Text style={{fontSize: 12, fontFamily: fonts.poppins}}>
+                  {data.npp}
+                </Text>
+              </VStack>
+            </ImageBackground>
+          </Box>
+          <VStack space={5}>
+            <Navigation
+              title={'User Profile'}
+              icon={'profile-circle'}
+              onPress={() => navigation.navigate('UserProfile', {data: data})}
+            />
+            <Navigation
+              title={'Change Passsword'}
+              icon={'key'}
+              onPress={() => navigation.navigate('ChangePassScreen')}
+            />
+            <Navigation title={'Logout'} icon={'logout'} onPress={logout} />
+          </VStack>
+          <StatusBar style="auto" />
+        </VStack>
+      )}
     </SafeAreaView>
   );
 }

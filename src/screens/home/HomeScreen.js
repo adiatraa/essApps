@@ -1,12 +1,14 @@
-import {StatusBar, StyleSheet} from 'react-native';
+import {
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  ImageBackground,
+} from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import * as Progress from 'react-native-progress';
-import {SafeAreaView} from 'react-native';
 import {colors, fonts} from '../../components/Theme';
-import {ImageBackground} from 'react-native';
 import axios from 'axios';
 import {AuthContext} from '../../context/AuthContext';
-import {useIsFocused} from '@react-navigation/native';
 import {BASE_URL} from '../../../config';
 import {
   Avatar,
@@ -62,7 +64,6 @@ const HomeScreen = ({navigation}) => {
   const {userInfo, userToken, logout} = useContext(AuthContext); // Memanggil user info dan user token dari context
   const toast = useToast();
   const [data, setData] = useState(null);
-  const isFocused = useIsFocused();
 
   const showToast = () => {
     toast.show({
@@ -82,7 +83,7 @@ const HomeScreen = ({navigation}) => {
   const getDataProfile = async () => {
     try {
       axios
-        .get(BASE_URL + '/user-profile/' + userInfo?.npp, {
+        .get(BASE_URL + '/user-profile?npp=' + userInfo?.npp, {
           headers: {'x-access-token': userToken},
         }) // Get API dengan parameter NPP dengan keamanan x-access-token token
         .then(response => {
@@ -139,38 +140,48 @@ const HomeScreen = ({navigation}) => {
         {data === null ? (
           <Skeleton w="100%" h="130" rounded={'2xl'} />
         ) : (
-          <Box>
-            <ImageBackground
-              source={require('../../assets/card.webp')}
-              resizeMode={'cover'}
-              borderRadius={20}
-              style={styles.profileCardBody}>
-              <Avatar
-                size={'lg'}
-                bg={colors.primary}
-                source={{
-                  uri: 'https://instagram.fsrg5-1.fna.fbcdn.net/v/t51.2885-19/352413582_1288172718746389_4767104345431996126_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fsrg5-1.fna.fbcdn.net&_nc_cat=101&_nc_ohc=KJINafp28qsAX-6zdrw&edm=AAAAAAABAAAA&ccb=7-5&oh=00_AfDwRlpCsuhTNjnylsz-m8dToOR9ljeSj9UjaOhnxeyoog&oe=64861552',
-                }}
-              />
-              <VStack ml={3}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: fonts.poppins_b,
-                    fontWeight: 'bold',
-                  }}>
-                  {data.nama_lengkap}
-                </Text>
-                <Text style={{fontSize: 12, fontFamily: fonts.poppins}}>
-                  {data === null ? '' : data.npp}
-                </Text>
-              </VStack>
-            </ImageBackground>
-          </Box>
+          <Pressable
+            onPress={() => navigation.navigate('DetailProfile', {data: data})}>
+            {({isPressed}) => {
+              return (
+                <ImageBackground
+                  source={require('../../assets/card.webp')}
+                  resizeMode={'cover'}
+                  borderRadius={20}
+                  style={styles.profileCardBody}
+                  imageStyle={{opacity: isPressed ? 0.8 : 1}}>
+                  <Avatar
+                    size={'lg'}
+                    bg={colors.primary}
+                    source={{
+                      uri: data.foto,
+                    }}
+                  />
+                  <VStack ml={3}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontFamily: fonts.poppins_b,
+                        fontWeight: 'bold',
+                      }}>
+                      {data.nama_lengkap}
+                    </Text>
+                    <Text style={{fontSize: 12, fontFamily: fonts.poppins}}>
+                      {data === null ? '' : data.npp}
+                    </Text>
+                  </VStack>
+                </ImageBackground>
+              );
+            }}
+          </Pressable>
         )}
         <Box mb={100} mt={3} px={2}>
           <Box>
-            <Text style={styles.subTitle}>Data Karyawan</Text>
+            {data === null ? (
+              <Skeleton w={120} h={8} my={5} rounded={'sm'} />
+            ) : (
+              <Text style={styles.subTitle}>Data Karyawan</Text>
+            )}
             {data === null ? (
               <HStack my={5} justifyContent={'space-between'}>
                 <Skeleton size={'24'} rounded={'full'} />
@@ -256,8 +267,14 @@ const HomeScreen = ({navigation}) => {
           </Box>
           <VStack>
             <Box>
-              <Text style={styles.subTitle}>Monitoring</Text>
-              <Box style={styles.divider} />
+              {data === null ? (
+                <Skeleton w={120} h={8} my={5} rounded={'sm'} />
+              ) : (
+                <>
+                  <Text style={styles.subTitle}>Monitoring</Text>
+                  <Box style={styles.divider} />
+                </>
+              )}
               {data === null ? (
                 <VStack my={3} space={3}>
                   <Skeleton w={'100%'} h={50} rounded={'lg'} />
@@ -289,8 +306,14 @@ const HomeScreen = ({navigation}) => {
               )}
             </Box>
             <Box>
-              <Text style={styles.subTitle}>Benefit</Text>
-              <Box style={styles.divider} />
+              {data === null ? (
+                <Skeleton w={120} h={8} my={5} rounded={'sm'} />
+              ) : (
+                <>
+                  <Text style={styles.subTitle}>Benefit</Text>
+                  <Box style={styles.divider} />
+                </>
+              )}
               {data === null ? (
                 <VStack my={3} space={3}>
                   <Skeleton w={'100%'} h={50} rounded={'lg'} />
@@ -364,6 +387,8 @@ const styles = StyleSheet.create({
   },
   profileCardBody: {
     alignItems: 'center',
+    backgroundColor: colors.dark,
+    borderRadius: 20,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',

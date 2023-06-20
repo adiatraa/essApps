@@ -1,4 +1,4 @@
-import {StyleSheet, SafeAreaView} from 'react-native';
+import {StyleSheet, SafeAreaView, RefreshControl} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import {colors, fonts} from '../../components/Theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,8 +16,8 @@ import {
   ScrollView,
   VStack,
   Text,
+  Skeleton,
 } from 'native-base';
-import Spinner from '../../components/Spinner';
 import {CustomIcon} from '../../components/CustomIcon';
 
 // Card component
@@ -58,16 +58,17 @@ const Landing = ({navigation}) => {
   const [data, setData] = useState([]);
   const [recap, setRecap] = useState(null);
   const [pageLoading, setPageLoading] = useState(true);
+  const [isRefresh, setIsRefresh] = useState(false);
 
   // Get API riwayat Jam Terbuang
   const getJamTerbuangAPI = async () => {
     try {
       axios
-        .get(BASE_URL + '/jam-terbuang/' + userInfo.npp, {
+        .get(BASE_URL + '/history-jam-terbuang?npp=' + userInfo.npp, {
           headers: {'x-access-token': userToken},
         })
         .then(response => {
-          setData(response.data.data.Jam_terbuang);
+          setData(response.data.data.jam_terbuang);
           setRecap(response.data.data.numbers_of_Jam_terbuang);
           setPageLoading(false);
         });
@@ -78,16 +79,26 @@ const Landing = ({navigation}) => {
   const getOneJamTerbuangAPI = async () => {
     try {
       axios
-        .post(
-          BASE_URL + '/choose-date-jam-terbuang',
-          {npp: userInfo.npp, tanggal: selectedDate},
+        .get(
+          BASE_URL +
+            '/choose-date-jam-terbuang?npp=' +
+            userInfo.npp +
+            '&tanggal=' +
+            selectedDate,
           {
             headers: {'x-access-token': userToken},
           },
         )
         .then(response => {
-          setData(response.data.data.Jam_terbuang);
+          setData([response.data.data.jam_terbuang]);
           setRecap(response.data.data.numbers_of_Jam_terbuang);
+          setDatePickerVisible(false);
+        })
+        .catch(err => {
+          if (err.response.data.message) {
+            setData([]);
+            setRecap(err.response.data.numbers_of_Jam_terbuang);
+          }
           setDatePickerVisible(false);
         });
     } catch {}
@@ -96,10 +107,6 @@ const Landing = ({navigation}) => {
   useEffect(() => {
     getJamTerbuangAPI();
   }, []);
-
-  if (pageLoading === true) {
-    return <Spinner />; // Apabila status loading true maka akan menampilkan Skeleton
-  }
 
   return (
     <SafeAreaView>
@@ -135,117 +142,127 @@ const Landing = ({navigation}) => {
         />
         <Text style={styles.headerTitle}>Jam Terbuang</Text>
       </HStack>
-      <ScrollView px={5} bg={colors.bgWhite} minH={'100%'}>
-        <Box bg={colors.white} mx={1} px={5} py={5} borderRadius={15}>
-          <VStack py={2} px={2} space={2}>
-            <HStack alignItems={'center'} justifyContent={'space-between'}>
-              <Text
-                fontFamily={fonts.poppins_sb}
-                fontWeight={'bold'}
-                fontSize={12}>
-                {'Jam Terbuang Bulan ' +
-                  (data.length === 1
-                    ? convertMonth(new Date(data[0].tanggal).getMonth())
-                    : convertMonth(new Date().getMonth()))}
-              </Text>
-              <HStack alignItems={'center'}>
-                <Text
-                  fontFamily={fonts.poppins_b}
-                  fontWeight={'bold'}
-                  fontSize={11}
-                  color={colors.secondary}>
-                  {convertTime(recap)}
-                </Text>
-                <Text
-                  fontFamily={fonts.poppins_m}
-                  fontWeight={'medium'}
-                  fontSize={10}
-                  color={colors.dark20}
-                  mb={-0.5}
-                  ml={1}
-                />
-              </HStack>
-            </HStack>
-            <Progress
-              size={'md'}
-              value={(100 / 31) * parseInt(recap)}
-              _filledTrack={{
-                bg: colors.secondary,
-              }}
-            />
+      {pageLoading === true ? (
+        <VStack h={'100%'} px={5} bg={colors.bgWhite}>
+          <Skeleton rounded={'md'} h={100} />
+          <Skeleton rounded={'md'} my={5} h={55} />
+          <VStack space={5} mx={1}>
+            <Skeleton rounded={'md'} h={90} />
+            <Skeleton rounded={'md'} h={90} />
+            <Skeleton rounded={'md'} h={90} />
+            <Skeleton rounded={'md'} h={90} />
+            <Skeleton rounded={'md'} h={90} />
+            <Skeleton rounded={'md'} h={90} />
+            <Skeleton rounded={'md'} h={90} />
           </VStack>
-        </Box>
-        {/* <Box bg={colors.white} mx={1} px={5} pb={6} borderRadius={10}>
-          <VStack mt={7} px={2} space={3}>
-            <Text fontWeight={'bold'}>
-              {'Total jam terbuang bulan ' +
-                (data.length === 1
-                  ? convertMonth(new Date(data[0].tanggal).getMonth())
-                  : convertMonth(new Date().getMonth())) +
-                ' : ' +
-                convertTime(recap)}
-            </Text>
-            <Progress
-              size={'md'}
-              value={(100 / 50) * parseInt(recap)}
-              _filledTrack={{
-                bg: colors.danger,
-              }}
-            />
-          </VStack>
-        </Box> */}
-        <Pressable onPress={() => setDatePickerVisible(true)}>
-          {({isPressed}) => {
-            return (
-              <HStack
-                bg={isPressed ? colors.bgWhite : colors.white}
-                justifyContent={'center'}
-                alignItems={'center'}
-                my={5}
-                px={5}
-                py={3}
-                borderRadius={10}
-                borderWidth={1}
-                borderColor={colors.bgPrimary}>
-                <CustomIcon
-                  name="calendarday"
-                  size={20}
-                  color={colors.secondary}
-                  style={styles.chooseDateIcon}
-                />
-                <Text>Choose Date</Text>
-              </HStack>
-            );
-          }}
-        </Pressable>
-        <VStack space={5} mx={1} mb={200}>
-          {data.length < 1 ? (
-            <Text
-              style={{
-                width: '100%',
-                textAlign: 'center',
-                fontFamily: fonts.poppins,
-                fontSize: 14,
-                marginTop: 10,
-              }}>
-              Data Jam Terbuang Tidak Ditemukan
-            </Text>
-          ) : (
-            data.map((i, index) => {
-              return (
-                <Card
-                  key={index}
-                  tanggal={getDate(new Date(i.tanggal))}
-                  jam={convertTime(i.total_jam_terbuang)}
-                  onPress={() =>
-                    navigation.navigate('JamTerbuangDetail', {data: i})
-                  }
-                />
-              );
-            })
-          )}
         </VStack>
-      </ScrollView>
+      ) : (
+        <ScrollView
+          px={5}
+          bg={colors.bgWhite}
+          minH={'100%'}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefresh}
+              onRefresh={() => {
+                setIsRefresh(true);
+                getJamTerbuangAPI();
+                setIsRefresh(false);
+              }}
+            />
+          }>
+          <Box bg={colors.white} mx={1} px={5} py={5} borderRadius={15}>
+            <VStack py={2} px={2} space={2}>
+              <HStack alignItems={'center'} justifyContent={'space-between'}>
+                <Text
+                  fontFamily={fonts.poppins_sb}
+                  fontWeight={'bold'}
+                  fontSize={12}>
+                  {'Jam Terbuang Bulan ' +
+                    (data.length === 1
+                      ? convertMonth(new Date(data[0].tanggal).getMonth())
+                      : convertMonth(new Date(selectedDate).getMonth()))}
+                </Text>
+                <HStack alignItems={'center'}>
+                  <Text
+                    fontFamily={fonts.poppins_b}
+                    fontWeight={'bold'}
+                    fontSize={11}
+                    color={colors.secondary}>
+                    {convertTime(recap)}
+                  </Text>
+                  <Text
+                    fontFamily={fonts.poppins_m}
+                    fontWeight={'medium'}
+                    fontSize={10}
+                    color={colors.dark20}
+                    mb={-0.5}
+                    ml={1}
+                  />
+                </HStack>
+              </HStack>
+              <Progress
+                size={'md'}
+                value={(100 / 31) * parseInt(recap)}
+                _filledTrack={{
+                  bg: colors.secondary,
+                }}
+              />
+            </VStack>
+          </Box>
+          <Pressable onPress={() => setDatePickerVisible(true)}>
+            {({isPressed}) => {
+              return (
+                <HStack
+                  bg={isPressed ? colors.bgWhite : colors.white}
+                  justifyContent={'center'}
+                  alignItems={'center'}
+                  my={5}
+                  px={5}
+                  py={3}
+                  borderRadius={10}
+                  borderWidth={1}
+                  borderColor={colors.bgPrimary}>
+                  <CustomIcon
+                    name="calendarday"
+                    size={20}
+                    color={colors.secondary}
+                    style={styles.chooseDateIcon}
+                  />
+                  <Text>Choose Date</Text>
+                </HStack>
+              );
+            }}
+          </Pressable>
+          <VStack space={5} mx={1} mb={200}>
+            {data.length < 1 ? (
+              <Text
+                style={{
+                  width: '100%',
+                  textAlign: 'center',
+                  fontFamily: fonts.poppins,
+                  fontSize: 14,
+                  marginTop: 10,
+                }}>
+                Data Jam Terbuang Tidak Ditemukan
+              </Text>
+            ) : (
+              data.map((i, index) => {
+                return (
+                  <Card
+                    key={index}
+                    tanggal={getDate(new Date(i.tanggal))}
+                    jam={convertTime(i.total_jam_terbuang)}
+                    onPress={() =>
+                      navigation.navigate('JamTerbuangDetail', {data: i})
+                    }
+                  />
+                );
+              })
+            )}
+          </VStack>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

@@ -15,6 +15,7 @@ import {colors, fonts} from '../../components/Theme';
 import {AuthContext} from '../../context/AuthContext';
 import {Text, useToast} from 'native-base';
 import Toast from '../../components/Toast';
+import {CustomIcon} from '../../components/CustomIcon';
 
 export default function Verify({navigation}) {
   const {userToken, userInfo} = useContext(AuthContext);
@@ -33,7 +34,7 @@ export default function Verify({navigation}) {
         )
         .then(response => {
           let isValid =
-            response.data.message === 'Password is valid' ? true : false;
+            response.data.message === 'password is valid' ? true : false;
           if (!isValid) {
             toast.show({
               render: () => {
@@ -57,24 +58,24 @@ export default function Verify({navigation}) {
 
   return (
     <SafeAreaView>
-      <StatusBar style="auto" />
+      <StatusBar backgroundColor={colors.bgWhite} barStyle={'dark-content'} />
       <View style={styles.header}>
-        <Icon
-          name="arrow-left"
-          size={24}
+        <CustomIcon
+          name="left-small"
+          size={16}
           color={colors.black}
           onPress={() => navigation.goBack()}
         />
         <Text style={styles.headerTitle}>Change Password</Text>
       </View>
       <View style={styles.container}>
-        <Text style={styles.text}>
-          Masukkan password lama Anda untuk memverifikasi sebelum Anda merubah
+        <Text fontFamily={fonts.poppins} fontSize={14} mt={3} mb={7}>
+          Masukkan password lama anda untuk memverifikasi sebelum anda merubah
           password baru
         </Text>
         <View style={styles.menuContainer}>
           <View style={styles.menuIcon}>
-            <Icon name="lock-outline" size={26} color="#373737" />
+            <CustomIcon name="lock" size={20} color="#373737" />
           </View>
           <View style={styles.menuBar}>
             <TextInput
@@ -88,7 +89,7 @@ export default function Verify({navigation}) {
         </View>
         <TouchableOpacity onPress={handleSend}>
           <View style={styles.button}>
-            <Text style={styles.buttonText}>Send</Text>
+            <Text style={styles.buttonText}>Lanjutkan</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     paddingHorizontal: 30,
-    paddingVertical: 20,
+    paddingTop: 30,
   },
   headerTitle: {
     color: colors.dark,
@@ -133,11 +134,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 20,
+    paddingBottom: 1,
   },
   menuBar: {
     height: 30,
     justifyContent: 'center',
-    marginLeft: 20,
     width: 200,
   },
   menuContainer: {
@@ -157,12 +158,5 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: 'center',
     width: 30,
-  },
-  text: {
-    color: '#000',
-    fontSize: 17,
-    fontWeight: '500',
-    lineHeight: 20,
-    marginBottom: 20,
   },
 });

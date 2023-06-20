@@ -15,7 +15,15 @@ import {BASE_URL} from '../../../config';
 import {AuthContext} from '../../context/AuthContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useIsFocused} from '@react-navigation/native';
-import {Box, Button, Center, Pressable, Text, useToast} from 'native-base';
+import {
+  Box,
+  Button,
+  Center,
+  Pressable,
+  Skeleton,
+  Text,
+  useToast,
+} from 'native-base';
 import Spinner from '../../components/Spinner';
 
 const SuccessDialog = ({path}) => {
@@ -52,7 +60,6 @@ const SuccessDialog = ({path}) => {
 const ExternalCV = ({navigation}) => {
   const isFocused = useIsFocused();
   const toast = useToast();
-  const [generated, setGenerated] = useState(false);
   const {userInfo, userToken} = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState({});
@@ -64,11 +71,11 @@ const ExternalCV = ({navigation}) => {
 
   const getCVData = async () => {
     axios
-      .get(BASE_URL + '/cv/' + userInfo.npp, {
+      .get(BASE_URL + '/user-cv?npp=' + userInfo.npp, {
         headers: {'x-access-token': userToken},
       }) // Get API dengan parameter NPP dengan keamanan x-access-token token
       .then(response => {
-        // console.log(response.data.data);
+        console.log(response.data.data);
         createPDF(response.data.data);
         setTimeout(() => {
           setData(response.data.data);
@@ -229,38 +236,6 @@ const ExternalCV = ({navigation}) => {
               <td>${pend.tahun_lulus}</td>
             </tr>`;
             })}
-              <tr>
-                <td>2</td>
-                <td>S1</td>
-                <td>TEKNIK INFORMATIKA</td>
-                <td>UI</td>
-                <td>JAKARTA</td>
-                <td>2014</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>SLTA</td>
-                <td>SMA - IPA</td>
-                <td>SMA 1 SURAKARTA</td>
-                <td>SURAKARTA</td>
-                <td>2010</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>SLTP</td>
-                <td>UMUM</td>
-                <td>SMPN 1 KRA</td>
-                <td>KARANGANYAR</td>
-                <td>2007</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>SD</td>
-                <td>UMUM</td>
-                <td>SDN 1 KRA</td>
-                <td>KARANGANYAR</td>
-                <td>2004</td>
-              </tr>
             </tbody>
           </table>
         </ol>
@@ -292,11 +267,7 @@ const ExternalCV = ({navigation}) => {
 
   useEffect(() => {
     getCVData();
-  }, [isFocused, generated]);
-
-  if (isLoading) {
-    return <Spinner />; // Apabila status loading true maka akan menampilkan Skeleton
-  }
+  }, [isFocused]);
 
   return (
     <SafeAreaView>
@@ -310,9 +281,18 @@ const ExternalCV = ({navigation}) => {
         />
         <Text style={styles.headerTitle}>CV External</Text>
       </View>
-      <View style={styles.container}>
-        <Pdf source={source} style={styles.pdf} />
-        <View>
+      {isLoading ? (
+        <View style={styles.container}>
+          <Skeleton
+            h={Dimensions.get('window').height - 220}
+            w={Dimensions.get('window').width - 20}
+            rounded={'md'}
+          />
+          <Skeleton w={130} h={46} rounded={'3xl'} mt={30} />
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <Pdf source={source} style={styles.pdf} />
           <Pressable onPress={downloadPDF}>
             {({isPressed}) => {
               return (
@@ -331,7 +311,7 @@ const ExternalCV = ({navigation}) => {
             }}
           </Pressable>
         </View>
-      </View>
+      )}
     </SafeAreaView>
   );
 };

@@ -47,7 +47,7 @@ const Verify = ({navigation, route}) => {
           otp: otp1 + otp2 + otp3 + otp4,
         })
         .then(response => {
-          if (response.data.message === 'OTP is valid') {
+          if (response.data.message === 'successfully verify otp') {
             toast.show({
               render: () => {
                 return (
@@ -66,7 +66,24 @@ const Verify = ({navigation, route}) => {
                 token: response.data.token,
               });
             }, 1000);
-          } else if (response.data.message === 'OTP does not match') {
+          } else {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast
+                    message={'Server error, coba lagi.'}
+                    bgColor={colors.danger}
+                    color={colors.white}
+                  />
+                );
+              },
+              placement: 'top',
+            });
+            setIsLoading(false);
+          }
+        })
+        .catch(err => {
+          if (err.response.data.message === 'invalid otp') {
             toast.show({
               render: () => {
                 return (
@@ -80,12 +97,12 @@ const Verify = ({navigation, route}) => {
               placement: 'top',
             });
             setIsLoading(false);
-          } else {
+          } else if (err.response.data.message === 'otp has expired') {
             toast.show({
               render: () => {
                 return (
                   <Toast
-                    message={'Server error, coba lagi.'}
+                    message={'Kode OTP telah kadaluarsa!'}
                     bgColor={colors.danger}
                     color={colors.white}
                   />
@@ -298,8 +315,8 @@ const Verify = ({navigation, route}) => {
           </View>
         </KeyboardAvoidingView>
         <Button
-          loading={isLoading}
-          title="Kirim Kode"
+          // loading={isLoading}
+          title="Kirim"
           titleStyle={{
             fontFamily: fonts.poppins_b,
             fontSize: 18,
@@ -315,9 +332,15 @@ const Verify = ({navigation, route}) => {
           containerStyle={{width: 280, left: '50%', marginLeft: -140}}
           onPress={handleSend}
         />
-        <VStack mx={5} mt={10} alignItems={'flex-end'}>
-          <Text>Belum menerima kode OTP?</Text>
-          <Text>
+        <VStack mx={5} mt={9} alignItems={'center'}>
+          <Text fontFamily={fonts.poppins} fontSize={12}>
+            Belum menerima kode OTP?
+          </Text>
+          <Text
+            fontFamily={fonts.poppins_b}
+            fontWeight={'bold'}
+            color={colors.primary}
+            fontSize={16}>
             {minutes != null
               ? (minutes <= 9 ? '0' + minutes : minutes) +
                 ':' +
@@ -326,7 +349,11 @@ const Verify = ({navigation, route}) => {
           </Text>
           {minutes === null ? (
             <Pressable mt={-5} onPress={reSendEmail}>
-              <Text color={colors.primary} fontSize={'md'} fontWeight={'black'}>
+              <Text
+                fontFamily={fonts.poppins_b}
+                fontWeight={'bold'}
+                color={colors.primary}
+                fontSize={16}>
                 Kirim ulang
               </Text>
             </Pressable>

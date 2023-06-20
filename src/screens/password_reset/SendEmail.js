@@ -14,6 +14,7 @@ import {colors, fonts} from '../../components/Theme';
 import ForgotPasswordProgress from '../../components/ForgotPasswordProgress';
 import {BASE_URL} from '../../../config';
 import Toast from '../../components/Toast';
+import {CustomIcon} from '../../components/CustomIcon';
 
 const SendEmail = ({navigation}) => {
   const [NPP, setNPP] = useState('');
@@ -24,65 +25,83 @@ const SendEmail = ({navigation}) => {
 
   const handleSend = async () => {
     setIsLoading(true);
-    try {
-      axios
-        .put(BASE_URL + '/forget-password', {npp: NPP, no_ktp: KTP})
-        .then(response => {
-          if (response.data.message === 'NPP or No.KTP not found') {
-            toast.show({
-              render: () => {
-                return (
-                  <Toast
-                    message={'User tidak ditemukan!'}
-                    bgColor={colors.danger}
-                    color={colors.white}
-                  />
-                );
-              },
-              placement: 'top',
-            });
-            setIsLoading(false);
-          } else if (response.data.success === true) {
-            toast.show({
-              render: () => {
-                return (
-                  <Toast
-                    message={'OTP telah dikirimkan ke email anda!'}
-                    bgColor={colors.success}
-                    color={colors.white}
-                  />
-                );
-              },
-              placement: 'top',
-            });
-            const delay = setTimeout(() => {
-              navigation.replace('PasswordResetVerify', {
-                npp: NPP,
-                no_ktp: KTP,
+    if (NPP === '' || KTP === '') {
+      toast.show({
+        render: () => {
+          return (
+            <Toast
+              message={'Mohon lengkapi NPP dan No. KTP!'}
+              bgColor={colors.success}
+              color={colors.white}
+            />
+          );
+        },
+        placement: 'top',
+      });
+    } else {
+      try {
+        axios
+          .post(BASE_URL + '/forget-password', {npp: NPP, no_ktp: KTP})
+          .then(response => {
+            if (response.data.success === true) {
+              toast.show({
+                render: () => {
+                  return (
+                    <Toast
+                      message={'OTP telah dikirimkan ke email anda!'}
+                      bgColor={colors.success}
+                      color={colors.white}
+                    />
+                  );
+                },
+                placement: 'top',
               });
-            }, 1000);
-          } else {
-            toast.show({
-              render: () => {
-                return (
-                  <Toast
-                    message={'OTP gagal dikirim, coba lagi!'}
-                    bgColor={colors.danger}
-                    color={colors.white}
-                  />
-                );
-              },
-              placement: 'top',
-            });
-            setIsLoading(false);
-          }
-        });
-    } catch {}
+              const delay = setTimeout(() => {
+                navigation.replace('PasswordResetVerify', {
+                  npp: NPP,
+                  no_ktp: KTP,
+                });
+              }, 1000);
+            } else {
+              toast.show({
+                render: () => {
+                  return (
+                    <Toast
+                      message={'OTP gagal dikirim, coba lagi!'}
+                      bgColor={colors.danger}
+                      color={colors.white}
+                    />
+                  );
+                },
+                placement: 'top',
+              });
+              setIsLoading(false);
+            }
+          })
+          .catch(err => {
+            if (err.response.data.message === 'npp or no.ktp not found') {
+              toast.show({
+                render: () => {
+                  return (
+                    <Toast
+                      message={'User tidak ditemukan!'}
+                      bgColor={colors.danger}
+                      color={colors.white}
+                    />
+                  );
+                },
+                placement: 'top',
+              });
+              setIsLoading(false);
+            }
+          });
+      } catch {}
+    }
   };
 
   return (
     <SafeAreaView>
-      <StatusBar backgroundColor={colors.white} />
+      <StatusBar backgroundColor={colors.white} barStyle={'dark-content'} />
       <View style={styles.header}>
         <Icon
           name="arrow-left"
@@ -90,7 +109,7 @@ const SendEmail = ({navigation}) => {
           color={colors.black}
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.headerTitle}>Reset Email</Text>
+        <Text style={styles.headerTitle}>Reset Password</Text>
       </View>
       <Box style={styles.container}>
         <ForgotPasswordProgress status={'send'} />
@@ -101,8 +120,8 @@ const SendEmail = ({navigation}) => {
               color: colors.dark10,
               fontSize: 13,
             }}>
-            Kami akan kirim 4 digit kode ke email anda. Masukkan email anda
-            untuk proses verivikasi.
+            Kami akan kirim 4 digit kode ke email anda. Masukkan NPP dan No. KTP
+            anda untuk proses verivikasi.
           </Text>
         </View>
         <KeyboardAvoidingView behavior="padding" style={{alignItems: 'center'}}>
@@ -114,8 +133,8 @@ const SendEmail = ({navigation}) => {
             placeholderTextColor="#666"
             value={NPP}
             leftIcon={
-              <Icon
-                name="card-account-details-outline"
+              <CustomIcon
+                name="id-card-clip"
                 size={18}
                 color="#333"
                 style={{marginRight: 5}}
@@ -127,13 +146,14 @@ const SendEmail = ({navigation}) => {
           <Input
             ref={refKTP}
             inputContainerStyle={styles.emailForm}
+            keyboardType={'phone-pad'}
             containerStyle={{width: 300}}
             placeholder="No KTP"
             placeholderTextColor="#666"
             value={KTP}
             leftIcon={
-              <Icon
-                name="card-account-details-outline"
+              <CustomIcon
+                name="address-card"
                 size={18}
                 color="#333"
                 style={{marginRight: 5}}

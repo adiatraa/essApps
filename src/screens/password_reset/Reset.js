@@ -15,6 +15,7 @@ import {BASE_URL} from '../../../config';
 import axios from 'axios';
 import {Text, useToast} from 'native-base';
 import Toast from '../../components/Toast';
+import {CustomIcon} from '../../components/CustomIcon';
 
 const Reset = ({navigation, route}) => {
   const [password, setPassword] = useState('');
@@ -53,7 +54,7 @@ const Reset = ({navigation, route}) => {
       });
     } else {
       axios
-        .put(
+        .post(
           BASE_URL + '/update-password',
           {npp: npp, new_password: password},
           {
@@ -86,8 +87,7 @@ const Reset = ({navigation, route}) => {
               color: colors.dark10,
               fontSize: 13,
             }}>
-            Kami akan kirim 4 digit kode ke email anda. Masukkan email anda
-            untuk proses verivikasi.
+            Identitas Anda telah diverifikasi! Buat password baru Anda.
           </Text>
         </View>
         <KeyboardAvoidingView behavior="padding" style={{alignItems: 'center'}}>
@@ -100,9 +100,9 @@ const Reset = ({navigation, route}) => {
             placeholderTextColor="#666"
             value={password}
             leftIcon={
-              <Icon
-                name="lock-outline"
-                size={18}
+              <CustomIcon
+                name="lock"
+                size={14}
                 color="#333"
                 style={{marginRight: 5}}
               />
@@ -118,9 +118,9 @@ const Reset = ({navigation, route}) => {
             placeholderTextColor="#666"
             value={passwordConfirm}
             leftIcon={
-              <Icon
-                name="lock-outline"
-                size={18}
+              <CustomIcon
+                name="lock"
+                size={14}
                 color="#333"
                 style={{marginRight: 5}}
               />

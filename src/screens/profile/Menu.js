@@ -101,7 +101,7 @@ const Menu = ({navigation, route}) => {
               size={'lg'}
               bg={colors.primary}
               source={{
-                uri: 'https://berita.99.co/wp-content/uploads/2022/06/foto-profil-keren.jpg',
+                uri: data.foto,
               }}
             />
             <VStack ml={3}>
@@ -121,7 +121,7 @@ const Menu = ({navigation, route}) => {
         </Box>
         <ScrollView
           horizontal={true}
-          showsHorizontalScrollIndicator={false}
+          showsHorizontalScrollIndicator={true}
           decelerationRate="fast">
           <HStack space={3} alignItems={'center'} mt={5} mb={3}>
             <HStack
@@ -129,10 +129,9 @@ const Menu = ({navigation, route}) => {
               alignItems={'center'}
               bg={colors.white}
               borderRadius={10}
-              borderWidth={1}
               borderColor={colors.dark40}
               px={5}
-              h={70}
+              h={85}
               w={250}>
               <Text
                 fontFamily={fonts.poppins_b}
@@ -153,10 +152,9 @@ const Menu = ({navigation, route}) => {
               alignItems={'flex-start'}
               bg={colors.white}
               borderRadius={10}
-              borderWidth={1}
               borderColor={colors.dark40}
               px={5}
-              h={70}
+              h={85}
               w={250}>
               <Text
                 fontFamily={fonts.poppins_b}
@@ -176,11 +174,10 @@ const Menu = ({navigation, route}) => {
               justifyContent={'center'}
               bg={colors.white}
               borderRadius={10}
-              borderWidth={1}
               borderColor={colors.dark40}
               px={5}
               space={1}
-              h={70}
+              h={85}
               w={250}>
               <HStack justifyContent={'space-between'} alignItems={'center'}>
                 <Text
@@ -206,17 +203,23 @@ const Menu = ({navigation, route}) => {
                   </Text>
                 </HStack>
               </HStack>
-              <Progress.Bar progress={0.3} width={205} color={'#9747FF'} />
+              <Progress.Bar
+                progress={0.3}
+                width={205}
+                height={8}
+                color={'#9747FF'}
+                borderWidth={0}
+                unfilledColor={colors.dark50}
+              />
             </VStack>
             <VStack
               justifyContent={'center'}
               bg={colors.white}
               borderRadius={10}
-              borderWidth={1}
               borderColor={colors.dark40}
               px={5}
               space={1}
-              h={70}
+              h={85}
               w={250}>
               <HStack justifyContent={'space-between'} alignItems={'center'}>
                 <Text
@@ -242,7 +245,14 @@ const Menu = ({navigation, route}) => {
                   </Text>
                 </HStack>
               </HStack>
-              <Progress.Bar progress={0.3} width={205} color={'#18A0FB'} />
+              <Progress.Bar
+                progress={0.3}
+                width={205}
+                height={8}
+                color={'#18A0FB'}
+                borderWidth={0}
+                unfilledColor={colors.dark50}
+              />
             </VStack>
           </HStack>
         </ScrollView>
@@ -302,7 +312,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderColor: '#B6B6B6',
     borderRadius: 10,
-    borderWidth: 1,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -317,8 +326,10 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   menuText: {
-    color: '#B6B6B6',
-    fontWeight: 'regular',
+    color: colors.dark20,
+    fontFamily: fonts.poppins_b,
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   profileCardBody: {
     alignItems: 'center',

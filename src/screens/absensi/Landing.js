@@ -1,8 +1,12 @@
-import {StatusBar, StyleSheet} from 'react-native';
+import {
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  ImageBackground,
+  RefreshControl,
+} from 'react-native';
 import React, {useState, useEffect, useContext} from 'react';
-import {SafeAreaView} from 'react-native';
 import {colors, fonts} from '../../components/Theme';
-import {ImageBackground} from 'react-native';
 import {Dialog} from '@rneui/themed';
 import {
   getDate,
@@ -28,8 +32,8 @@ import {
   Progress,
   Button,
   Spinner as Spin,
+  Skeleton,
 } from 'native-base';
-import Spinner from '../../components/Spinner';
 import {useIsFocused} from '@react-navigation/native';
 import {CustomIcon} from '../../components/CustomIcon';
 
@@ -63,45 +67,50 @@ const HistoryCard = ({
                 }}>
                 {converDate(date)}
               </Text>
-              <HStack
-                alignItems={'center'}
-                justifyContent={'flex-start'}
-                flexWrap={'wrap'}
-                space={2}
-                w={'90%'}>
-                <HStack alignItems={'center'}>
-                  <CustomIcon name="calendar-circle-plus" color={colors.dark} />
-                  <Text
-                    style={{
-                      fontFamily: fonts.poppins,
-                      fontSize: 10,
-                      color: colors.dark,
-                      marginBottom: -2,
-                      marginLeft: 2,
-                    }}>
-                    Clock In {'  '} {clockIn === null ? '-' : clockIn}
+              <VStack alignItems={'flex-start'}>
+                <HStack
+                  alignItems={'center'}
+                  justifyContent={'flex-start'}
+                  flexWrap={'wrap'}
+                  space={2}
+                  w={'90%'}>
+                  <HStack alignItems={'center'}>
+                    <CustomIcon
+                      name="calendar-circle-plus"
+                      color={colors.dark}
+                    />
+                    <Text
+                      style={{
+                        fontFamily: fonts.poppins,
+                        fontSize: 10,
+                        color: colors.dark,
+                        marginBottom: -2,
+                        marginLeft: 2,
+                      }}>
+                      Clock In {'  '} {clockIn === null ? '-' : clockIn}
+                    </Text>
+                  </HStack>
+                  {/* <Icon name={'circle-small'} color={colors.black} /> */}
+                  <Text fontSize={10} pb={0.5} color={colors.dark20}>
+                    |
                   </Text>
-                </HStack>
-                {/* <Icon name={'circle-small'} color={colors.black} /> */}
-                <Text fontSize={10} pb={0.5} color={colors.dark20}>
-                  |
-                </Text>
-                <HStack alignItems={'center'}>
-                  <CustomIcon
-                    name="calendar-circle-check"
-                    color={colors.dark}
-                  />
+                  <HStack alignItems={'center'}>
+                    <CustomIcon
+                      name="calendar-circle-check"
+                      color={colors.dark}
+                    />
 
-                  <Text
-                    style={{
-                      fontFamily: fonts.poppins,
-                      fontSize: 10,
-                      color: colors.dark,
-                      marginBottom: -2,
-                      marginLeft: 2,
-                    }}>
-                    Clock Out {'  '} {clockOut === null ? '-' : clockOut}
-                  </Text>
+                    <Text
+                      style={{
+                        fontFamily: fonts.poppins,
+                        fontSize: 10,
+                        color: colors.dark,
+                        marginBottom: -2,
+                        marginLeft: 2,
+                      }}>
+                      Clock Out {'  '} {clockOut === null ? '-' : clockOut}
+                    </Text>
+                  </HStack>
                 </HStack>
                 <HStack alignItems={'center'}>
                   <CustomIcon
@@ -125,13 +134,13 @@ const HistoryCard = ({
                       : ' -'}
                   </Text>
                 </HStack>
-              </HStack>
+              </VStack>
             </VStack>
             <Box
               position={'absolute'}
               bottom={0}
               right={0}
-              px={7}
+              w={120}
               py={1}
               bg={
                 status === 'terlambat'
@@ -188,18 +197,19 @@ const Landing = ({navigation, route}) => {
   const [inLoading, setInLoading] = useState(false);
   const [outLoading, setOutLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
+  const [isRefresh, setIsRefresh] = useState(false);
 
   // Get API riwayat absensi
   const getHistoryAPI = async () => {
     try {
       axios
-        .get(BASE_URL + '/history-attendance/' + userInfo.npp, {
+        .get(BASE_URL + '/history-attendance?npp=' + userInfo.npp, {
           headers: {'x-access-token': userToken},
         })
         .then(response => {
-          setJamTelat(response.data.data.jam_telat);
-          setData(response.data.data.attendance);
-          setRecap(response.data.data.numbers_of_attendance);
+          setJamTelat(response.data.jam_telat);
+          setData(response.data.attendance);
+          setRecap(response.data.numbers_of_attendance);
           setPageLoading(false);
         });
     } catch {}
@@ -209,19 +219,30 @@ const Landing = ({navigation, route}) => {
   const getOneHistoryAPI = async () => {
     try {
       axios
-        .post(
-          BASE_URL + '/choose-date-attendance',
-          {npp: userInfo.npp, tanggal_hadir: selectedDate},
+        .get(
+          BASE_URL +
+            '/choose-date-attendance?npp=' +
+            userInfo.npp +
+            '&tanggal_hadir=' +
+            selectedDate,
           {
             headers: {'x-access-token': userToken},
           },
         )
         .then(response => {
-          if (response.data.data.attendance != null) {
-            setData(response.data.data.attendance);
-            setRecap(response.data.data.numbers_of_attendance);
+          if (response.data.attendance != null) {
+            setJamTelat([response.data.jam_telat]);
+            setData([response.data.attendance]);
+            setRecap(response.data.numbers_of_attendance);
           } else {
             setData(null);
+          }
+          setDatePickerVisible(false);
+        })
+        .catch(err => {
+          if (err.response.data.message === 'attendance not found') {
+            setData([]);
+            setRecap(err.response.data.numbers_of_attendance);
           }
           setDatePickerVisible(false);
         });
@@ -232,20 +253,11 @@ const Landing = ({navigation, route}) => {
   const handleClockIn = async () => {
     try {
       axios
-        .post(
-          BASE_URL + '/get-attendance',
-          {
-            npp: userInfo.npp,
-          },
-          {
-            headers: {'x-access-token': userToken},
-          },
-        )
+        .get(BASE_URL + '/get-attendance?npp=' + userInfo.npp, {
+          headers: {'x-access-token': userToken},
+        })
         .then(response => {
-          if (response.data.message === 'User have not attendance') {
-            navigation.navigate('ClockIn', {status: 'Kosong'});
-            setInLoading(false);
-          } else if (response.data.message === 'User already clocked out') {
+          if (response.data.message === 'already clock-out') {
             navigation.navigate('ClockIn', {status: 'Isi'});
             setInLoading(false);
           } else {
@@ -263,6 +275,13 @@ const Landing = ({navigation, route}) => {
             });
             setInLoading(false);
           }
+        })
+        .catch(err => {
+          // console.log(err.response.data.message);
+          if (err.response.data.message === 'attendance not found') {
+            navigation.navigate('ClockIn', {status: 'Kosong'});
+            setInLoading(false);
+          }
         });
     } catch (error) {}
   };
@@ -271,17 +290,11 @@ const Landing = ({navigation, route}) => {
   const handleClockOut = async () => {
     try {
       axios
-        .post(
-          BASE_URL + '/get-attendance',
-          {
-            npp: userInfo.npp,
-          },
-          {
-            headers: {'x-access-token': userToken},
-          },
-        )
+        .get(BASE_URL + '/get-attendance?npp=' + userInfo.npp, {
+          headers: {'x-access-token': userToken},
+        })
         .then(response => {
-          if (response.data.message === 'User already clocked in') {
+          if (response.data.message === 'already clock-in') {
             navigation.navigate('ClockOut');
             setOutLoading(false);
           } else {
@@ -304,8 +317,11 @@ const Landing = ({navigation, route}) => {
   };
 
   const getStatusHadir = time => {
-    let tempTime = time.split(':');
+    if (time === undefined) {
+      return;
+    }
     let result;
+    let tempTime = time.split(':');
     if (tempTime[0] == 0 && tempTime[1] == 0 && tempTime[2] == 0) {
       result = 'hadir';
     } else if (tempTime[0] > 0 || tempTime[1] > 0 || tempTime[2] > 0) {
@@ -321,12 +337,8 @@ const Landing = ({navigation, route}) => {
     getHistoryAPI();
   }, [isFocused]);
 
-  if (pageLoading === true) {
-    return <Spinner />; // Apabila status loading true maka akan menampilkan Skeleton
-  }
-
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor: colors.bgWhite}}>
       <StatusBar backgroundColor={colors.bgWhite} barStyle={'dark-content'} />
       <Dialog
         isVisible={datePickerVisible}
@@ -360,178 +372,215 @@ const Landing = ({navigation, route}) => {
         />
         <Text style={styles.headerTitle}>Absensi</Text>
       </HStack>
-      <ScrollView px={5} bg={colors.bgWhite} minH={600}>
-        <Box>
-          <ImageBackground
-            source={require('../../assets/card.webp')}
-            resizeMode={'stretch'}
-            borderRadius={30}
-            style={styles.mainCardBackground}>
-            <VStack justifyContent={'center'} alignItems={'center'} py={10}>
-              <Text style={styles.mainCardTime}>{getTime(date)}</Text>
-              <Text style={styles.mainCardDate}>{getDate(date)}</Text>
-              <HStack mt={3} alignItems={'center'} space={3}>
-                <Button
-                  size={'sm'}
-                  colorScheme={'dark'}
-                  bg={colors.white}
-                  borderRadius={10}
-                  disabled={inLoading}
-                  leftIcon={
-                    inLoading === true ? (
-                      <Spin color={colors.dark} />
-                    ) : (
-                      <CustomIcon
-                        size={16}
-                        name="calendar-circle-plus"
-                        color={colors.dark}
-                      />
-                    )
-                  }
-                  w={110}
-                  onPress={() => {
-                    setInLoading(true);
-                    handleClockIn();
-                  }}>
-                  <Text>Clock In</Text>
-                </Button>
-                <Button
-                  size={'sm'}
-                  colorScheme={'dark'}
-                  bg={colors.white}
-                  borderRadius={10}
-                  disabled={outLoading}
-                  leftIcon={
-                    outLoading === true ? (
-                      <Spin color={colors.dark} />
-                    ) : (
-                      <CustomIcon
-                        size={16}
-                        name="calendar-circle-check"
-                        color={colors.dark}
-                      />
-                    )
-                  }
-                  w={110}
-                  onPress={() => {
-                    setOutLoading(true);
-                    handleClockOut();
-                  }}>
-                  <Text>Clock Out</Text>
-                </Button>
-              </HStack>
-              {/* <Text style={styles.mainCardDescription}>Tidak ada presensi</Text> */}
-            </VStack>
-          </ImageBackground>
-        </Box>
-        <Box bg={colors.white} mx={1} px={5} py={5} mt={7} borderRadius={15}>
-          <VStack py={2} px={2} space={2}>
-            <HStack alignItems={'center'} justifyContent={'space-between'}>
-              <Text
-                fontFamily={fonts.poppins_sb}
-                fontWeight={'bold'}
-                fontSize={12}>
-                {'Total Kehadiran Bulan ' +
-                  (data.length === 1
-                    ? convertMonth(new Date(data[0].tanggal_hadir).getMonth())
-                    : convertMonth(new Date().getMonth()))}
-              </Text>
-              <HStack alignItems={'center'}>
-                <Text
-                  fontFamily={fonts.poppins_b}
-                  fontWeight={'bold'}
-                  fontSize={11}
-                  color={colors.success}>
-                  {recap}
-                </Text>
-                <Text
-                  fontFamily={fonts.poppins_m}
-                  fontWeight={'medium'}
-                  fontSize={10}
-                  color={colors.dark20}
-                  mb={-0.5}
-                  ml={1}>
-                  Hari
-                </Text>
-              </HStack>
-            </HStack>
-            <Progress
-              size={'md'}
-              value={(100 / 31) * parseInt(recap)}
-              _filledTrack={{
-                bg: colors.success,
-              }}
-            />
-          </VStack>
-        </Box>
-        <Box mb={100}>
-          <HStack justifyContent={'space-between'} alignItems={'center'} px={2}>
-            <Text style={styles.subTitle}>Riwayat</Text>
-            <Pressable onPress={() => setDatePickerVisible(true)}>
-              <HStack style={styles.chooseDate}>
-                <CustomIcon
-                  name="calendarday"
-                  size={20}
-                  color={colors.secondary}
-                  style={styles.chooseDateIcon}
-                />
-                <Text style={{}}>Choose Date</Text>
-              </HStack>
-            </Pressable>
+      {pageLoading === true ? (
+        <VStack px={5} bg={colors.bgWhite} h={'100%'}>
+          <Skeleton rounded={'3xl'} h={180} />
+          <Skeleton rounded={'md'} h={100} mt={7} />
+          <HStack
+            justifyContent={'space-between'}
+            alignItems={'center'}
+            px={2}
+            py={6}>
+            <Skeleton rounded={'sm'} w={70} h={7} />
+            <Skeleton rounded={'sm'} w={150} h={12} />
           </HStack>
           <VStack px={2} space={3}>
-            {data.length < 1 ? (
-              <Center>
-                <Text color={colors.dark20}>
-                  Riwayat kehadiran tidak ditemukan!
-                </Text>
-              </Center>
-            ) : (
-              data.map((e, index) => {
-                return (
-                  <HistoryCard
-                    key={index}
-                    active={e.t02 === null ? true : false}
-                    date={e.tanggal_hadir}
-                    clockIn={e.t01}
-                    clockOut={
-                      e.t10 != null
-                        ? e.t10
-                        : e.t08 != null
-                        ? e.t08
-                        : e.t06 != null
-                        ? e.t06
-                        : e.t04 != null
-                        ? e.t04
-                        : e.t02
-                    }
-                    status={getStatusHadir(jamTelat[index])}
-                    terlambat={convertTime(jamTelat[index])}
-                    onPress={() =>
-                      navigation.navigate('AbsensiDetail', {
-                        date: e.tanggal_hadir,
-                        npp: e.npp,
-                        t: [
-                          e.t01,
-                          e.t02,
-                          e.t03,
-                          e.t04,
-                          e.t05,
-                          e.t06,
-                          e.t07,
-                          e.t08,
-                          e.t09,
-                          e.t10,
-                        ],
-                      })
-                    }
-                  />
-                );
-              })
-            )}
+            <Skeleton h={120} rounded={'md'} />
+            <Skeleton h={120} rounded={'md'} />
+            <Skeleton h={120} rounded={'md'} />
+            <Skeleton h={120} rounded={'md'} />
+            <Skeleton h={120} rounded={'md'} />
           </VStack>
-        </Box>
-      </ScrollView>
+        </VStack>
+      ) : (
+        <ScrollView
+          px={5}
+          bg={colors.bgWhite}
+          minH={600}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefresh}
+              onRefresh={() => {
+                setIsRefresh(true);
+                getHistoryAPI();
+                setIsRefresh(false);
+              }}
+            />
+          }>
+          <Box>
+            <ImageBackground
+              source={require('../../assets/card.webp')}
+              resizeMode={'stretch'}
+              borderRadius={30}
+              style={styles.mainCardBackground}>
+              <VStack justifyContent={'center'} alignItems={'center'} py={10}>
+                <Text style={styles.mainCardTime}>{getTime(date)}</Text>
+                <Text style={styles.mainCardDate}>{getDate(date)}</Text>
+                <HStack mt={3} alignItems={'center'} space={3}>
+                  <Button
+                    size={'sm'}
+                    colorScheme={'dark'}
+                    bg={colors.white}
+                    borderRadius={10}
+                    disabled={inLoading}
+                    leftIcon={
+                      inLoading === true ? (
+                        <Spin color={colors.dark} />
+                      ) : (
+                        <CustomIcon
+                          size={16}
+                          name="calendar-circle-plus"
+                          color={colors.dark}
+                        />
+                      )
+                    }
+                    w={110}
+                    onPress={() => {
+                      setInLoading(true);
+                      handleClockIn();
+                    }}>
+                    <Text>Clock In</Text>
+                  </Button>
+                  <Button
+                    size={'sm'}
+                    colorScheme={'dark'}
+                    bg={colors.white}
+                    borderRadius={10}
+                    disabled={outLoading}
+                    leftIcon={
+                      outLoading === true ? (
+                        <Spin color={colors.dark} />
+                      ) : (
+                        <CustomIcon
+                          size={16}
+                          name="calendar-circle-check"
+                          color={colors.dark}
+                        />
+                      )
+                    }
+                    w={110}
+                    onPress={() => {
+                      setOutLoading(true);
+                      handleClockOut();
+                    }}>
+                    <Text>Clock Out</Text>
+                  </Button>
+                </HStack>
+              </VStack>
+            </ImageBackground>
+          </Box>
+          <Box bg={colors.white} mx={1} px={5} py={5} mt={7} borderRadius={15}>
+            <VStack py={2} px={2} space={2}>
+              <HStack alignItems={'center'} justifyContent={'space-between'}>
+                <Text
+                  fontFamily={fonts.poppins_sb}
+                  fontWeight={'bold'}
+                  fontSize={12}>
+                  {'Total Kehadiran Bulan ' +
+                    (data.length === 1
+                      ? convertMonth(new Date(data[0].tanggal_hadir).getMonth())
+                      : convertMonth(new Date(selectedDate).getMonth()))}
+                </Text>
+                <HStack alignItems={'center'}>
+                  <Text
+                    fontFamily={fonts.poppins_b}
+                    fontWeight={'bold'}
+                    fontSize={11}
+                    color={colors.success}>
+                    {recap}
+                  </Text>
+                  <Text
+                    fontFamily={fonts.poppins_m}
+                    fontWeight={'medium'}
+                    fontSize={10}
+                    color={colors.dark20}
+                    mb={-0.5}
+                    ml={1}>
+                    Hari
+                  </Text>
+                </HStack>
+              </HStack>
+              <Progress
+                size={'md'}
+                value={(100 / 31) * parseInt(recap)}
+                _filledTrack={{
+                  bg: colors.success,
+                }}
+              />
+            </VStack>
+          </Box>
+          <Box mb={100}>
+            <HStack
+              justifyContent={'space-between'}
+              alignItems={'center'}
+              px={2}>
+              <Text style={styles.subTitle}>Riwayat</Text>
+              <Pressable onPress={() => setDatePickerVisible(true)}>
+                <HStack style={styles.chooseDate}>
+                  <CustomIcon
+                    name="calendarday"
+                    size={20}
+                    color={colors.secondary}
+                    style={styles.chooseDateIcon}
+                  />
+                  <Text style={{}}>Choose Date</Text>
+                </HStack>
+              </Pressable>
+            </HStack>
+            <VStack px={2} space={3}>
+              {data.length < 1 ? (
+                <Center>
+                  <Text color={colors.dark20}>
+                    Riwayat kehadiran tidak ditemukan!
+                  </Text>
+                </Center>
+              ) : (
+                data.map((e, index) => {
+                  return (
+                    <HistoryCard
+                      key={index}
+                      active={e.t02 === null ? true : false}
+                      date={e.tanggal_hadir}
+                      clockIn={e.t01}
+                      clockOut={
+                        e.t10 != null
+                          ? e.t10
+                          : e.t08 != null
+                          ? e.t08
+                          : e.t06 != null
+                          ? e.t06
+                          : e.t04 != null
+                          ? e.t04
+                          : e.t02
+                      }
+                      status={getStatusHadir(jamTelat[index])}
+                      terlambat={convertTime(jamTelat[index])}
+                      onPress={() =>
+                        navigation.navigate('AbsensiDetail', {
+                          date: e.tanggal_hadir,
+                          npp: e.npp,
+                          t: [
+                            e.t01,
+                            e.t02,
+                            e.t03,
+                            e.t04,
+                            e.t05,
+                            e.t06,
+                            e.t07,
+                            e.t08,
+                            e.t09,
+                            e.t10,
+                          ],
+                        })
+                      }
+                    />
+                  );
+                })
+              )}
+            </VStack>
+          </Box>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

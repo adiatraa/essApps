@@ -1,4 +1,4 @@
-import {StyleSheet, StatusBar} from 'react-native';
+import {StyleSheet, StatusBar, Keyboard} from 'react-native';
 import React, {useState, useContext, useRef} from 'react';
 import Icon from 'react-native-vector-icons/Octicons';
 import * as Animatable from 'react-native-animatable';
@@ -19,6 +19,7 @@ import {
 } from 'native-base';
 import Toast from '../components/Toast';
 import {Platform} from 'react-native';
+import {CustomIcon} from '../components/CustomIcon';
 
 export default function LoginPage({navigation}) {
   const {login, isLoading} = useContext(AuthContext);
@@ -30,6 +31,12 @@ export default function LoginPage({navigation}) {
   const [secureText, setSecureText] = useState(true);
   const [eyeStatus, setEyeStatus] = useState('eye-closed');
   const [heightForm, setHeightForm] = useState('4/6');
+  const keyboardShowListener = Keyboard.addListener('keyboardDidShow', () => {
+    setHeightForm('4/5');
+  });
+  const keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
+    setHeightForm('4/6');
+  });
 
   //Set password visible or invisible
   const eyeStatusHandler = () => {
@@ -198,8 +205,8 @@ export default function LoginPage({navigation}) {
           source={require('../assets/ess-logo.webp')}
           alt="logo"
           tintColor={colors.dark}
-          w={68}
-          h={100}
+          w={51}
+          h={75}
           mb={5}
         />
         <Text
@@ -222,8 +229,12 @@ export default function LoginPage({navigation}) {
         <Text fontFamily={fonts.poppins_b} fontSize={40} fontWeight={'bold'}>
           LOGIN
         </Text>
-        <Text fontFamily={fonts.poppins} fontSize={11} mb={10}>
-          Welcome back you’ve been missed!
+        <Text
+          fontFamily={fonts.poppins}
+          textAlign={'center'}
+          fontSize={11}
+          mb={10}>
+          Selamat datang di Employe Self Service{'\n'}PT. PINDAD
         </Text>
         <KeyboardAvoidingView
           w={'100%'}
@@ -235,8 +246,8 @@ export default function LoginPage({navigation}) {
               placeholderTextColor="#666"
               value={NPP}
               InputLeftElement={
-                <Icon
-                  name="person"
+                <CustomIcon
+                  name="id-card-clip"
                   size={18}
                   color="#333"
                   style={{marginRight: 5}}
@@ -248,7 +259,6 @@ export default function LoginPage({navigation}) {
               onSubmitEditing={() => {
                 refPassword.current.focus();
               }}
-              onFocus={() => setHeightForm('4/5')}
             />
           </FormControl>
           <FormControl style={styles.passwordForm}>
@@ -270,7 +280,7 @@ export default function LoginPage({navigation}) {
                 />
               }
               InputLeftElement={
-                <Icon
+                <CustomIcon
                   name="lock"
                   size={18}
                   color="#333"
@@ -281,7 +291,6 @@ export default function LoginPage({navigation}) {
               _focus={{backgroundColor: colors.white, borderWidth: 0}}
               onChangeText={text => setPassword(text)}
               onSubmitEditing={() => {
-                setHeightForm('4/6');
                 handleLogin();
               }}
             />
@@ -320,7 +329,7 @@ export default function LoginPage({navigation}) {
         </Button>
         <HStack alignItems={'center'} mt={16} space={3}>
           <Text fontFamily={fonts.poppins} fontSize={10} mb={-1}>
-            Colaboration with
+            Collaboration with
           </Text>
           <Image
             source={require('../assets/logo-uns.webp')}
